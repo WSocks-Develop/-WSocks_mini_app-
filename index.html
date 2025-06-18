@@ -1,0 +1,638 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html> <!-- Объявление типа документа HTML5 -->
+<html lang="en"> <!-- Начало HTML-документа с указанием языка (английский) -->
+<head> <!-- Начало секции метаданных документа -->
+  <meta charset="UTF-8"> <!-- Установка кодировки документа в UTF-8 для поддержки всех символов -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Настройка отображения для адаптивности на мобильных устройствах -->
+  <title>WSocks VPN Mini App</title> <!-- Заголовок страницы, отображаемый в вкладке браузера -->
+  <!-- <script src="https://telegram.org/js/telegram-web-app.js"></script> --> <!-- Закомментирован скрипт Telegram Web App SDK для интеграции с Telegram -->
+  <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.production.min.js"></script> <!-- Подключение React (библиотека для UI) через CDN, минимизированная версия -->
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.production.min.js"></script> <!-- Подключение ReactDOM (для рендеринга React в DOM) через CDN, минимизированная версия -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"> <!-- Подключение шрифта Inter от Google Fonts с весами 400, 600, 700 -->
+  <style> <!-- Начало секции встроенных CSS-стилей -->
+    * { /* Универсальный селектор для всех элементов */
+      box-sizing: border-box; /* Установка модели коробки, включающей padding и border в размеры */
+      margin: 0; /* Сброс внешних отступов для всех элементов */
+      padding: 0; /* Сброс внутренних отступов для всех элементов */
+    }
+    body { /* Стили для тега body */
+      font-family: 'Inter', sans-serif; /* Установка шрифта Inter для текста */
+      background-color: #f0f4f8; /* Установка светло-серого фона страницы */
+      color: #1f2a44; /* Установка тёмно-синего цвета текста */
+    }
+    .container { /* Стили для главного контейнера приложения */
+      max-width: 420px; /* Максимальная ширина 420px для мобильного вида */
+      margin: 0 auto; /* Центрирование контейнера по горизонтали */
+      min-height: 100vh; /* Минимальная высота равна высоте экрана */
+      background-color: white; /* Белый фон контейнера */
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень для визуальной глубины */
+      overflow-x: hidden; /* Скрытие горизонтальной прокрутки */
+    }
+    .header { /* Стили для липкого заголовка */
+      position: sticky; /* Фиксация заголовка при прокрутке */
+      top: 0; /* Прикрепление к верхней части экрана */
+      background-color: #3b82f6; /* Синий фон заголовка */
+      color: white; /* Белый цвет текста в заголовке */
+      padding: 12px 16px; /* Внутренние отступы (12px сверху/снизу, 16px слева/справа) */
+      display: flex; /* Использование flexbox для расположения элементов */
+      align-items: center; /* Вертикальное центрирование элементов */
+      z-index: 10; /* Высокий уровень слоя для перекрытия контента */
+    }
+    .header-title { /* Стили для заголовка в шапке */
+      flex: 1; /* Занимает всё доступное пространство */
+      font-size: 18px; /* Размер шрифта 18px */
+      font-weight: 600; /* Полужирный шрифт */
+      text-align: center; /* Центрирование текста */
+    }
+    .back-button { /* Стили для кнопки "Назад" */
+      background: none; /* Без фона */
+      border: none; /* Без рамки */
+      color: white; /* Белый цвет текста */
+      font-size: 24px; /* Размер шрифта 24px для стрелки */
+      cursor: pointer; /* Курсор указателя при наведении */
+      padding: 4px 8px; /* Внутренние отступы */
+    }
+    .content { /* Стили для основного содержимого */
+      padding: 16px; /* Внутренние отступы 16px со всех сторон */
+    }
+    .logo { /* Стили для блока логотипа */
+      text-align: center; /* Центрирование содержимого */
+      margin-bottom: 16px; /* Отступ снизу 16px */
+    }
+    .logo-text { /* Стили для текста логотипа */
+      font-size: 24px; /* Размер шрифта 24px */
+      font-weight: 700; /* Жирный шрифт */
+      color: #1f2a44; /* Тёмно-синий цвет текста */
+    }
+    .button { /* Стили для всех кнопок */
+      display: flex; /* Flexbox для выравнивания иконки и текста */
+      align-items: center; /* Вертикальное центрирование содержимого */
+      width: 100%; /* Полная ширина кнопки */
+      padding: 12px 16px; /* Внутренние отступы */
+      margin-bottom: 8px; /* Отступ снизу 8px */
+      border: none; /* Без рамки */
+      border-radius: 8px; /* Скругленные углы */
+      font-size: 16px; /* Размер шрифта 16px */
+      font-weight: 600; /* Полужирный шрифт */
+      cursor: pointer; /* Курсор указателя */
+      transition: background-color 0.2s, transform 0.1s; /* Плавные анимации фона и смещения */
+    }
+    .button:hover { /* Стили при наведении на кнопку */
+      transform: translateY(-1px); /* Лёгкий подъём кнопки */
+    }
+    .button:active { /* Стили при нажатии на кнопку */
+      transform: translateY(0); /* Возврат к исходной позиции */
+    }
+    .button-primary { /* Стили для основных кнопок */
+      background-color: #3b82f6; /* Синий фон */
+      color: white; /* Белый текст */
+    }
+    .button-primary:hover { /* Стили при наведении на основную кнопку */
+      background-color: #2563eb; /* Более тёмный синий фон */
+    }
+    .button-secondary { /* Стили для второстепенных кнопок */
+      background-color: #6b7280; /* Серый фон */
+      color: white; /* Белый текст */
+    }
+    .button-secondary:hover { /* Стили при наведении на второстепенную кнопку */
+      background-color: #4b5563; /* Более тёмный серый фон */
+    }
+    .button-success { /* Стили для кнопок успеха */
+      background-color: #10b981; /* Зелёный фон */
+      color: white; /* Белый текст */
+    }
+    .button-success:hover { /* Стили при наведении на кнопку успеха */
+      background-color: #059669; /* Более тёмный зелёный фон */
+    }
+    .button-danger { /* Стили для кнопок отмены */
+      background-color: #ef4444; /* Красный фон */
+      color: white; /* Белый текст */
+    }
+    .button-danger:hover { /* Стили при наведении на кнопку отмены */
+      background-color: #dc2626; /* Более тёмный красный фон */
+    }
+    .button-icon { /* Стили для иконок в кнопках */
+      margin-right: 8px; /* Отступ справа 8px */
+      font-size: 20px; /* Размер шрифта 20px для эмодзи */
+    }
+    .card { /* Стили для карточек (например, подписки) */
+      background-color: #f9fafb; /* Светло-серый фон */
+      padding: 16px; /* Внутренние отступы 16px */
+      margin-bottom: 16px; /* Отступ снизу 16px */
+      border-radius: 8px; /* Скругленные углы */
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Лёгкая тень */
+    }
+    .card p { /* Стили для параграфов в карточках */
+      font-size: 14px; /* Размер шрифта 14px */
+      margin: 4px 0; /* Отступы сверху и снизу 4px */
+      color: #374151; /* Тёмно-серый цвет текста */
+    }
+    .card b { /* Стили для жирного текста в карточках */
+      color: #1f2a44; /* Тёмно-синий цвет */
+    }
+    .error { /* Стили для сообщений об ошибках */
+      color: #dc2626; /* Красный цвет текста */
+      font-size: 14px; /* Размер шрифта 14px */
+      text-align: center; /* Центрирование текста */
+      margin-bottom: 16px; /* Отступ снизу 16px */
+    }
+    .loading { /* Стили для текста загрузки */
+      text-align: center; /* Центрирование текста */
+      color: #6b7280; /* Серый цвет текста */
+      font-size: 16px; /* Размер шрифта 16px */
+      animation: pulse 1.5s infinite; /* Применение анимации пульсации */
+    }
+    .link { /* Стили для ссылок */
+      color: #3b82f6; /* Синий цвет текста */
+      text-decoration: none; /* Удаление подчеркивания */
+      font-weight: 600; /* Полужирный шрифт */
+    }
+    .link:hover { /* Стили при наведении на ссылку */
+      text-decoration: underline; /* Добавление подчеркивания */
+    }
+    @keyframes pulse { /* Определение анимации пульсации */
+      0%, 100% { opacity: 1; } /* Полная видимость в начале и конце */
+      50% { opacity: 0.5; } /* Полупрозрачность в середине */
+    }
+    .tooltip { /* Стили для контейнера всплывающей подсказки */
+      position: relative; /* Относительное позиционирование */
+      display: inline-block; /* Встроенный блочный элемент */
+      width: 100%; /* Полная ширина */
+    }
+    .tooltip .tooltip-text { /* Стили для текста всплывающей подсказки */
+      visibility: hidden; /* Скрыт по умолчанию */
+      background-color: #1f2a44; /* Тёмно-синий фон */
+      color: white; /* Белый текст */
+      text-align: center; /* Центрирование текста */
+      border-radius: 4px; /* Скругленные углы */
+      padding: 4px 8px; /* Внутренние отступы */
+      position: absolute; /* Абсолютное позиционирование */
+      z-index: 1; /* Уровень слоя выше других элементов */
+      bottom: 125%; /* Позиция над кнопкой */
+      left: 50%; /* Центрирование по горизонтали */
+      transform: translateX(-50%); /* Смещение для точного центрирования */
+      font-size: 12px; /* Размер шрифта 12px */
+      white-space: nowrap; /* Текст в одну строку */
+      opacity: 0; /* Прозрачность по умолчанию */
+      transition: opacity 0.2s; /* Плавная анимация прозрачности */
+    }
+    .tooltip:hover .tooltip-text { /* Стили при наведении на всплывающую подсказку */
+      visibility: visible; /* Отображение подсказки */
+      opacity: 1; /* Полная видимость */
+    }
+  </style> <!-- Конец секции CSS-стилей -->
+</head> <!-- Конец секции метаданных -->
+<body> <!-- Начало тела документа -->
+  <div id="root"></div> <!-- Контейнер для рендеринга React-приложения -->
+  <script> <!-- Начало секции JavaScript -->
+    const { useState, useEffect, createElement: h } = React; // Деструктуризация хуков и функции createElement из React
+
+    function App() { // Определение главного компонента приложения
+      const [user, setUser] = useState(null); // Состояние для хранения данных пользователя
+      const [view, setView] = useState('main'); // Состояние для текущего вида (main, subscriptions и т.д.)
+      const [subscriptions, setSubscriptions] = useState([]); // Состояние для списка подписок
+      const [loading, setLoading] = useState(false); // Состояние для индикации загрузки
+      const [error, setError] = useState(null); // Состояние для хранения ошибок
+      const [paymentData, setPaymentData] = useState(null); // Состояние для данных платежа
+      const [selectedSub, setSelectedSub] = useState(null); // Состояние для выбранной подписки
+
+      const API_URL = 'https://wsocks-api.onrender.com'; // URL backend API (заменить на реальный)
+
+      useEffect(() => { // Хук для выполнения кода при монтировании компонента
+        // Mock user for interface preview
+        setUser({ id: 123, first_name: 'Test' }); // Установка фиктивного пользователя для тестирования интерфейса
+
+        /* Telegram integration (commented out)
+        window.Telegram.WebApp.ready(); // Инициализация Telegram Web App
+        const initData = window.Telegram.WebApp.initDataUnsafe; // Получение данных инициализации Telegram
+        if (initData.user) { // Проверка наличия данных пользователя
+          setUser(initData.user); // Установка пользователя из Telegram
+          verifyUser(initData); // Вызов функции верификации
+        }
+        window.Telegram.WebApp.expand(); // Разворачивание приложения на полный экран
+        */
+      }, []); // Пустой массив зависимостей для однократного выполнения
+
+      /* Telegram user verification (commented out)
+      const verifyUser = async (initData) => { // Функция для верификации пользователя через backend
+        try { // Начало блока обработки ошибок
+          const response = await fetch(`${API_URL}/verify-user`, { // Запрос к API для верификации
+            method: 'POST', // Метод POST
+            headers: { 'Content-Type': 'application/json' }, // Заголовок JSON
+            body: JSON.stringify({ initData }), // Тело запроса с данными Telegram
+          });
+          const data = await response.json(); // Парсинг ответа в JSON
+          if (!data.success) { // Проверка успешности верификации
+            setError('Failed to verify user'); // Установка ошибки
+          }
+        } catch (err) { // Обработка исключений
+          setError('Error verifying user'); // Установка ошибки
+        }
+      };
+      */
+
+      const fetchSubscriptions = async () => { // Функция для получения списка подписок
+        if (!user) return; // Выход, если пользователь не установлен
+        setLoading(true); // Включение индикатора загрузки
+        try { // Начало блока обработки ошибок
+          const response = await fetch(`${API_URL}/subscriptions?tg_id=${user.id}`); // Запрос к API для получения подписок
+          const data = await response.json(); // Парсинг ответа
+          setSubscriptions(data.subscriptions || []); // Установка подписок или пустого массива
+        } catch (err) { // Обработка ошибок
+          setError('Failed to fetch subscriptions'); // Установка ошибки
+        } finally { // Выполняется всегда
+          setLoading(false); // Выключение индикатора загрузки
+        }
+      };
+
+      const buySubscription = async (days) => { // Функция для покупки подписки
+        setLoading(true); // Включение индикатора загрузки
+        try { // Начало блока обработки ошибок
+          const response = await fetch(`${API_URL}/buy-subscription`, { // Запрос к API для покупки
+            method: 'POST', // Метод POST
+            headers: { 'Content-Type': 'application/json' }, // Заголовок JSON
+            body: JSON.stringify({ tg_id: user.id, days }), // Тело запроса с ID и длительностью
+          });
+          const data = await response.json(); // Парсинг ответа
+          if (data.payment_link) { // Проверка наличия ссылки на оплату
+            setPaymentData({ ...data, days }); // Сохранение данных платежа
+            setView('payment'); // Переключение на вид оплаты
+          } else { // Если ссылка отсутствует
+            setError(data.error || 'Failed to create payment'); // Установка ошибки
+          }
+        } catch (err) { // Обработка ошибок
+          setError('Error initiating payment'); // Установка ошибки
+        } finally { // Выполняется всегда
+          setLoading(false); // Выключение индикатора загрузки
+        }
+      };
+
+      const confirmPayment = async (label) => { // Функция для подтверждения оплаты
+        setLoading(true); // Включение индикатора загрузки
+        try { // Начало блока обработки ошибок
+          const response = await fetch(`${API_URL}/confirm-payment`, { // Запрос к API для подтверждения
+            method: 'POST', // Метод POST
+            headers: { 'Content-Type': 'application/json' }, // Заголовок JSON
+            body: JSON.stringify({ tg_id: user.id, label }), // Тело запроса с ID и меткой
+          });
+          const data = await response.json(); // Парсинг ответа
+          if (data.success) { // Проверка успешности
+            setView('main'); // Возврат в главное меню
+            fetchSubscriptions(); // Обновление подписок
+            alert('Subscription activated!'); // Уведомление об активации
+          } else { // Если не успешно
+            setError('Payment not confirmed'); // Установка ошибки
+          }
+        } catch (err) { // Обработка ошибок
+          setError('Error confirming payment'); // Установка ошибки
+        } finally { // Выполняется всегда
+          setLoading(false); // Выключение индикатора загрузки
+        }
+      };
+
+      const activateTrial = async () => { // Функция для активации пробной подписки
+        if (!window.confirm('Activate 3-day trial?')) return; // Подтверждение действия
+        setLoading(true); // Включение индикатора загрузки
+        try { // Начало блока обработки ошибок
+          const response = await fetch(`${API_URL}/activate-trial?tg_id=${user.id}`); // Запрос к API для активации
+          const data = await response.json(); // Парсинг ответа
+          if (data.success) { // Проверка успешности
+            fetchSubscriptions(); // Обновление подписок
+            alert('Trial activated!'); // Уведомление об активации
+          } else { // Если не успешно
+            setError(data.error || 'Trial not available'); // Установка ошибки
+          }
+        } catch (err) { // Обработка ошибок
+          setError('Error activating trial'); // Установка ошибки
+        } finally { // Выполняется всегда
+          setLoading(false); // Выключение индикатора загрузки
+        }
+      };
+
+      const getReferralLink = () => `t.me/WSocks_BOT?start=ref_${user.id}`; // Функция для генерации реферальной ссылки
+
+      const Header = ({ title, onBack }) => // Компонент для рендеринга заголовка
+        h('div', { className: 'header' }, [ // Создание div с классом header
+          onBack && h('button', { className: 'back-button', onClick: onBack }, '←'), // Кнопка "Назад", если передан onBack
+          h('div', { className: 'header-title' }, title), // Заголовок с переданным текстом
+          onBack && h('div', { style: { width: '40px' } }), // Пустой блок для симметрии
+        ]);
+
+      const renderMainMenu = () => // Функция для рендеринга главного меню
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'WSocks VPN' }), // Заголовок "WSocks VPN"
+          h('div', { className: 'content' }, [ // Контейнер для содержимого
+            h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')), // Логотип
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке, если есть
+            h('div', { className: 'tooltip' }, [ // Контейнер для кнопки с подсказкой
+              h('button', { className: 'button button-primary', onClick: () => setView('referrals') }, [ // Кнопка "Реферальная система"
+                h('span', { className: 'button-icon' }, '👥'), // Иконка эмодзи
+                'Referral System', // Текст кнопки
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Invite friends for rewards'), // Текст подсказки
+            ]),
+            h('div', { className: 'tooltip' }, [ // Контейнер для кнопки подписок
+              h('button', { className: 'button button-primary', onClick: () => { setView('subscriptions'); fetchSubscriptions(); } }, [ // Кнопка "Подписки"
+                h('span', { className: 'button-icon' }, '🛒'), // Иконка
+                'Subscriptions', // Текст
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Manage your subscriptions'), // Подсказка
+            ]),
+            h('div', { className: 'tooltip' }, [ // Контейнер для кнопки информации
+              h('button', { className: 'button button-primary', onClick: () => setView('info') }, [ // Кнопка "Информация"
+                h('span', { className: 'button-icon' }, '📌'), // Иконка
+                'Information', // Текст
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN'), // Подсказка
+            ]),
+            h('div', { className: 'tooltip' }, [ // Контейнер для кнопки поддержки
+              h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [ // Кнопка "Чат поддержки"
+                h('span', { className: 'button-icon' }, '❤️'), // Иконка
+                'Support Chat', // Текст
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Contact our support team'), // Подсказка
+            ]),
+          ]),
+        ]);
+
+      const renderReferrals = () => // Функция для рендеринга страницы рефералов
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Referral System', onBack: () => setView('main') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'), ' free:']), // Призыв к рефералам
+            h('p', { className: 'card' }, h('a', { href: getReferralLink(), className: 'link' }, getReferralLink())), // Реферальная ссылка
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderSubscriptions = () => // Функция для рендеринга страницы подписок
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Subscriptions', onBack: () => setView('main') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            loading && h('p', { className: 'loading' }, 'Loading...'), // Индикатор загрузки
+            !loading && subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'), // Сообщение, если подписок нет
+            subscriptions.map((sub, index) => // Перебор подписок
+              h('div', { key: index, className: 'card' }, [ // Карточка подписки
+                h('p', null, [h('b', null, 'User: '), sub.email]), // Поле пользователя
+                h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]), // Дата истечения
+                h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active']), // Статус подписки
+                h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [ // Контейнер для кнопок
+                  h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); } }, 'Extend'), // Кнопка продления
+                  h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); } }, 'Setup Guide'), // Кнопка руководства
+                ]),
+              ])
+            ),
+            h('button', { className: 'button button-primary', onClick: () => setView('buy') }, [ // Кнопка покупки подписки
+              h('span', { className: 'button-icon' }, '💳'), // Иконка
+              'Buy Subscription', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: activateTrial }, [ // Кнопка активации пробной версии
+              h('span', { className: 'button-icon' }, '🎁'), // Иконка
+              'Activate Trial', // Текст
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderBuy = () => // Функция для рендеринга страницы покупки подписки
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Buy Subscription', onBack: () => setView('subscriptions') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [ // Кнопка на 30 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '30 Days - 89 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [ // Кнопка на 90 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '90 Days - 249 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [ // Кнопка на 180 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '180 Days - 449 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [ // Кнопка на 360 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '360 Days - 849 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderExtend = () => // Функция для рендеринга страницы продления подписки
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Extend Subscription', onBack: () => setView('subscriptions') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, [h('b', null, 'User: '), selectedSub.email]), // Поле пользователя
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [ // Кнопка на 30 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '30 Days - 89 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [ // Кнопка на 90 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '90 Days - 249 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [ // Кнопка на 180 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '180 Days - 449 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [ // Кнопка на 360 дней
+              h('span', { className: 'button-icon' }, '📅'), // Иконка
+              '360 Days - 849 RUB', // Текст
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderPayment = () => // Функция для рендеринга страницы оплаты
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Payment', onBack: () => window.confirm('Cancel payment?') && setView('buy') }), // Заголовок с подтверждением отмены
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, `Cost for ${paymentData.days} days: ${paymentData.amount} RUB`), // Информация о платеже
+            h('a', { href: paymentData.payment_link, target: '_blank', className: 'button button-success' }, [ // Ссылка для оплаты
+              h('span', { className: 'button-icon' }, '💸'), // Иконка
+              'Pay', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => confirmPayment(paymentData.label) }, [ // Кнопка подтверждения
+              h('span', { className: 'button-icon' }, '✅'), // Иконка
+              'Confirm Payment', // Текст
+            ]),
+            h('button', { className: 'button button-danger', onClick: () => window.confirm('Cancel payment?') && setView('buy') }, [ // Кнопка отмены
+              h('span', { className: 'button-icon' }, '❌'), // Иконка
+              'Cancel', // Текст
+            ]),
+          ]),
+        ]);
+
+      const renderSetup = () => // Функция для рендеринга страницы руководства по настройке
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Setup Guide', onBack: () => setView('subscriptions') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, [h('b', null, 'User: '), selectedSub.email]), // Поле пользователя
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=fGzKBtY-KmfW') }, [ // Кнопка для ПК
+              h('span', { className: 'button-icon' }, '💻'), // Иконка
+              'PC Guide', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=P3biV6ti6j-7') }, [ // Кнопка для Android
+              h('span', { className: 'button-icon' }, '📱'), // Иконка
+              'Android Guide', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=FPuHNLWI2VrA') }, [ // Кнопка для iOS/MacOS
+              h('span', { className: 'button-icon' }, '🍏'), // Иконка
+              'iOS/MacOS Guide', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => alert('See bot for Android TV guide.') }, [ // Кнопка для Android TV
+              h('span', { className: 'button-icon' }, '📺'), // Иконка
+              'Android TV Guide', // Текст
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderInfo = () => // Функция для рендеринга страницы информации
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Information', onBack: () => setView('main') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('button', { className: 'button button-primary', onClick: () => setView('service') }, [ // Кнопка "О сервисе"
+              h('span', { className: 'button-icon' }, '🌐'), // Иконка
+              'About Service', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('subscription') }, [ // Кнопка "О подписке"
+              h('span', { className: 'button-icon' }, '📋'), // Иконка
+              'About Subscription', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('terms') }, [ // Кнопка "Пользовательское соглашение"
+              h('span', { className: 'button-icon' }, '📜'), // Иконка
+              'User Agreement', // Текст
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('privacy') }, [ // Кнопка "Политика конфиденциальности"
+              h('span', { className: 'button-icon' }, '🔒'), // Иконка
+              'Privacy Policy', // Текст
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderService = () => // Функция для рендеринга страницы "О сервисе"
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'About Service', onBack: () => setView('info') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, 'WSocks VPN provides secure internet browsing via servers in Germany. We ensure data privacy, stability, and speed. Our service uses modern TLS+Vless+TCP+Reality protocols and supports multiple apps.'), // Описание сервиса
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderSubscription = () => // Функция для рендеринга страницы "О подписке"
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'About Subscription', onBack: () => setView('info') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('div', { className: 'card' }, [ // Карточка с информацией
+              h('p', null, [h('b', null, 'Cost:'), ' 89 RUB/month']), // Стоимость
+              h('p', null, [h('b', null, 'Speed Limit:'), ' None']), // Ограничение скорости
+              h('p', null, [h('b', null, 'Traffic Limit:'), ' Unlimited']), // Ограничение трафика
+              h('p', null, [h('b', null, 'Protocols:'), ' TLS+Vless+TCP+Reality']), // Протоколы
+              h('p', null, [h('b', null, 'Apps:'), ' Amnezia, NekoBox, V2RayNG, etc.']), // Приложения
+              h('p', null, [h('b', null, 'Max Devices:'), ' 3 (Android, iOS, PC, etc.)']), // Максимум устройств
+              h('p', null, [h('b', null, 'Note:'), ' Add games or torrents to exclusions to avoid speed throttling.']), // Примечание
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderTerms = () => // Функция для рендеринга страницы пользовательского соглашения
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'User Agreement', onBack: () => setView('info') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, 'By using WSocks VPN, you agree to comply with Russian laws, avoid bypassing blocks, and not engage in illegal activities. We reserve the right to suspend access for violations.'), // Текст соглашения
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const renderPrivacy = () => // Функция для рендеринга страницы политики конфиденциальности
+        h('div', { className: 'container' }, [ // Главный контейнер
+          Header({ title: 'Privacy Policy', onBack: () => setView('info') }), // Заголовок с кнопкой "Назад"
+          h('div', { className: 'content' }, [ // Контейнер содержимого
+            error && h('p', { className: 'error' }, error), // Сообщение об ошибке
+            h('p', { className: 'card' }, 'WSocks VPN respects your privacy and uses Telegram-provided data. See details at:'), // Описание политики
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://telegra.ph/Politika-konfidencialnosti-08-04-7') }, [ // Кнопка для открытия политики
+              h('span', { className: 'button-icon' }, '🔗'), // Иконка
+              'Open Policy', // Текст
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'), // Кнопка "Назад"
+          ]),
+        ]);
+
+      const views = { // Объект с функциями рендеринга для каждого вида
+        main: renderMainMenu, // Главное меню
+        referrals: renderReferrals, // Реферальная система
+        subscriptions: renderSubscriptions, // Подписки
+        buy: renderBuy, // Покупка подписки
+        extend: renderExtend, // Продление подписки
+        payment: renderPayment, // Оплата
+        setup: renderSetup, // Руководство по настройке
+        info: renderInfo, // Информация
+        service: renderService, // О сервисе
+        subscription: renderSubscription, // О подписке
+        terms: renderTerms, // Пользовательское соглашение
+        privacy: renderPrivacy, // Политика конфиденциальности
+      };
+
+      return user // Проверка наличия пользователя
+        ? h('div', null, views[view]()) // Рендеринг текущего вида
+        : h('div', { className: 'container' }, [ // Рендеринг загрузки, если пользователь не установлен
+            Header({ title: 'WSocks VPN' }), // Заголовок
+            h('div', { className: 'content' }, h('p', { className: 'loading' }, 'Loading user data...')), // Текст загрузки
+          ]);
+    }
+
+    ReactDOM.render(h(App), document.getElementById('root')); // Рендеринг приложения в DOM
+  </script> <!-- Конец секции JavaScript -->
+</body> <!-- Конец тела документа -->
+</html> <!-- Конец HTML-документа -->
