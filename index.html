@@ -4,126 +4,318 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WSocks VPN Mini App</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    body {
-      font-family: Arial, sans-serif;
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 20px;
-      background-color: #f0f0f0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f4f8;
+      color: #1f2a44;
     }
     .container {
-      max-width: 400px;
+      max-width: 420px;
       margin: 0 auto;
+      min-height: 100vh;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow-x: hidden;
     }
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
+    .header {
+      position: sticky;
+      top: 0;
+      background-color: #3b82f6;
+      color: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      z-index: 10;
     }
-    p {
-      margin-bottom: 10px;
+    .header-title {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
     }
-    .error {
-      color: red;
-    }
-    button {
-      padding: 10px;
-      width: 100%;
+    .back-button {
+      background: none;
       border: none;
-      border-radius: 5px;
+      color: white;
+      font-size: 24px;
       cursor: pointer;
+      padding: 4px 8px;
+    }
+    .content {
+      padding: 16px;
+    }
+    .logo {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1f2a44;
+    }
+    .button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border: none;
+      border-radius: 8px;
       font-size: 16px;
-      background-color: #28a745;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .button:hover {
+      transform: translateY(-1px);
+    }
+    .button:active {
+      transform: translateY(0);
+    }
+    .button-primary {
+      background-color: #3b82f6;
       color: white;
     }
-    button:disabled {
-      background-color: #ccc;
+    .button-primary:hover {
+      background-color: #2563eb;
+    }
+    .button-secondary {
+      background-color: #6b7280;
+      color: white;
+    }
+    .button-secondary:hover {
+      background-color: #4b5563;
+    }
+    .button-success {
+      background-color: #10b981;
+      color: white;
+    }
+    .button-success:hover {
+      background-color: #059669;
+    }
+    .button-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+    .button-danger:hover {
+      background-color: #dc2626;
+    }
+    .button-icon {
+      margin-right: 8px;
+      font-size: 20px;
+    }
+    .card {
+      background-color: #f9fafb;
+      padding: 16px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .card p {
+      font-size: 14px;
+      margin: 4px 0;
+      color: #374151;
+    }
+    .card b {
+      color: #1f2a44;
+    }
+    .error {
+      color: #dc2626;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .loading {
+      text-align: center;
+      color: #6b7280;
+      font-size: 16px;
+      animation: pulse 1.5s infinite;
+    }
+    .link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      background-color: #1f2a44;
+      color: white;
+      text-align: center;
+      border-radius: 4px;
+      padding: 4px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
 </head>
 <body>
-  <div className="container" id="app">
-    <h1>WSocks VPN</h1>
-    <p id="user-id">Загрузка...</p>
-    <p id="error" class="error"></p>
-    <h2>Пробная подписка</h2>
-    <p id="status">Проверка статуса...</p>
-    <button id="activate-btn" disabled>Активировать пробный период</button>
-  </div>
-  <script>
-    console.log('App starting...');
-    console.log('Telegram SDK:', window.Telegram?.WebApp);
-    console.log('axios:', typeof axios);
+  <div id="root"></div>
+  <script type="text/javascript">
+    const { useState, useEffect, createElement: h } = React;
 
-    const app = document.getElementById('app');
-    const userId = document.getElementById('user-id');
-    const error = document.getElementById('error');
-    const status = document.getElementById('status');
-    const activateBtn = document.getElementById('activate-btn');
+    function App() {
+      const [user, setUser] = useState(null);
+      const [view, setView] = useState('main');
+      const [subscriptions, setSubscriptions] = useState([]);
+      const [loading, setLoading] = useState(false);
+      const [error, setError] = useState(null);
 
-    try {
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
-      const initData = Telegram.WebApp.initData;
-      console.log('InitData:', initData);
-      console.log('User:', Telegram.WebApp.initDataUnsafe.user);
+      const API_URL = 'https://wsocks-api.onrender.com'; // Замените на ваш URL бэкенда
 
-      if (!initData) {
-        error.textContent = 'Не удалось инициализировать Telegram Web App';
-        return;
-      }
+      useEffect(() => {
+        console.log('App starting...');
+        console.log('Telegram SDK:', window.Telegram?.WebApp);
 
-      // Аутентификация пользователя
-      axios.post('https://your-backend.onrender.com/api/auth', { initData })
-        .then(({ data }) => {
-          console.log('Auth response:', data);
-          userId.textContent = `ID: ${data.user.telegram_id}`;
+        try {
+          Telegram.WebApp.ready();
+          Telegram.WebApp.expand();
+          const initData = Telegram.WebApp.initData;
+          console.log('InitData:', initData);
+          console.log('User:', Telegram.WebApp.initDataUnsafe.user);
 
-          // Проверка статуса пробного периода
-          axios.get(`https://your-backend.onrender.com/api/trial/status?tg_id=${data.user.telegram_id}`)
+          if (!initData) {
+            setError('Не удалось инициализировать Telegram Web App');
+            return;
+          }
+
+          // Аутентификация пользователя
+          axios.post(`${API_URL}/api/auth`, { initData })
             .then(({ data }) => {
-              console.log('Trial status response:', data);
-              if (data.status === 1) {
-                status.textContent = `Пробный период активирован! Ключ: ${data.key}`;
-                activateBtn.style.display = 'none';
-              } else {
-                status.textContent = 'Пробный период доступен';
-                activateBtn.disabled = false;
-              }
+              console.log('Auth response:', data);
+              setUser(data.user);
+              // Получение подписок
+              fetchSubscriptions(data.user.telegram_id);
             })
             .catch(err => {
-              console.error('Trial status error:', err);
-              error.textContent = 'Ошибка при проверке пробного периода: ' + (err.response?.data?.detail || err.message);
+              console.error('Auth error:', err);
+              setError('Ошибка авторизации: ' + (err.response?.data?.detail || err.message));
             });
+        } catch (e) {
+          console.error('General error:', e);
+          setError('Ошибка инициализации: ' + e.message);
+        }
+      }, []);
 
-          // Обработчик активации
-          activateBtn.addEventListener('click', () => {
-            activateBtn.disabled = true;
-            activateBtn.textContent = 'Активация...';
-            axios.post('https://your-backend.onrender.com/api/trial/activate', { tg_id: data.user.telegram_id })
-              .then(({ data }) => {
-                console.log('Activate trial response:', data);
-                status.textContent = `Пробный период активирован! Ключ: ${data.key}`;
-                activateBtn.style.display = 'none';
-                Telegram.WebApp.showAlert('Пробный период активирован!');
-              })
-              .catch(err => {
-                console.error('Activate trial error:', err);
-                error.textContent = err.response?.data?.detail || 'Ошибка активации';
-                activateBtn.disabled = false;
-                activateBtn.textContent = 'Активировать пробный период';
-              });
-          });
-        })
-        .catch(err => {
-          console.error('Auth error:', err);
-          error.textContent = 'Ошибка авторизации: ' + (err.response?.data?.detail || err.message);
-        });
-    } catch (e) {
-      console.error('General error:', e);
-      error.textContent = 'Ошибка инициализации: ' + e.message;
+      const fetchSubscriptions = async (tg_id) => {
+        setLoading(true);
+        try {
+          const response = await axios.get(`${API_URL}/api/subscriptions?tg_id=${tg_id}`);
+          console.log('Subscriptions response:', response.data);
+          setSubscriptions(response.data.subscriptions || []);
+        } catch (err) {
+          console.error('Subscriptions error:', err);
+          setError('Ошибка получения подписок: ' + (err.response?.data?.detail || err.message));
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const Header = ({ title, onBack }) =>
+        h('div', { className: 'header' }, [
+          onBack && h('button', { className: 'back-button', onClick: onBack }, '←'),
+          h('div', { className: 'header-title' }, title),
+          onBack && h('div', { style: { width: '40px' } }), // Spacer
+        ]);
+
+      const renderMainMenu = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'WSocks VPN' }),
+          h('div', { className: 'content' }, [
+            h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
+            error && h('p', { className: 'error' }, error),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: () => setView('subscriptions') }, [
+                h('span', { className: 'button-icon' }, '🛒'),
+                'Subscriptions',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Manage your subscriptions'),
+            ]),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', disabled: true }, [
+                h('span', { className: 'button-icon' }, '👥'),
+                'Referral System',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Invite friends for rewards'),
+            ]),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', disabled: true }, [
+                h('span', { className: 'button-icon' }, '📌'),
+                'Information',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN'),
+            ]),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [
+                h('span', { className: 'button-icon' }, '❤️'),
+                'Support Chat',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Contact our support team'),
+            ]),
+          ]),
+        ]);
+
+      const renderSubscriptions = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Subscriptions', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            loading && h('p', { className: 'loading' }, 'Loading...'),
+            !loading && subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
+            subscriptions.map((sub, index) =>
+              h('div', { key: index, className: 'card' }, [
+                h('p', null, [h('b', null, 'Email: '), sub.email]),
+                h('p', null, [h('b', null, 'Panel: '), sub.panel]),
+                h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]),
+                h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active']),
+              ])
+            ),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
+          ]),
+        ]);
+
+      return user
+        ? h('div', null, view === 'main' ? renderMainMenu() : renderSubscriptions())
+        : h('div', { className: 'container' }, [
+            Header({ title: 'WSocks VPN' }),
+            h('div', { className: 'content' }, h('p', { className: 'loading' }, 'Loading user data...')),
+          ]);
     }
+
+    ReactDOM.render(h(App), document.getElementById('root'));
   </script>
 </body>
 </html>
