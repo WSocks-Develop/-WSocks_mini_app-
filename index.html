@@ -10,7 +10,6 @@
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Ваш CSS без изменений */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -27,94 +26,29 @@
       min-height: 100vh;
       background-color: white;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      overflow-x: hidden;
     }
     .header {
-      position: sticky;
-      top: 0;
       background-color: #3b82f6;
       color: white;
       padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      z-index: 10;
-    }
-    .header-title {
-      flex: 1;
+      text-align: center;
       font-size: 18px;
       font-weight: 600;
-      text-align: center;
-    }
-    .back-button {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px 8px;
     }
     .content {
       padding: 16px;
     }
-    .logo {
+    .error {
+      color: #dc2626;
+      font-size: 14px;
       text-align: center;
       margin-bottom: 16px;
     }
-    .logo-text {
-      font-size: 24px;
-      font-weight: 700;
-      color: #1f2a44;
-    }
-    .button {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      padding: 12px 16px;
-      margin-bottom: 8px;
-      border: none;
-      border-radius: 8px;
+    .loading {
+      text-align: center;
+      color: #6b7280;
       font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-    .button:hover {
-      transform: translateY(-1px);
-    }
-    .button:active {
-      transform: translateY(0);
-    }
-    .button-primary {
-      background-color: #3b82f6;
-      color: white;
-    }
-    .button-primary:hover {
-      background-color: #2563eb;
-    }
-    .button-secondary {
-      background-color: #6b7280;
-      color: white;
-    }
-    .button-secondary:hover {
-      background-color: #4b5563;
-    }
-    .button-success {
-      background-color: #10b981;
-      color: white;
-    }
-    .button-success:hover {
-      background-color: #059669;
-    }
-    .button-danger {
-      background-color: #ef4444;
-      color: white;
-    }
-    .button-danger:hover {
-      background-color: #dc2626;
-    }
-    .button-icon {
-      margin-right: 8px;
-      font-size: 20px;
+      animation: pulse 1.5s infinite;
     }
     .card {
       background-color: #f9fafb;
@@ -131,55 +65,9 @@
     .card b {
       color: #1f2a44;
     }
-    .error {
-      color: #dc2626;
-      font-size: 14px;
-      text-align: center;
-      margin-bottom: 16px;
-    }
-    .loading {
-      text-align: center;
-      color: #6b7280;
-      font-size: 16px;
-      animation: pulse 1.5s infinite;
-    }
-    .link {
-      color: #3b82f6;
-      text-decoration: none;
-      font-weight: 600;
-    }
-    .link:hover {
-      text-decoration: underline;
-    }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
-    }
-    .tooltip {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-    .tooltip .tooltip-text {
-      visibility: hidden;
-      background-color: #1f2a44;
-      color: white;
-      text-align: center;
-      border-radius: 4px;
-      padding: 4px 8px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 12px;
-      white-space: nowrap;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .tooltip:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
     }
   </style>
 </head>
@@ -190,70 +78,49 @@
 
     function App() {
       const [user, setUser] = useState(null);
-      const [view, setView] = useState('main');
       const [subscriptions, setSubscriptions] = useState([]);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
 
-      const API_URL = 'https://wsocks-api-bot.onrender.com'; // Замените на ваш URL бэкенда
+      const API_URL = 'https://wsocks-api-bot.onrender.com';
 
       useEffect(() => {
         console.log('App starting...');
-        console.log('Telegram SDK:', window.Telegram?.WebApp);
-
-        try {
-          if (!window.Telegram?.WebApp) {
-            setError('Telegram Web App SDK не загружен');
-            setLoading(false);
-            return;
-          }
-
-          Telegram.WebApp.ready();
-          Telegram.WebApp.expand();
-          const initData = Telegram.WebApp.initData;
-          console.log('InitData:', initData);
-          console.log('User:', Telegram.WebApp.initDataUnsafe.user);
-
-          if (!initData) {
-            setError('Не удалось получить initData');
-            setLoading(false);
-            return;
-          }
-
-          // Аутентификация пользователя
-          axios.post(`${API_URL}/api/auth`, { init_data: initData }, {
-            headers: { 'Cache-Control': 'no-cache' }
-          })
-            .then(({ data }) => {
-              console.log('Auth response:', data);
-              setUser(data.user);
-              fetchSubscriptions(data.user.telegram_id);
-            })
-            .catch(err => {
-              console.error('Auth error:', err);
-              console.error('Full error response:', JSON.stringify(err.response, null, 2));
-              let errorMessage = 'Ошибка авторизации';
-              if (err.response?.data?.detail) {
-                if (Array.isArray(err.response.data.detail)) {
-                  errorMessage += ': ' + err.response.data.detail.map(d => d.msg).join(', ');
-                } else {
-                  errorMessage += ': ' + err.response.data.detail;
-                }
-              } else {
-                errorMessage += ': ' + (err.message || 'Неизвестная ошибка');
-              }
-              setError(errorMessage);
-              setLoading(false);
-            });
-        } catch (e) {
-          console.error('General error:', e);
-          setError('Ошибка инициализации: ' + e.message);
+        if (!window.Telegram?.WebApp) {
+          setError('Telegram Web App SDK не загружен');
           setLoading(false);
+          return;
         }
-      }, []);
+
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+        const initData = Telegram.WebApp.initData;
+        console.log('InitData:', initData);
+
+        if (!initData) {
+          setError('Не удалось получить initData');
+          setLoading(false);
+          return;
+        }
+
+        // Аутентификация
+        axios.post(`${API_URL}/api/auth`, { init_data: initData }, {
+          headers: { 'Cache-Control': 'no-cache' }
+        })
+          .then(({ data }) => {
+            console.log('Auth response:', data);
+            setUser(data.user);
+            return fetchSubscriptions(data.user.telegram_id);
+          })
+          .catch(err => {
+            console.error('Auth error:', err);
+            console.error('Full error response:', JSON.stringify(err.response, null, 2));
+            setError(`Ошибка авторизации: ${err.response?.data?.detail || err.message}`);
+            setLoading(false);
+          });
+      }, []); // Пустой массив зависимостей предотвращает повторные вызовы
 
       const fetchSubscriptions = async (tg_id) => {
-        setLoading(true);
         try {
           const response = await axios.get(`${API_URL}/api/subscriptions?tg_id=${tg_id}`, {
             headers: { 'Cache-Control': 'no-cache' }
@@ -262,80 +129,41 @@
           setSubscriptions(response.data.subscriptions || []);
         } catch (err) {
           console.error('Subscriptions error:', err);
-          setError('Ошибка получения подписок: ' + (err.response?.data?.detail || err.message));
+          setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
         } finally {
-          setLoading(false);
+          setLoading(false); // Всегда завершаем загрузку
         }
       };
 
-      const Header = ({ title, onBack }) =>
-        h('div', { className: 'header' }, [
-          onBack && h('button', { className: 'back-button', onClick: onBack }, '←'),
-          h('div', { className: 'header-title' }, title),
-          onBack && h('div', { style: { width: '40px' } }), // Spacer
+      if (loading) {
+        return h('div', { className: 'container' }, [
+          h('div', { className: 'header' }, 'WSocks VPN'),
+          h('div', { className: 'content' }, h('p', { className: 'loading' }, 'Loading user data...'))
         ]);
+      }
 
-      const renderMainMenu = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'WSocks VPN' }),
-          h('div', { className: 'content' }, [
-            h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
-            error && h('p', { className: 'error' }, error),
-            h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => setView('subscriptions') }, [
-                h('span', { className: 'button-icon' }, '🛒'),
-                'Subscriptions',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Manage your subscriptions'),
-            ]),
-            h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', disabled: true }, [
-                h('span', { className: 'button-icon' }, '👥'),
-                'Referral System',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Invite friends for rewards'),
-            ]),
-            h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', disabled: true }, [
-                h('span', { className: 'button-icon' }, '📌'),
-                'Information',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN'),
-            ]),
-            h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [
-                h('span', { className: 'button-icon' }, '❤️'),
-                'Support Chat',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Contact our support team'),
-            ]),
-          ]),
+      if (error) {
+        return h('div', { className: 'container' }, [
+          h('div', { className: 'header' }, 'WSocks VPN'),
+          h('div', { className: 'content' }, h('p', { className: 'error' }, error))
         ]);
-
-      const renderSubscriptions = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Subscriptions', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            loading && h('p', { className: 'loading' }, 'Loading subscriptions...'),
-            !loading && subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
-            subscriptions.map((sub, index) =>
-              h('div', { key: index, className: 'card' }, [
-                h('p', null, [h('b', null, 'Email: '), sub.email]),
-                h('p', null, [h('b', null, 'Panel: '), sub.panel]),
-                h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]),
-                h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active']),
-              ])
-            ),
-            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
-          ]),
-        ]);
+      }
 
       return h('div', { className: 'container' }, [
-        Header({ title: 'WSocks VPN' }),
+        h('div', { className: 'header' }, 'WSocks VPN'),
         h('div', { className: 'content' }, [
-          error ? h('p', { className: 'error' }, error) : h('p', { className: 'loading' }, 'Loading user data...'),
-        ]),
+          h('p', null, `Welcome, ${user.first_name}!`),
+          h('h3', null, 'Subscriptions'),
+          subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
+          subscriptions.map((sub, index) =>
+            h('div', { key: index, className: 'card' }, [
+              h('p', null, [h('b', null, 'Email: '), sub.email]),
+              h('p', null, [h('b', null, 'Panel: '), sub.panel]),
+              h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]),
+              h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active'])
+            ])
+          )
+        ])
       ]);
     }
 
