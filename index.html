@@ -30,11 +30,11 @@
         const initData = Telegram.WebApp.initData;
 
         // Аутентификация пользователя
-        axios.post('https://your-backend.com/api/auth', { initData })
+        axios.post('https://wsocks-api-bot.onrender.com/api/auth', { initData })
           .then(({ data }) => {
             setUser(data.user);
             // Проверка статуса пробного периода
-            axios.get(`https://your-backend.com/api/trial/status?tg_id=${data.user.telegram_id}`)
+            axios.get(`https://wsocks-api-bot.onrender.com/api/trial/status?tg_id=${data.user.telegram_id}`)
               .then(({ data }) => {
                 setTrialStatus(data.status);
                 setTrialKey(data.key);
@@ -46,7 +46,7 @@
 
       const activateTrial = () => {
         setLoading(true);
-        axios.post('https://your-backend.com/api/trial/activate', { tg_id: user.telegram_id })
+        axios.post('https://wsocks-api-bot.onrender.com/api/trial/activate', { tg_id: user.telegram_id })
           .then(({ data }) => {
             setTrialStatus(1);
             setTrialKey(data.key);
