@@ -189,10 +189,12 @@
 
     function App() {
       const [user, setUser] = useState(null);
-      const [subscriptions, setSubscriptions] = useState(null);
-      const [loading, setLoading] = useState(true);
+      const [view, setView] = useState('main');
+      const [subscriptions, setSubscriptions] = useState([]);
+      const [loading, setLoading] = useState(false);
       const [error, setError] = useState(null);
-      const [showSubscriptions, setShowSubscriptions] = useState(false);
+      const [paymentData, setPaymentData] = useState(null);
+      const [selectedSub, setSelectedSub] = useState(null);
 
       const API_URL = 'https://wsocks-api-bot.onrender.com';
 
@@ -216,6 +218,7 @@
         }
 
         // Аутентификация
+        setLoading(true);
         axios.post(`${API_URL}/api/auth`, { init_data: initData }, {
           headers: { 'Cache-Control': 'no-cache' }
         })
@@ -230,7 +233,7 @@
             setError(`Ошибка авторизации: ${err.response?.data?.detail || err.message}`);
             setLoading(false);
           });
-      }, []); // Пустой массив зависимостей предотвращает повторные вызовы
+      }, []);
 
       const fetchSubscriptions = async () => {
         if (!user) {
@@ -244,14 +247,32 @@
           });
           console.log('Subscriptions response:', response.data);
           setSubscriptions(response.data.subscriptions || []);
-          setShowSubscriptions(true);
+          setView('subscriptions');
         } catch (err) {
           console.error('Subscriptions error:', err);
           setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
+          setLoading(false);
         } finally {
           setLoading(false);
         }
       };
+
+      // Заглушка для buySubscription (не поддерживается текущим API)
+      const buySubscription = async (days) => {
+        setError('Функция покупки подписки пока не реализована');
+      };
+
+      // Заглушка для confirmPayment (не поддерживается текущим API)
+      const confirmPayment = async (label) => {
+        setError('Функция подтверждения оплаты пока не реализована');
+      };
+
+      // Заглушка для activateTrial (не поддерживается текущим API)
+      const activateTrial = async () => {
+        setError('Функция активации пробного периода пока не реализована');
+      };
+
+      const getReferralLink = () => `t.me/WSocks_BOT?start=ref_${user.telegram_id}`;
 
       const Header = ({ title, onBack }) =>
         h('div', { className: 'header' }, [
@@ -260,75 +281,282 @@
           onBack && h('div', { style: { width: '40px' } }), // Spacer
         ]);
 
-      if (loading) {
-        return h('div', { className: 'container' }, [
-          Header({ title: 'WSocks VPN' }),
-          h('div', { className: 'content' }, h('p', { className: 'loading' }, 'Loading user data...'))
-        ]);
-      }
-
-      if (error) {
-        return h('div', { className: 'container' }, [
-          Header({ title: 'WSocks VPN' }),
-          h('div', { className: 'content' }, h('p', { className: 'error' }, error))
-        ]);
-      }
-
-      if (!showSubscriptions) {
-        return h('div', { className: 'container' }, [
+      const renderMainMenu = () =>
+        h('div', { className: 'container' }, [
           Header({ title: 'WSocks VPN' }),
           h('div', { className: 'content' }, [
             h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
             user && h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: '16px' } }, `Welcome, ${user.first_name}!`),
+            error && h('p', { className: 'error' }, error),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: () => setView('referrals') }, [
+                h('span', { className: 'button-icon' }, '👥'),
+                'Referral System',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Invite friends for rewards'),
+            ]),
             h('div', { className: 'tooltip' }, [
               h('button', { className: 'button button-primary', onClick: fetchSubscriptions }, [
                 h('span', { className: 'button-icon' }, '🛒'),
                 'Subscriptions',
               ]),
-              h('span', { className: 'tooltip-text' }, 'Check your active subscriptions'),
-            ])
-          ])
+              h('span', { className: 'tooltip-text' }, 'Manage your subscriptions'),
+            ]),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: () => setView('info') }, [
+                h('span', { className: 'button-icon' }, '📌'),
+                'Information',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN'),
+            ]),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [
+                h('span', { className: 'button-icon' }, '❤️'),
+                'Support Chat',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Contact our support team'),
+            ]),
+          ]),
         ]);
-      }
 
-      return h('div', { className: 'container' }, [
-        Header({ title: 'WSocks VPN' }),
-        h('div', { className: 'content' }, [
-          h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
-          h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: '16px' } }, `Welcome, ${user.first_name}!`),
-          h('h3', { style: { marginBottom: '8px', fontSize: '18px' } }, 'Subscriptions'),
-          subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
-          subscriptions.map((sub, index) =>
-            h('div', { key: index, className: 'card' }, [
-              h('p', null, [h('b', null, 'Email: '), sub.email]),
-              h('p', null, [h('b', null, 'Panel: '), sub.panel]),
-              h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]),
-              h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active'])
-            ])
-          ),
-          h('div', { className: 'tooltip' }, [
-            h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, [
-              h('span', { className: 'button-icon' }, '👥'),
-              'Referral System',
-            ]),
-            h('span', { className: 'tooltip-text' }, 'Invite friends for rewards')
+      const renderReferrals = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Referral System', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'), ' free:']),
+            h('p', { className: 'card' }, h('a', { href: getReferralLink(), className: 'link' }, getReferralLink())),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
           ]),
-          h('div', { className: 'tooltip' }, [
-            h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, [
-              h('span', { className: 'button-icon' }, '📌'),
-              'Information',
+        ]);
+
+      const renderSubscriptions = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Subscriptions', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            loading && h('p', { className: 'loading' }, 'Loading...'),
+            !loading && subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
+            subscriptions.map((sub, index) =>
+              h('div', { key: index, className: 'card' }, [
+                h('p', null, [h('b', null, 'Email: '), sub.email]),
+                h('p', null, [h('b', null, 'Panel: '), sub.panel]),
+                h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]),
+                h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active']),
+                h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
+                  h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); } }, 'Extend'),
+                  h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); } }, 'Setup Guide'),
+                ]),
+              ])
+            ),
+            h('button', { className: 'button button-primary', onClick: () => setView('buy') }, [
+              h('span', { className: 'button-icon' }, '💳'),
+              'Buy Subscription',
             ]),
-            h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN')
+            h('button', { className: 'button button-primary', onClick: activateTrial }, [
+              h('span', { className: 'button-icon' }, '🎁'),
+              'Activate Trial',
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
           ]),
-          h('div', { className: 'tooltip' }, [
-            h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [
-              h('span', { className: 'button-icon' }, '❤️'),
-              'Support Chat',
+        ]);
+
+      const renderBuy = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Buy Subscription', onBack: () => setView('subscriptions') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '30 Days - 89 RUB',
             ]),
-            h('span', { className: 'tooltip-text' }, 'Contact our support team')
-          ])
-        ])
-      ]);
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '90 Days - 249 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '180 Days - 449 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '360 Days - 849 RUB',
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
+          ]),
+        ]);
+
+      const renderExtend = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Extend Subscription', onBack: () => setView('subscriptions') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '30 Days - 89 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '90 Days - 249 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '180 Days - 449 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [
+              h('span', { className: 'button-icon' }, '📅'),
+              '360 Days - 849 RUB',
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
+          ]),
+        ]);
+
+      const renderPayment = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Payment', onBack: () => window.confirm('Cancel payment?') && setView('buy') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            paymentData && h('p', { className: 'card' }, `Cost for ${paymentData.days} days: ${paymentData.amount} RUB`),
+            paymentData && h('a', { href: paymentData.payment_link, target: '_blank', className: 'button button-success' }, [
+              h('span', { className: 'button-icon' }, '💸'),
+              'Pay',
+            ]),
+            paymentData && h('button', { className: 'button button-primary', onClick: () => confirmPayment(paymentData.label) }, [
+              h('span', { className: 'button-icon' }, '✅'),
+              'Confirm Payment',
+            ]),
+            h('button', { className: 'button button-danger', onClick: () => window.confirm('Cancel payment?') && setView('buy') }, [
+              h('span', { className: 'button-icon' }, '❌'),
+              'Cancel',
+            ]),
+          ]),
+        ]);
+
+      const renderSetup = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Setup Guide', onBack: () => setView('subscriptions') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=fGzKBtY-KmfW') }, [
+              h('span', { className: 'button-icon' }, '💻'),
+              'PC Guide',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=P3biV6ti6j-7') }, [
+              h('span', { className: 'button-icon' }, '📱'),
+              'Android Guide',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=FPuHNLWI2VrA') }, [
+              h('span', { className: 'button-icon' }, '🍏'),
+              'iOS/MacOS Guide',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => alert('See bot for Android TV guide.') }, [
+              h('span', { className: 'button-icon' }, '📺'),
+              'Android TV Guide',
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
+          ]),
+        ]);
+
+      const renderInfo = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Information', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => setView('service') }, [
+              h('span', { className: 'button-icon' }, '🌐'),
+              'About Service',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('subscription') }, [
+              h('span', { className: 'button-icon' }, '📋'),
+              'About Subscription',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('terms') }, [
+              h('span', { className: 'button-icon' }, '📜'),
+              'User Agreement',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('privacy') }, [
+              h('span', { className: 'button-icon' }, '🔒'),
+              'Privacy Policy',
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
+          ]),
+        ]);
+
+      const renderService = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'About Service', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('p', { className: 'card' }, 'WSocks VPN provides secure internet browsing via servers in Germany. We ensure data privacy, stability, and speed. Our service uses modern TLS+Vless+TCP+Reality protocols and supports multiple apps.'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'),
+          ]),
+        ]);
+
+      const renderSubscription = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'About Subscription', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('div', { className: 'card' }, [
+              h('p', null, [h('b', null, 'Cost:'), ' 89 RUB/month']),
+              h('p', null, [h('b', null, 'Speed Limit:'), ' None']),
+              h('p', null, [h('b', null, 'Traffic Limit:'), ' Unlimited']),
+              h('p', null, [h('b', null, 'Protocols:'), ' TLS+Vless+TCP+Reality']),
+              h('p', null, [h('b', null, 'Apps:'), ' Amnezia, NekoBox, V2RayNG, etc.']),
+              h('p', null, [h('b', null, 'Max Devices:'), ' 3 (Android, iOS, PC, etc.)']),
+              h('p', null, [h('b', null, 'Note:'), ' Add games or torrents to exclusions to avoid speed throttling.']),
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'),
+          ]),
+        ]);
+
+      const renderTerms = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'User Agreement', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('p', { className: 'card' }, 'By using WSocks VPN, you agree to comply with Russian laws, avoid bypassing blocks, and not engage in illegal activities. We reserve the right to suspend access for violations.'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'),
+          ]),
+        ]);
+
+      const renderPrivacy = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Privacy Policy', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            h('p', { className: 'card' }, 'WSocks VPN respects your privacy and uses Telegram-provided data. See details at:'),
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://telegra.ph/Politika-konfidencialnosti-08-04-7') }, [
+              h('span', { className: 'button-icon' }, '🔗'),
+              'Open Policy',
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'),
+          ]),
+        ]);
+
+      const views = {
+        main: renderMainMenu,
+        referrals: renderReferrals,
+        subscriptions: renderSubscriptions,
+        buy: renderBuy,
+        extend: renderExtend,
+        payment: renderPayment,
+        setup: renderSetup,
+        info: renderInfo,
+        service: renderService,
+        subscription: renderSubscription,
+        terms: renderTerms,
+        privacy: renderPrivacy,
+      };
+
+      return user
+        ? h('div', null, views[view]())
+        : h('div', { className: 'container' }, [
+            Header({ title: 'WSocks VPN' }),
+            h('div', { className: 'content' }, h('p', { className: 'loading' }, 'Loading user data...')),
+          ]);
     }
 
     ReactDOM.render(h(App), document.getElementById('root'));
