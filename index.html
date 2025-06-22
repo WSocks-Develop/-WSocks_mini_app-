@@ -221,7 +221,9 @@
           }
 
           // Аутентификация пользователя
-          axios.post(`${API_URL}/api/auth`, { init_data: initData })
+          axios.post(`${API_URL}/api/auth`, { init_data: initData }, {
+            headers: { 'Cache-Control': 'no-cache' }
+          })
             .then(({ data }) => {
               console.log('Auth response:', data);
               setUser(data.user);
@@ -229,6 +231,7 @@
             })
             .catch(err => {
               console.error('Auth error:', err);
+              console.error('Full error response:', JSON.stringify(err.response, null, 2));
               let errorMessage = 'Ошибка авторизации';
               if (err.response?.data?.detail) {
                 if (Array.isArray(err.response.data.detail)) {
@@ -237,7 +240,7 @@
                   errorMessage += ': ' + err.response.data.detail;
                 }
               } else {
-                errorMessage += ': ' + err.message;
+                errorMessage += ': ' + (err.message || 'Неизвестная ошибка');
               }
               setError(errorMessage);
               setLoading(false);
@@ -252,7 +255,9 @@
       const fetchSubscriptions = async (tg_id) => {
         setLoading(true);
         try {
-          const response = await axios.get(`${API_URL}/api/subscriptions?tg_id=${tg_id}`);
+          const response = await axios.get(`${API_URL}/api/subscriptions?tg_id=${tg_id}`, {
+            headers: { 'Cache-Control': 'no-cache' }
+          });
           console.log('Subscriptions response:', response.data);
           setSubscriptions(response.data.subscriptions || []);
         } catch (err) {
