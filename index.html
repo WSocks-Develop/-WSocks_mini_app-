@@ -4,110 +4,126 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WSocks VPN Mini App</title>
-  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode.react@3.1.0/lib/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@twa-dev/sdk@7.11.0/dist/telegram-web-apps.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    p {
+      margin-bottom: 10px;
+    }
+    .error {
+      color: red;
+    }
+    button {
+      padding: 10px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      background-color: #28a745;
+      color: white;
+    }
+    button:disabled {
+      background-color: #ccc;
+    }
+  </style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel" src="https://cdn.jsdelivr.net/npm/babel-standalone@6.26.0/babel.min.js"></script>
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+  <div className="container" id="app">
+    <h1>WSocks VPN</h1>
+    <p id="user-id">Загрузка...</p>
+    <p id="error" class="error"></p>
+    <h2>Пробная подписка</h2>
+    <p id="status">Проверка статуса...</p>
+    <button id="activate-btn" disabled>Активировать пробный период</button>
+  </div>
+  <script>
+    console.log('App starting...');
+    console.log('Telegram SDK:', window.Telegram?.WebApp);
+    console.log('axios:', typeof axios);
 
-    function App() {
-      const [user, setUser] = useState(null);
-      const [trialStatus, setTrialStatus] = useState(null);
-      const [trialKey, setTrialKey] = useState(null);
-      const [error, setError] = useState(null);
-      const [loading, setLoading] = useState(false);
+    const app = document.getElementById('app');
+    const userId = document.getElementById('user-id');
+    const error = document.getElementById('error');
+    const status = document.getElementById('status');
+    const activateBtn = document.getElementById('activate-btn');
 
-      useEffect(() => {
-        Telegram.WebApp.ready();
-        Telegram.WebApp.expand();
-        const initData = Telegram.WebApp.initData;
+    try {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+      const initData = Telegram.WebApp.initData;
+      console.log('InitData:', initData);
+      console.log('User:', Telegram.WebApp.initDataUnsafe.user);
 
-        // Аутентификация пользователя
-        axios.post('https://wsocks-api-bot.onrender.com/api/auth', { initData })
-          .then(({ data }) => {
-            setUser(data.user);
-            // Проверка статуса пробного периода
-            axios.get(`https://wsocks-api-bot.onrender.com/api/trial/status?tg_id=${data.user.telegram_id}`)
-              .then(({ data }) => {
-                setTrialStatus(data.status);
-                setTrialKey(data.key);
-              })
-              .catch(err => setError('Ошибка при проверке пробного периода'));
-          })
-          .catch(err => setError('Ошибка авторизации'));
-      }, []);
-
-      const activateTrial = () => {
-        setLoading(true);
-        axios.post('https://wsocks-api-bot.onrender.com/api/trial/activate', { tg_id: user.telegram_id })
-          .then(({ data }) => {
-            setTrialStatus(1);
-            setTrialKey(data.key);
-            setLoading(false);
-            Telegram.WebApp.showAlert('Пробный период активирован!');
-          })
-          .catch(err => {
-            setError(err.response?.data?.detail || 'Ошибка активации');
-            setLoading(false);
-          });
-      };
-
-      const copyKey = () => {
-        navigator.clipboard.writeText(trialKey);
-        Telegram.WebApp.showAlert('Ключ скопирован!');
-      };
-
-      if (!user) {
-        return <div className="p-4 text-center">Загрузка...</div>;
+      if (!initData) {
+        error.textContent = 'Не удалось инициализировать Telegram Web App';
+        return;
       }
 
-      return (
-        <div className="p-4 max-w-md mx-auto bg-gray-100 min-h-screen">
-          <h1 className="text-2xl font-bold mb-4">WSocks VPN</h1>
-          <p className="mb-4">ID: {user.telegram_id}</p>
+      // Аутентификация пользователя
+      axios.post('https://your-backend.onrender.com/api/auth', { initData })
+        .then(({ data }) => {
+          console.log('Auth response:', data);
+          userId.textContent = `ID: ${data.user.telegram_id}`;
 
-          {error && <p className="text-red-500 mb-4">{error}</p>}
+          // Проверка статуса пробного периода
+          axios.get(`https://your-backend.onrender.com/api/trial/status?tg_id=${data.user.telegram_id}`)
+            .then(({ data }) => {
+              console.log('Trial status response:', data);
+              if (data.status === 1) {
+                status.textContent = `Пробный период активирован! Ключ: ${data.key}`;
+                activateBtn.style.display = 'none';
+              } else {
+                status.textContent = 'Пробный период доступен';
+                activateBtn.disabled = false;
+              }
+            })
+            .catch(err => {
+              console.error('Trial status error:', err);
+              error.textContent = 'Ошибка при проверке пробного периода: ' + (err.response?.data?.detail || err.message);
+            });
 
-          <h2 className="text-xl font-semibold mb-2">Пробная подписка</h2>
-          {trialStatus === null ? (
-            <p>Проверка статуса...</p>
-          ) : trialStatus === 1 ? (
-            <div>
-              <p className="mb-2">Пробный период активирован!</p>
-              <div className="bg-white p-2 rounded mb-2 overflow-x-auto">
-                <pre className="text-sm">{trialKey}</pre>
-              </div>
-              <div className="flex justify-center mb-2">
-                <QRCode value={trialKey} size={128} />
-              </div>
-              <button
-                onClick={copyKey}
-                className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-              >
-                Скопировать ключ
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={activateTrial}
-              disabled={loading}
-              className={`w-full py-2 rounded text-white ${loading ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'}`}
-            >
-              {loading ? 'Активация...' : 'Активировать пробный период'}
-            </button>
-          )}
-        </div>
-      );
+          // Обработчик активации
+          activateBtn.addEventListener('click', () => {
+            activateBtn.disabled = true;
+            activateBtn.textContent = 'Активация...';
+            axios.post('https://your-backend.onrender.com/api/trial/activate', { tg_id: data.user.telegram_id })
+              .then(({ data }) => {
+                console.log('Activate trial response:', data);
+                status.textContent = `Пробный период активирован! Ключ: ${data.key}`;
+                activateBtn.style.display = 'none';
+                Telegram.WebApp.showAlert('Пробный период активирован!');
+              })
+              .catch(err => {
+                console.error('Activate trial error:', err);
+                error.textContent = err.response?.data?.detail || 'Ошибка активации';
+                activateBtn.disabled = false;
+                activateBtn.textContent = 'Активировать пробный период';
+              });
+          });
+        })
+        .catch(err => {
+          console.error('Auth error:', err);
+          error.textContent = 'Ошибка авторизации: ' + (err.response?.data?.detail || err.message);
+        });
+    } catch (e) {
+      console.error('General error:', e);
+      error.textContent = 'Ошибка инициализации: ' + e.message;
     }
-
-    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
 </html>
