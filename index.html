@@ -26,29 +26,94 @@
       min-height: 100vh;
       background-color: white;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow-x: hidden;
     }
     .header {
+      position: sticky;
+      top: 0;
       background-color: #3b82f6;
       color: white;
       padding: 12px 16px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      z-index: 10;
+    }
+    .header-title {
+      flex: 1;
       font-size: 18px;
       font-weight: 600;
+      text-align: center;
+    }
+    .back-button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px 8px;
     }
     .content {
       padding: 16px;
     }
-    .error {
-      color: #dc2626;
-      font-size: 14px;
+    .logo {
       text-align: center;
       margin-bottom: 16px;
     }
-    .loading {
-      text-align: center;
-      color: #6b7280;
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1f2a44;
+    }
+    .button {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      border: none;
+      border-radius: 8px;
       font-size: 16px;
-      animation: pulse 1.5s infinite;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    .button:hover {
+      transform: translateY(-1px);
+    }
+    .button:active {
+      transform: translateY(0);
+    }
+    .button-primary {
+      background-color: #3b82f6;
+      color: white;
+    }
+    .button-primary:hover {
+      background-color: #2563eb;
+    }
+    .button-secondary {
+      background-color: #6b7280;
+      color: white;
+    }
+    .button-secondary:hover {
+      background-color: #4b5563;
+    }
+    .button-success {
+      background-color: #10b981;
+      color: white;
+    }
+    .button-success:hover {
+      background-color: #059669;
+    }
+    .button-danger {
+      background-color: #ef4444;
+      color: white;
+    }
+    .button-danger:hover {
+      background-color: #dc2626;
+    }
+    .button-icon {
+      margin-right: 8px;
+      font-size: 20px;
     }
     .card {
       background-color: #f9fafb;
@@ -65,9 +130,55 @@
     .card b {
       color: #1f2a44;
     }
+    .error {
+      color: #dc2626;
+      font-size: 14px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .loading {
+      text-align: center;
+      color: #6b7280;
+      font-size: 16px;
+      animation: pulse 1.5s infinite;
+    }
+    .link {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link:hover {
+      text-decoration: underline;
+    }
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      background-color: #1f2a44;
+      color: white;
+      text-align: center;
+      border-radius: 4px;
+      padding: 4px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
     }
   </style>
 </head>
@@ -78,9 +189,10 @@
 
     function App() {
       const [user, setUser] = useState(null);
-      const [subscriptions, setSubscriptions] = useState([]);
+      const [subscriptions, setSubscriptions] = useState(null);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
+      const [showSubscriptions, setShowSubscriptions] = useState(false);
 
       const API_URL = 'https://wsocks-api-bot.onrender.com';
 
@@ -110,7 +222,7 @@
           .then(({ data }) => {
             console.log('Auth response:', data);
             setUser(data.user);
-            return fetchSubscriptions(data.user.telegram_id);
+            setLoading(false);
           })
           .catch(err => {
             console.error('Auth error:', err);
@@ -120,40 +232,71 @@
           });
       }, []); // Пустой массив зависимостей предотвращает повторные вызовы
 
-      const fetchSubscriptions = async (tg_id) => {
+      const fetchSubscriptions = async () => {
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
+        }
+        setLoading(true);
         try {
-          const response = await axios.get(`${API_URL}/api/subscriptions?tg_id=${tg_id}`, {
+          const response = await axios.get(`${API_URL}/api/subscriptions?tg_id=${user.telegram_id}`, {
             headers: { 'Cache-Control': 'no-cache' }
           });
           console.log('Subscriptions response:', response.data);
           setSubscriptions(response.data.subscriptions || []);
+          setShowSubscriptions(true);
         } catch (err) {
           console.error('Subscriptions error:', err);
           setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
         } finally {
-          setLoading(false); // Всегда завершаем загрузку
+          setLoading(false);
         }
       };
 
+      const Header = ({ title, onBack }) =>
+        h('div', { className: 'header' }, [
+          onBack && h('button', { className: 'back-button', onClick: onBack }, '←'),
+          h('div', { className: 'header-title' }, title),
+          onBack && h('div', { style: { width: '40px' } }), // Spacer
+        ]);
+
       if (loading) {
         return h('div', { className: 'container' }, [
-          h('div', { className: 'header' }, 'WSocks VPN'),
+          Header({ title: 'WSocks VPN' }),
           h('div', { className: 'content' }, h('p', { className: 'loading' }, 'Loading user data...'))
         ]);
       }
 
       if (error) {
         return h('div', { className: 'container' }, [
-          h('div', { className: 'header' }, 'WSocks VPN'),
+          Header({ title: 'WSocks VPN' }),
           h('div', { className: 'content' }, h('p', { className: 'error' }, error))
         ]);
       }
 
+      if (!showSubscriptions) {
+        return h('div', { className: 'container' }, [
+          Header({ title: 'WSocks VPN' }),
+          h('div', { className: 'content' }, [
+            h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
+            user && h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: '16px' } }, `Welcome, ${user.first_name}!`),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: fetchSubscriptions }, [
+                h('span', { className: 'button-icon' }, '🛒'),
+                'Subscriptions',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Check your active subscriptions'),
+            ])
+          ])
+        ]);
+      }
+
       return h('div', { className: 'container' }, [
-        h('div', { className: 'header' }, 'WSocks VPN'),
+        Header({ title: 'WSocks VPN' }),
         h('div', { className: 'content' }, [
-          h('p', null, `Welcome, ${user.first_name}!`),
-          h('h3', null, 'Subscriptions'),
+          h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
+          h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: '16px' } }, `Welcome, ${user.first_name}!`),
+          h('h3', { style: { marginBottom: '8px', fontSize: '18px' } }, 'Subscriptions'),
           subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
           subscriptions.map((sub, index) =>
             h('div', { key: index, className: 'card' }, [
@@ -162,7 +305,28 @@
               h('p', null, [h('b', null, 'Expiry: '), new Date(sub.expiry_date).toLocaleString()]),
               h('p', null, [h('b', null, 'Status: '), sub.is_expired ? 'Expired' : 'Active'])
             ])
-          )
+          ),
+          h('div', { className: 'tooltip' }, [
+            h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, [
+              h('span', { className: 'button-icon' }, '👥'),
+              'Referral System',
+            ]),
+            h('span', { className: 'tooltip-text' }, 'Invite friends for rewards')
+          ]),
+          h('div', { className: 'tooltip' }, [
+            h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, [
+              h('span', { className: 'button-icon' }, '📌'),
+              'Information',
+            ]),
+            h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN')
+          ]),
+          h('div', { className: 'tooltip' }, [
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [
+              h('span', { className: 'button-icon' }, '❤️'),
+              'Support Chat',
+            ]),
+            h('span', { className: 'tooltip-text' }, 'Contact our support team')
+          ])
         ])
       ]);
     }
