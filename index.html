@@ -313,12 +313,12 @@
         setLoading(true);
         setError(null);
         try {
-          // Удаляем запись из pending_payments
+          console.log('Cancel payment request:', { tg_id: user.telegram_id, label: paymentData.label });
           await axios.delete(`${API_URL}/api/cancel-payment`, {
             data: { tg_id: user.telegram_id, label: paymentData.label }
           });
           setPaymentData(null);
-          setView('buy');
+          setView('subscriptions');
           Telegram.WebApp.showAlert('Оплата отменена');
         } catch (err) {
           console.error('Cancel payment error:', err);
