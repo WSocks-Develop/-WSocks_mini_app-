@@ -191,6 +191,7 @@
       const [user, setUser] = useState(null);
       const [view, setView] = useState('main');
       const [subscriptions, setSubscriptions] = useState([]);
+      const [referrals, setReferrals] = useState([]);
       const [loading, setLoading] = useState(false);
       const [error, setError] = useState(null);
       const [paymentData, setPaymentData] = useState(null);
@@ -217,7 +218,6 @@
           return;
         }
 
-        // Аутентификация
         setLoading(true);
         axios.post(`${API_URL}/api/auth`, { init_data: initData }, {
           headers: { 'Cache-Control': 'no-cache' }
@@ -229,7 +229,6 @@
           })
           .catch(err => {
             console.error('Auth error:', err);
-            console.error('Full error response:', JSON.stringify(err.response, null, 2));
             setError(`Ошибка авторизации: ${err.response?.data?.detail || err.message}`);
             setLoading(false);
           });
@@ -251,34 +250,65 @@
         } catch (err) {
           console.error('Subscriptions error:', err);
           setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
-          setLoading(false);
         } finally {
           setLoading(false);
         }
       };
 
-      // Заглушка для buySubscription (не поддерживается текущим API)
       const buySubscription = async (days) => {
-        setError('Функция покупки подписки пока не реализована');
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
+        }
+        setLoading(true);
+        try {
+          const response = await axios.post(`${API_URL}/api/buy-subscription`, {
+            tg_id: user.telegram_id,
+            days
+          });
+          console.log('Buy subscription response:', response.data);
+          setPaymentData(response.data);
+          setView('payment');
+        } catch (err) {
+          console.error('Buy subscription error:', err);
+          setError(`Ошибка покупки подписки: ${err.response?.data?.detail || err.message}`);
+        } finally {
+          setLoading(false);
+        }
       };
 
-      // Заглушка для confirmPayment (не поддерживается текущим API)
       const confirmPayment = async (label) => {
-        setError('Функция подтверждения оплаты пока не реализована');
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
+        }
+        setLoading(true);
+        try {
+          const response = await axios.post(`${API_URL}/api/confirm-payment`, {
+            tg_id: user.telegram_id,
+            label
+          });
+          console.log('Confirm payment response:', response.data);
+          if (response.data.success) {
+            setView('main');
+            fetchSubscriptions();
+            alert('Subscription activated!');
+          } else {
+            setError('Payment not confirmed');
+          }
+        } catch (err) {
+          console.error('Confirm payment error:', err);
+          setError(`Ошибка подтверждения оплаты: ${err.response?.data?.detail || err.message}`);
+        } finally {
+          setLoading(false);
+        }
       };
-
-      // Заглушка для activateTrial (не поддерживается текущим API)
-      const activateTrial = async () => {
-        setError('Функция активации пробного периода пока не реализована');
-      };
-
-      const getReferralLink = () => `t.me/WSocks_BOT?start=ref_${user.telegram_id}`;
 
       const Header = ({ title, onBack }) =>
         h('div', { className: 'header' }, [
           onBack && h('button', { className: 'back-button', onClick: onBack }, '←'),
           h('div', { className: 'header-title' }, title),
-          onBack && h('div', { style: { width: '40px' } }), // Spacer
+          onBack && h('div', { style: { width: '40px' } }),
         ]);
 
       const renderMainMenu = () =>
@@ -325,7 +355,7 @@
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'), ' free:']),
-            h('p', { className: 'card' }, h('a', { href: getReferralLink(), className: 'link' }, getReferralLink())),
+            h('p', { className: 'card' }, 'Referral system not implemented yet.'),
             h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
           ]),
         ]);
@@ -352,10 +382,6 @@
             h('button', { className: 'button button-primary', onClick: () => setView('buy') }, [
               h('span', { className: 'button-icon' }, '💳'),
               'Buy Subscription',
-            ]),
-            h('button', { className: 'button button-primary', onClick: activateTrial }, [
-              h('span', { className: 'button-icon' }, '🎁'),
-              'Activate Trial',
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
           ]),
@@ -392,22 +418,7 @@
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [
-              h('span', { className: 'button-icon' }, '📅'),
-              '30 Days - 89 RUB',
-            ]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [
-              h('span', { className: 'button-icon' }, '📅'),
-              '90 Days - 249 RUB',
-            ]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [
-              h('span', { className: 'button-icon' }, '📅'),
-              '180 Days - 449 RUB',
-            ]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [
-              h('span', { className: 'button-icon' }, '📅'),
-              '360 Days - 849 RUB',
-            ]),
+            h('p', { className: 'card' }, 'Extend subscription not implemented yet.'),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
           ]),
         ]);
@@ -418,6 +429,8 @@
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             paymentData && h('p', { className: 'card' }, `Cost for ${paymentData.days} days: ${paymentData.amount} RUB`),
+            paymentData && h('p', { className: 'card' }, [h('b', null, 'Email: '), paymentData.email]),
+            paymentData && h('p', { className: 'card' }, [h('b', null, 'Key: '), h('code', null, paymentData.subscription_key)]),
             paymentData && h('a', { href: paymentData.payment_link, target: '_blank', className: 'button button-success' }, [
               h('span', { className: 'button-icon' }, '💸'),
               'Pay',
