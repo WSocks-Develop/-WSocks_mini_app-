@@ -261,6 +261,7 @@
           return;
         }
         setLoading(true);
+        setError(null);
         try {
           const response = await axios.post(`${API_URL}/api/buy-subscription`, {
             tg_id: user.telegram_id,
@@ -277,28 +278,51 @@
         }
       };
 
-      const confirmPayment = async (label) => {
-        if (!user) {
-          setError('Пользователь не авторизован');
+      const confirmPayment = async () => {
+        if (!user || !paymentData) {
+          setError('Данные для подтверждения оплаты отсутствуют');
           return;
         }
         setLoading(true);
+        setError(null);
         try {
           const response = await axios.post(`${API_URL}/api/confirm-payment`, {
             tg_id: user.telegram_id,
-            label
+            label: paymentData.label
           });
           console.log('Confirm payment response:', response.data);
           if (response.data.success) {
             setView('main');
             fetchSubscriptions();
-            alert('Subscription activated!');
-          } else {
-            setError('Payment not confirmed');
+            Telegram.WebApp.showAlert('Подписка успешно активирована!');
+            setPaymentData(null);
           }
         } catch (err) {
           console.error('Confirm payment error:', err);
           setError(`Ошибка подтверждения оплаты: ${err.response?.data?.detail || err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      const cancelPayment = async () => {
+        if (!user || !paymentData) {
+          setError('Данные для отмены оплаты отсутствуют');
+          return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+          // Удаляем запись из pending_payments
+          await axios.delete(`${API_URL}/api/cancel-payment`, {
+            data: { tg_id: user.telegram_id, label: paymentData.label }
+          });
+          setPaymentData(null);
+          setView('buy');
+          Telegram.WebApp.showAlert('Оплата отменена');
+        } catch (err) {
+          console.error('Cancel payment error:', err);
+          setError(`Ошибка отмены оплаты: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
         }
@@ -340,9 +364,9 @@
               h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN'),
             ]),
             h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/WSocks_Support') }, [
+              h('button', { className: 'button button-primary', onClick: () => window.open('https://t.me/JSocks_Support') }, [
                 h('span', { className: 'button-icon' }, '❤️'),
-                'Support Chat',
+                'Support Telegram',
               ]),
               h('span', { className: 'tooltip-text' }, 'Contact our support team'),
             ]),
@@ -393,19 +417,15 @@
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [
-              h('span', { className: 'button-icon' }, '📅'),
               '30 Days - 89 RUB',
             ]),
             h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [
-              h('span', { className: 'button-icon' }, '📅'),
               '90 Days - 249 RUB',
             ]),
             h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [
-              h('span', { className: 'button-icon' }, '📅'),
               '180 Days - 449 RUB',
             ]),
             h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [
-              h('span', { className: 'button-icon' }, '📅'),
               '360 Days - 849 RUB',
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
@@ -425,21 +445,20 @@
 
       const renderPayment = () =>
         h('div', { className: 'container' }, [
-          Header({ title: 'Payment', onBack: () => window.confirm('Cancel payment?') && setView('buy') }),
+          Header({ title: 'Payment', onBack: cancelPayment }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             paymentData && h('p', { className: 'card' }, `Cost for ${paymentData.days} days: ${paymentData.amount} RUB`),
-            paymentData && h('p', { className: 'card' }, [h('b', null, 'Email: '), paymentData.email]),
-            paymentData && h('p', { className: 'card' }, [h('b', null, 'Key: '), h('code', null, paymentData.subscription_key)]),
+            paymentData && h('p', { className: 'card' }, [h('b', null, 'User: '), paymentData.email]),
             paymentData && h('a', { href: paymentData.payment_link, target: '_blank', className: 'button button-success' }, [
               h('span', { className: 'button-icon' }, '💸'),
               'Pay',
             ]),
-            paymentData && h('button', { className: 'button button-primary', onClick: () => confirmPayment(paymentData.label) }, [
+            paymentData && h('button', { className: 'button button-primary', onClick: confirmPayment }, [
               h('span', { className: 'button-icon' }, '✅'),
               'Confirm Payment',
             ]),
-            h('button', { className: 'button button-danger', onClick: () => window.confirm('Cancel payment?') && setView('buy') }, [
+            paymentData && h('button', { className: 'button button-danger', onClick: cancelPayment }, [
               h('span', { className: 'button-icon' }, '❌'),
               'Cancel',
             ]),
@@ -452,19 +471,19 @@
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
-            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=fGzKBtY-KmfW') }, [
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=1') }, [
               h('span', { className: 'button-icon' }, '💻'),
               'PC Guide',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=P3biV6ti6j-7') }, [
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=2') }, [
               h('span', { className: 'button-icon' }, '📱'),
               'Android Guide',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=FPuHNLWI2VrA') }, [
+            h('button', { className: 'button button-primary', onClick: () => window.open('https://plvideo.ru/watch?v=3') }, [
               h('span', { className: 'button-icon' }, '🍏'),
               'iOS/MacOS Guide',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => alert('See bot for Android TV guide.') }, [
+            h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.showAlert('See bot for Android TV guide.') }, [
               h('span', { className: 'button-icon' }, '📺'),
               'Android TV Guide',
             ]),
@@ -516,9 +535,9 @@
               h('p', null, [h('b', null, 'Cost:'), ' 89 RUB/month']),
               h('p', null, [h('b', null, 'Speed Limit:'), ' None']),
               h('p', null, [h('b', null, 'Traffic Limit:'), ' Unlimited']),
-              h('p', null, [h('b', null, 'Protocols:'), ' TLS+Vless+TCP+Reality']),
-              h('p', null, [h('b', null, 'Apps:'), ' Amnezia, NekoBox, V2RayNG, etc.']),
-              h('p', null, [h('b', null, 'Max Devices:'), ' 3 (Android, iOS, PC, etc.)']),
+              h('p', null, [h('b', null, 'Protocols:'), ' TLS+Vless']),
+              h('p', null, [h('b', null, 'Apps:'), ' Amnesia, NekoBox']),
+              h('p', null, [h('b', null, 'Max Devices:'), ' 3']),
               h('p', null, [h('b', null, 'Note:'), ' Add games or torrents to exclusions to avoid speed throttling.']),
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Back'),
