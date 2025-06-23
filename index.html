@@ -255,7 +255,7 @@
         }
       };
 
-      const buySubscription = async (days) => {
+      const initiatePayment = async (days, isExtension = false, email = null) => {
         if (!user) {
           setError('Пользователь не авторизован');
           return;
@@ -263,16 +263,17 @@
         setLoading(true);
         setError(null);
         try {
-          const response = await axios.post(`${API_URL}/api/buy-subscription`, {
-            tg_id: user.telegram_id,
-            days
-          });
-          console.log('Buy subscription response:', response.data);
-          setPaymentData(response.data);
+          const endpoint = isExtension ? '/api/extend-subscription' : '/api/buy-subscription';
+          const payload = isExtension 
+            ? { tg_id: user.telegram_id, email, days }
+            : { tg_id: user.telegram_id, days };
+          const response = await axios.post(`${API_URL}${endpoint}`, payload);
+          console.log('Payment response:', response.data);
+          setPaymentData({ ...response.data, isExtension });
           setView('payment');
         } catch (err) {
-          console.error('Buy subscription error:', err);
-          setError(`Ошибка покупки подписки: ${err.response?.data?.detail || err.message}`);
+          console.error('Payment error:', err);
+          setError(`Ошибка инициации оплаты: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
         }
@@ -292,9 +293,13 @@
           });
           console.log('Confirm payment response:', response.data);
           if (response.data.success) {
-            setView('main');
+            setView('subscriptions');
             fetchSubscriptions();
-            Telegram.WebApp.showAlert('Подписка успешно активирована!');
+            Telegram.WebApp.showAlert(
+              paymentData.isExtension 
+                ? 'Подписка успешно продлена!' 
+                : 'Подписка успешно активирована!'
+            );
             setPaymentData(null);
           }
         } catch (err) {
@@ -416,16 +421,16 @@
           Header({ title: 'Buy Subscription', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(30) }, [
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(30) }, [
               '30 Days - 89 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(90) }, [
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(90) }, [
               '90 Days - 249 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(180) }, [
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(180) }, [
               '180 Days - 449 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => buySubscription(360) }, [
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(360) }, [
               '360 Days - 849 RUB',
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
@@ -438,7 +443,18 @@
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
-            h('p', { className: 'card' }, 'Extend subscription not implemented yet.'),
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(30, true, selectedSub.email) }, [
+              'Extend 30 Days - 89 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(90, true, selectedSub.email) }, [
+              'Extend 90 Days - 249 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(180, true, selectedSub.email) }, [
+              'Extend 180 Days - 449 RUB',
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => initiatePayment(360, true, selectedSub.email) }, [
+              'Extend 360 Days - 849 RUB',
+            ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
           ]),
         ]);
