@@ -245,7 +245,8 @@
             headers: { 'Cache-Control': 'no-cache' }
           });
           console.log('Subscriptions response:', response.data);
-          setSubscriptions(response.data.subscriptions || []);
+          const nonTrialSubs = response.data.subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
+          setSubscriptions(nonTrialSubs || []);
           setView('subscriptions');
         } catch (err) {
           console.error('Subscriptions error:', err);
@@ -265,7 +266,7 @@
         try {
           const endpoint = isExtension ? '/api/extend-subscription' : '/api/buy-subscription';
           const payload = isExtension 
-            ? { tg_id: user.telegram_id, email, days }
+            ? { tg_id: user.telegram_id, days, email }
             : { tg_id: user.telegram_id, days };
           const response = await axios.post(`${API_URL}${endpoint}`, payload);
           console.log('Payment response:', response.data);
@@ -297,13 +298,14 @@
             fetchSubscriptions();
             Telegram.WebApp.showAlert(
               paymentData.isExtension 
-                ? 'Подписка успешно продлена!' 
+                ? `Подписка успешно продлена до ${response.data.expiry_date}!` 
                 : 'Подписка успешно активирована!'
             );
             setPaymentData(null);
           }
         } catch (err) {
           console.error('Confirm payment error:', err);
+          Telegram.WebApp.showAlert(`Ошибка подтверждения оплаты: ${err.response?.data?.detail || err.message}`);
           setError(`Ошибка подтверждения оплаты: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
@@ -442,7 +444,8 @@
           Header({ title: 'Extend Subscription', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+            selectedSub && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+            selectedSub && h('p', { className: 'card' }, [h('b', null, 'Current Expiry: '), new Date(selectedSub.expiry_date).toLocaleString()]),
             h('button', { className: 'button button-primary', onClick: () => initiatePayment(30, true, selectedSub.email) }, [
               'Extend 30 Days - 89 RUB',
             ]),
@@ -464,19 +467,23 @@
           Header({ title: 'Payment', onBack: cancelPayment }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            paymentData && h('p', { className: 'card' }, `Cost for ${paymentData.days} days: ${paymentData.amount} RUB`),
-            paymentData && h('p', { className: 'card' }, [h('b', null, 'User: '), paymentData.email]),
+            paymentData && h('p', { className: 'card' }, `Стоимость за ${paymentData.days} дней: ${paymentData.amount} RUB`),
+            paymentData && h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
+            paymentData && paymentData.isExtension && h('p', { className: 'card' }, [
+              h('b', null, 'Новая дата окончания: '), 
+              new Date(new Date(selectedSub.expiry_date).getTime() + paymentData.days * 86400000).toLocaleString()
+            ]),
             paymentData && h('a', { href: paymentData.payment_link, target: '_blank', className: 'button button-success' }, [
               h('span', { className: 'button-icon' }, '💸'),
-              'Pay',
+              'Оплатить',
             ]),
             paymentData && h('button', { className: 'button button-primary', onClick: confirmPayment }, [
               h('span', { className: 'button-icon' }, '✅'),
-              'Confirm Payment',
+              'Подтвердить оплату',
             ]),
             paymentData && h('button', { className: 'button button-danger', onClick: cancelPayment }, [
               h('span', { className: 'button-icon' }, '❌'),
-              'Cancel',
+              'Отмена',
             ]),
           ]),
         ]);
