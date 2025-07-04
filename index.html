@@ -54,8 +54,8 @@
       padding: 4px 8px;
     }
     .back-button:disabled {
-      opacity: 0.5;
       cursor: not-allowed;
+      pointer-events: none;
     }
     .content {
       padding: 16px;
@@ -83,8 +83,9 @@
       transition: background-color 0.2s, transform 0.1s;
     }
     .button:disabled {
-      opacity: 0.5;
       cursor: not-allowed;
+      pointer-events: none;
+      /* Убрано opacity: 0.5, чтобы избежать помутнения */
     }
     .button:hover:not(:disabled) {
       transform: translateY(-1px);
@@ -144,14 +145,6 @@
       font-size: 14px;
       text-align: center;
       margin-bottom: 16px;
-    }
-    .loading-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      display: none; /* Скрыт полностью */
     }
     .link {
       color: #3b82f6;
@@ -394,7 +387,6 @@
               ]),
               h('span', { className: 'tooltip-text' }, 'Contact our support team'),
             ]),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -408,7 +400,6 @@
             !error && h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'), ' free:']),
             !error && h('p', { className: 'card' }, 'Referral system not implemented yet.'),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -437,7 +428,6 @@
               'Buy Subscription',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -461,7 +451,6 @@
               '360 Days - 849 RUB',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -487,7 +476,6 @@
               'Extend 360 Days - 849 RUB',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -512,7 +500,6 @@
               h('span', { className: 'button-icon' }, '❌'),
               'Отмена',
             ]),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -541,7 +528,6 @@
               'Android TV Guide',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -569,7 +555,6 @@
               'Privacy Policy',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -582,7 +567,6 @@
             error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
             !error && h('p', { className: 'card' }, 'WSocks VPN provides secure internet browsing via servers in Germany. We ensure data privacy, stability, and speed. Our service uses modern TLS+Vless+TCP+Reality protocols and supports multiple apps.'),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -603,7 +587,6 @@
               h('p', null, [h('b', null, 'Note:'), ' Add games or torrents to exclusions to avoid speed throttling.']),
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -616,7 +599,6 @@
             error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
             !error && h('p', { className: 'card' }, 'By using WSocks VPN, you agree to comply with Russian laws, avoid bypassing blocks, and not engage in illegal activities. We reserve the right to suspend access for violations.'),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -633,7 +615,6 @@
               'Open Policy',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
-            loading && h('div', { className: 'loading-overlay' }),
           ]),
         ]);
 
@@ -661,7 +642,6 @@
               error && h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
               error && h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение'),
               !error && h('p', { className: 'card', style: { textAlign: 'center' } }, 'Loading user data...'),
-              loading && h('div', { className: 'loading-overlay' }),
             ]),
           ]);
     }
