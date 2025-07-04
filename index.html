@@ -27,6 +27,7 @@
       background-color: white;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       overflow-x: hidden;
+      position: relative;
     }
     .header {
       position: sticky;
@@ -144,11 +145,29 @@
       text-align: center;
       margin-bottom: 16px;
     }
-    .loading {
-      text-align: center;
-      color: #6b7280;
-      font-size: 16px;
-      animation: pulse 1.5s infinite;
+    .loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #3b82f6;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     .link {
       color: #3b82f6;
@@ -157,10 +176,6 @@
     }
     .link:hover {
       text-decoration: underline;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
     }
     .tooltip {
       position: relative;
@@ -395,6 +410,9 @@
               ]),
               h('span', { className: 'tooltip-text' }, 'Contact our support team'),
             ]),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -408,6 +426,9 @@
             !error && h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'), ' free:']),
             !error && h('p', { className: 'card' }, 'Referral system not implemented yet.'),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -418,9 +439,8 @@
             error && h('p', { className: 'error' }, error),
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
-            loading && h('p', { className: 'loading' }, 'Loading...'),
-            !loading && !error && subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
-            !loading && !error && subscriptions.map((sub, index) =>
+            !error && subscriptions.length === 0 && h('p', { className: 'card' }, 'No active subscriptions.'),
+            !error && subscriptions.map((sub, index) =>
               h('div', { key: index, className: 'card' }, [
                 h('p', null, [h('b', null, 'Email: '), sub.email]),
                 h('p', null, [h('b', null, 'Panel: '), sub.panel]),
@@ -432,11 +452,14 @@
                 ]),
               ])
             ),
-            !loading && !error && h('button', { className: 'button button-primary', onClick: () => setView('buy'), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => setView('buy'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '💳'),
               'Buy Subscription',
             ]),
-            !loading && !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -460,6 +483,9 @@
               '360 Days - 849 RUB',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -485,6 +511,9 @@
               'Extend 360 Days - 849 RUB',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -508,6 +537,9 @@
             !error && paymentData && h('button', { className: 'button button-danger', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, [
               h('span', { className: 'button-icon' }, '❌'),
               'Отмена',
+            ]),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
             ]),
           ]),
         ]);
@@ -537,6 +569,9 @@
               'Android TV Guide',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -564,6 +599,9 @@
               'Privacy Policy',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -576,6 +614,9 @@
             error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
             !error && h('p', { className: 'card' }, 'WSocks VPN provides secure internet browsing via servers in Germany. We ensure data privacy, stability, and speed. Our service uses modern TLS+Vless+TCP+Reality protocols and supports multiple apps.'),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -596,6 +637,9 @@
               h('p', null, [h('b', null, 'Note:'), ' Add games or torrents to exclusions to avoid speed throttling.']),
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -608,6 +652,9 @@
             error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
             !error && h('p', { className: 'card' }, 'By using WSocks VPN, you agree to comply with Russian laws, avoid bypassing blocks, and not engage in illegal activities. We reserve the right to suspend access for violations.'),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -624,6 +671,9 @@
               'Open Policy',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Back'),
+            loading && h('div', { className: 'loading-overlay' }, [
+              h('div', { className: 'spinner' }),
+            ]),
           ]),
         ]);
 
@@ -650,7 +700,10 @@
               error && h('p', { className: 'error' }, error),
               error && h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
               error && h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение'),
-              !error && h('p', { className: 'loading' }, 'Loading user data...'),
+              !error && h('p', { className: 'card', style: { textAlign: 'center' } }, 'Loading user data...'),
+              loading && h('div', { className: 'loading-overlay' }, [
+                h('div', { className: 'spinner' }),
+              ]),
             ]),
           ]);
     }
