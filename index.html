@@ -195,6 +195,15 @@
   <script type="text/javascript">
     const { useState, useEffect, createElement: h } = React;
 
+    // Функция debounce для предотвращения множественных вызовов
+    function debounce(func, wait) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+      };
+    }
+
     function App() {
       const [user, setUser] = useState(null);
       const [view, setView] = useState(() => localStorage.getItem('view') || 'main');
@@ -210,6 +219,7 @@
         const saved = localStorage.getItem('selectedSub');
         return saved ? JSON.parse(saved) : null;
       });
+      const [processingActions, setProcessingActions] = useState({});
 
       const API_URL = 'https://wsocks-api-bot-o2if.onrender.com';
       const axiosInstance = axios.create({ timeout: 10000 }); // Таймаут 10 секунд
@@ -278,24 +288,15 @@
         }
       };
 
-      const activateSubscription = async (days, isExtension = false, email = null) => {
+      const activateSubscription = debounce(async (days, isExtension = false, email = null, requestId) => {
         if (!user) {
           setError('Пользователь не авторизован');
           return;
         }
-        if (!isExtension && subscriptions.length > 0) {
-          Telegram.WebApp.showAlert('У вас уже есть активные подписки. Новая подписка может быть избыточной.');
-          return;
+        if (processingActions[requestId]) {
+          return; // Игнорировать, если запрос уже выполняется
         }
-        if (isExtension && selectedSub) {
-          const expiryDate = new Date(selectedSub.expiry_date);
-          const now = new Date();
-          const minExtendDate = new Date(now.setDate(now.getDate() + 30));
-          if (expiryDate > minExtendDate) {
-            Telegram.WebApp.showAlert('Ваша подписка еще активна. Продление возможно ближе к истечению срока.');
-            return;
-          }
-        }
+        setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
         setError(null);
         try {
@@ -312,8 +313,9 @@
           setError(`Ошибка активации подписки: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
+          setProcessingActions(prev => ({ ...prev, [requestId]: false }));
         }
-      };
+      }, 500);
 
       const confirmActivation = async () => {
         if (!user || !paymentData) {
@@ -343,6 +345,10 @@
       const handleRetry = (action) => {
         setError(null);
         action();
+      };
+
+      const generateRequestId = () => {
+        return Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9);
       };
 
       const Header = ({ title, onBack }) =>
@@ -439,19 +445,18 @@
           Header({ title: 'Buy Subscription', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30)) }, 'Повторить'),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, false, null, generateRequestId())) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
-            !error && subscriptions.length > 0 && h('p', { className: 'card' }, 'У вас есть активные подписки. Покупка новой подписки может быть избыточной.'),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, [
               '30 Days - 89 RUB',
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(90), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, [
               '90 Days - 249 RUB',
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(180), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, [
               '180 Days - 449 RUB',
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(360), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, [
               '360 Days - 849 RUB',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
@@ -463,22 +468,20 @@
           Header({ title: 'Extend Subscription', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, true, selectedSub.email)) }, 'Повторить'),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, true, selectedSub.email, generateRequestId())) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
             !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
             !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Current Expiry: '), new Date(selectedSub.expiry_date).toLocaleString()]),
-            !error && selectedSub && new Date(selectedSub.expiry_date) > new Date(new Date().setDate(new Date().getDate() + 30)) && 
-              h('p', { className: 'card' }, 'Подписка еще активна. Продление возможно ближе к истечению срока.'),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub.email), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-30'] }, [
               'Extend 30 Days - 89 RUB',
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub.email), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-90'] }, [
               'Extend 90 Days - 249 RUB',
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub.email), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-180'] }, [
               'Extend 180 Days - 449 RUB',
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub.email), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-360'] }, [
               'Extend 360 Days - 849 RUB',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Back'),
