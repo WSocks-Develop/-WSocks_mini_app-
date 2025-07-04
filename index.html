@@ -155,7 +155,7 @@
       50% { opacity: 0.5; }
     }
     .tooltip {
-      position: relative;
+      position: size: relative;
       display: inline-block;
       width: 100%;
     }
@@ -256,7 +256,7 @@
         }
       };
 
-      const initiatePayment = async (days, isExtension = false, email = null) => {
+      const activateSubscription = async (days, isExtension = false, email = null) => {
         if (!user) {
           setError('Пользователь не авторизован');
           return;
@@ -269,67 +269,36 @@
             ? { tg_id: user.telegram_id, days, email }
             : { tg_id: user.telegram_id, days };
           const response = await axios.post(`${API_URL}${endpoint}`, payload);
-          console.log('Payment response:', response.data);
+          console.log('Subscription response:', response.data);
           setPaymentData({ ...response.data, isExtension });
           setView('payment');
         } catch (err) {
-          console.error('Payment error:', err);
-          setError(`Ошибка инициации оплаты: ${err.response?.data?.detail || err.message}`);
+          console.error('Subscription error:', err);
+          setError(`Ошибка активации подписки: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
         }
       };
 
-      const confirmPayment = async () => {
+      const confirmActivation = async () => {
         if (!user || !paymentData) {
-          setError('Данные для подтверждения оплаты отсутствуют');
+          setError('Данные для активации отсутствуют');
           return;
         }
         setLoading(true);
         setError(null);
         try {
-          const response = await axios.post(`${API_URL}/api/confirm-payment`, {
-            tg_id: user.telegram_id,
-            label: paymentData.label
-          });
-          console.log('Confirm payment response:', response.data);
-          if (response.data.success) {
-            setView('subscriptions');
-            fetchSubscriptions();
-            Telegram.WebApp.showAlert(
-              paymentData.isExtension 
-                ? `Подписка успешно продлена на ${response.data.days} дней до ${response.data.expiry_date}!` 
-                : 'Подписка успешно активирована!'
-            );
-            setPaymentData(null);
-          }
-        } catch (err) {
-          console.error('Confirm payment error:', err);
-          Telegram.WebApp.showAlert(`Ошибка подтверждения оплаты: ${err.response?.data?.detail || err.message}`);
-          setError(`Ошибка подтверждения оплаты: ${err.response?.data?.detail || err.message}`);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      const cancelPayment = async () => {
-        if (!user || !paymentData) {
-          setError('Данные для отмены оплаты отсутствуют');
-          return;
-        }
-        setLoading(true);
-        setError(null);
-        try {
-          console.log('Cancel payment request:', { tg_id: user.telegram_id, label: paymentData.label });
-          await axios.delete(`${API_URL}/api/cancel-payment`, {
-            data: { tg_id: user.telegram_id, label: paymentData.label }
-          });
-          setPaymentData(null);
           setView('subscriptions');
-          Telegram.WebApp.showAlert('Оплата отменена');
+          fetchSubscriptions();
+          Telegram.WebApp.showAlert(
+            paymentData.isExtension 
+              ? `Подписка успешно продлена на ${paymentData.days} дней до ${paymentData.expiry_date}!` 
+              : 'Подписка успешно активирована!'
+          );
+          setPaymentData(null);
         } catch (err) {
-          console.error('Cancel payment error:', err);
-          setError(`Ошибка отмены оплаты: ${err.response?.data?.detail || err.message}`);
+          console.error('Confirm activation error:', err);
+          setError(`Ошибка подтверждения активации: ${err.message}`);
         } finally {
           setLoading(false);
         }
@@ -385,7 +354,7 @@
           Header({ title: 'Referral System', onBack: () => setView('main') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'), ' free:']),
+            h('p', { className: 'card' }, ['Invite friends and get ', h('b', null, '7 days'),59 ' free:']),
             h('p', { className: 'card' }, 'Referral system not implemented yet.'),
             h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Back'),
           ]),
@@ -423,16 +392,16 @@
           Header({ title: 'Buy Subscription', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(30) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30) }, [
               '30 Days - 89 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(90) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90) }, [
               '90 Days - 249 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(180) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180) }, [
               '180 Days - 449 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(360) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360) }, [
               '360 Days - 849 RUB',
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
@@ -446,16 +415,16 @@
             error && h('p', { className: 'error' }, error),
             selectedSub && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
             selectedSub && h('p', { className: 'card' }, [h('b', null, 'Current Expiry: '), new Date(selectedSub.expiry_date).toLocaleString()]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(30, true, selectedSub.email) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub.email) }, [
               'Extend 30 Days - 89 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(90, true, selectedSub.email) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub.email) }, [
               'Extend 90 Days - 249 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(180, true, selectedSub.email) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub.email) }, [
               'Extend 180 Days - 449 RUB',
             ]),
-            h('button', { className: 'button button-primary', onClick: () => initiatePayment(360, true, selectedSub.email) }, [
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub.email) }, [
               'Extend 360 Days - 849 RUB',
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Back'),
@@ -464,24 +433,20 @@
 
       const renderPayment = () =>
         h('div', { className: 'container' }, [
-          Header({ title: 'Payment', onBack: cancelPayment }),
+          Header({ title: 'Confirm Subscription', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            paymentData && h('p', { className: 'card' }, `Стоимость за ${paymentData.days || 'неизвестно'} дней: ${paymentData.amount} RUB`),
+            paymentData && h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
             paymentData && h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
             paymentData && paymentData.isExtension && selectedSub && h('p', { className: 'card' }, [
               h('b', null, 'Новая дата окончания: '), 
-              paymentData.days ? new Date(new Date(selectedSub.expiry_date).getTime() + paymentData.days * 24 * 60 * 60 * 1000).toLocaleString() : 'Недоступно'
+              paymentData.expiry_date
             ]),
-            paymentData && h('a', { href: paymentData.payment_link, target: '_blank', className: 'button button-success' }, [
-              h('span', { className: 'button-icon' }, '💸'),
-              'Оплатить',
-            ]),
-            paymentData && h('button', { className: 'button button-primary', onClick: confirmPayment }, [
+            paymentData && h('button', { className: 'button button-success', onClick: confirmActivation }, [
               h('span', { className: 'button-icon' }, '✅'),
-              'Подтвердить оплату',
+              'Подтвердить',
             ]),
-            paymentData && h('button', { className: 'button button-danger', onClick: cancelPayment }, [
+            paymentData && h('button', { className: 'button button-danger', onClick: () => setView('subscriptions') }, [
               h('span', { className: 'button-icon' }, '❌'),
               'Отмена',
             ]),
