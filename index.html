@@ -133,7 +133,7 @@
     }
     .card p {
       font-size: 14px;
-      margin: 4px 0;
+      margin: 8px 0;
       color: #374151;
     }
     .card b {
@@ -179,49 +179,18 @@
       visibility: visible;
       opacity: 1;
     }
-    .modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    .modal-content {
-      background-color: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 360px;
-      width: 100%;
-      text-align: center;
-    }
-    .modal-content p {
-      font-size: 14px;
-      margin: 8px 0;
-      color: #374151;
-    }
-    .modal-content .clickable {
+    .clickable {
       color: #3b82f6;
       cursor: pointer;
       font-weight: 600;
     }
-    .modal-content .clickable:hover {
+    .clickable:hover {
       text-decoration: underline;
     }
-    .modal-content .copied {
+    .copied {
       color: #10b981;
       font-size: 12px;
       margin-left: 8px;
-    }
-    .modal-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      justify-content: center;
     }
   </style>
 </head>
@@ -255,11 +224,11 @@
         return saved ? JSON.parse(saved) : null;
       });
       const [processingActions, setProcessingActions] = useState({});
-      const [showSupportModal, setShowSupportModal] = useState(false);
       const [copiedField, setCopiedField] = useState(null);
 
       const API_URL = 'https://wsocks-api-bot-o2if.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
+      const SUPPORT_HANDLE = '@WSocks_Support';
       const axiosInstance = axios.create({ timeout: 0 });
 
       useEffect(() => {
@@ -399,49 +368,6 @@
         });
       };
 
-      const SupportModal = () => {
-        if (!user) return null;
-        const fullText = `Support: ${SUPPORT_LINK}\nTelegram ID: ${user.telegram_id}`;
-        return h('div', { className: 'modal' }, [
-          h('div', { className: 'modal-content' }, [
-            h('h2', { style: { fontSize: '18px', marginBottom: '16px' } }, 'Contact Support'),
-            h('p', null, [
-              'Support Chat: ',
-              h('span', {
-                className: 'clickable',
-                onClick: () => copyToClipboard(SUPPORT_LINK, 'link')
-              }, SUPPORT_LINK),
-              copiedField === 'link' && h('span', { className: 'copied' }, 'Скопировано!'),
-            ]),
-            h('p', null, [
-              'Your Telegram ID: ',
-              h('span', {
-                className: 'clickable',
-                onClick: () => copyToClipboard(user.telegram_id, 'tg_id')
-              }, user.telegram_id),
-              copiedField === 'tg_id' && h('span', { className: 'copied' }, 'Скопировано!'),
-            ]),
-            h('div', { className: 'modal-buttons' }, [
-              h('button', {
-                className: 'button button-primary',
-                onClick: () => copyToClipboard(fullText, 'all')
-              }, [
-                'Copy All',
-                copiedField === 'all' && h('span', { className: 'copied', style: { marginLeft: '8px' } }, 'Скопировано!'),
-              ]),
-              h('button', {
-                className: 'button button-success',
-                onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK)
-              }, 'Open Support'),
-              h('button', {
-                className: 'button button-secondary',
-                onClick: () => setShowSupportModal(false)
-              }, 'Close'),
-            ]),
-          ]),
-        ]);
-      };
-
       const Header = ({ title, onBack }) =>
         h('div', { className: 'header' }, [
           onBack && h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'),
@@ -480,13 +406,47 @@
               h('span', { className: 'tooltip-text' }, 'Learn about WSocks VPN'),
             ]),
             !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => setShowSupportModal(true), disabled: loading }, [
+              h('button', { className: 'button button-primary', onClick: () => setView('support'), disabled: loading }, [
                 h('span', { className: 'button-icon' }, '❤️'),
                 'Support Telegram',
               ]),
               h('span', { className: 'tooltip-text' }, 'Contact our support team'),
             ]),
-            showSupportModal && SupportModal(),
+          ]),
+        ]);
+
+      const renderSupport = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Support', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('support')) }, 'Повторить'),
+            error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
+            !error && h('div', { className: 'card' }, [
+              h('p', null, [
+                'Для связи с нашей поддержкой отправьте сообщение сюда, ',
+                h('span', {
+                  className: 'clickable',
+                  onClick: () => {
+                    copyToClipboard(SUPPORT_HANDLE, 'support');
+                    Telegram.WebApp.openLink(SUPPORT_LINK);
+                  }
+                }, SUPPORT_HANDLE),
+                copiedField === 'support' && h('span', { className: 'copied' }, 'Скопировано!'),
+                ' и наша команда ответит вам в ближайшее время!',
+              ]),
+              h('p', null, [
+                'Ваш id в телеграмм: 👉🏿 ',
+                h('span', {
+                  className: 'clickable',
+                  onClick: () => copyToClipboard(user.telegram_id, 'tg_id')
+                }, user.telegram_id),
+                copiedField === 'tg_id' && h('span', { className: 'copied' }, 'Скопировано!'),
+                ' 👈🏿',
+              ]),
+              h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)'),
+            ]),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад'),
           ]),
         ]);
 
@@ -720,6 +680,7 @@
 
       const views = {
         main: renderMainMenu,
+        support: renderSupport,
         referrals: renderReferrals,
         subscriptions: renderSubscriptions,
         buy: renderBuy,
