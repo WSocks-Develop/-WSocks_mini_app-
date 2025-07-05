@@ -368,7 +368,6 @@
         }
         setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
-        setError(null);
         try {
           const response = await axiosInstance.post(`${API_URL}/api/activate-trial`, { tg_id: user.telegram_id });
           console.log('Ответ пробной подписки:', response.data);
@@ -377,7 +376,6 @@
         } catch (err) {
           console.error('Ошибка активации пробной подписки:', err);
           Telegram.WebApp.showAlert(err.response?.data?.detail || 'Ошибка активации пробной подписки');
-          setError(`Ошибка: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
           setProcessingActions(prev => ({ ...prev, [requestId]: false }));
