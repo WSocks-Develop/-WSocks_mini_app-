@@ -85,7 +85,6 @@
     .button:disabled {
       cursor: not-allowed;
       pointer-events: none;
-      /* Убрано opacity: 0.5, чтобы избежать помутнения */
     }
     .button:hover:not(:disabled) {
       transform: translateY(-1px);
@@ -214,7 +213,7 @@
       const [processingActions, setProcessingActions] = useState({});
 
       const API_URL = 'https://wsocks-api-bot-o2if.onrender.com';
-      const axiosInstance = axios.create({ timeout: 10000 }); // Таймаут 10 секунд
+      const axiosInstance = axios.create({ timeout: 0 }); // Убран таймаут
 
       useEffect(() => {
         localStorage.setItem('view', view);
@@ -369,7 +368,7 @@
             !error && h('div', { className: 'tooltip' }, [
               h('button', { className: 'button button-primary', onClick: fetchSubscriptions, disabled: loading }, [
                 h('span', { className: 'button-icon' }, '🛒'),
-                'Subscriptions',
+                loading ? 'Loading...' : 'Subscriptions',
               ]),
               h('span', { className: 'tooltip-text' }, 'Manage your subscriptions'),
             ]),
