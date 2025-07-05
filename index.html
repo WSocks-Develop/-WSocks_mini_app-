@@ -465,7 +465,7 @@
                 h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
                 h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
                   h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить'),
-                  h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Инструкция по настройке'),
+                  h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка'),
                 ]),
               ])
             ),
@@ -551,7 +551,7 @@
 
       const renderSetup = () =>
         h('div', { className: 'container' }, [
-          Header({ title: 'Инструкция по настройке', onBack: () => setView('subscriptions') }),
+          Header({ title: 'Настройка', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
