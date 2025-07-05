@@ -187,11 +187,6 @@
     .clickable:hover {
       text-decoration: underline;
     }
-    .copied {
-      color: #10b981;
-      font-size: 12px;
-      margin-left: 8px;
-    }
   </style>
 </head>
 <body>
@@ -224,7 +219,6 @@
         return saved ? JSON.parse(saved) : null;
       });
       const [processingActions, setProcessingActions] = useState({});
-      const [copiedField, setCopiedField] = useState(null);
 
       const API_URL = 'https://wsocks-api-bot-o2if.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -358,11 +352,8 @@
         return Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9);
       };
 
-      const copyToClipboard = (text, field) => {
-        navigator.clipboard.writeText(text).then(() => {
-          setCopiedField(field);
-          setTimeout(() => setCopiedField(null), 2000);
-        }).catch(err => {
+      const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text).catch(err => {
           console.error('Copy error:', err);
           Telegram.WebApp.showAlert('Не удалось скопировать текст');
         });
@@ -427,21 +418,16 @@
                 'Для связи с нашей поддержкой отправьте сообщение сюда, ',
                 h('span', {
                   className: 'clickable',
-                  onClick: () => {
-                    copyToClipboard(SUPPORT_HANDLE, 'support');
-                    Telegram.WebApp.openLink(SUPPORT_LINK);
-                  }
+                  onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK)
                 }, SUPPORT_HANDLE),
-                copiedField === 'support' && h('span', { className: 'copied' }, 'Скопировано!'),
                 ' и наша команда ответит вам в ближайшее время!',
               ]),
               h('p', null, [
                 'Ваш id в телеграмм: 👉🏿 ',
                 h('span', {
                   className: 'clickable',
-                  onClick: () => copyToClipboard(user.telegram_id, 'tg_id')
+                  onClick: () => copyToClipboard(user.telegram_id)
                 }, user.telegram_id),
-                copiedField === 'tg_id' && h('span', { className: 'copied' }, 'Скопировано!'),
                 ' 👈🏿',
               ]),
               h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)'),
