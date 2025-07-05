@@ -371,8 +371,8 @@
         try {
           const response = await axiosInstance.post(`${API_URL}/api/activate-trial`, { tg_id: user.telegram_id });
           console.log('Ответ пробной подписки:', response.data);
-          setPaymentData({ ...response.data, isExtension: false });
-          setView('payment');
+          await fetchSubscriptions();
+          Telegram.WebApp.showAlert(`Пробная подписка успешно активирована на 3 дня до ${new Date(response.data.expiry_date).toLocaleString()}!`);
         } catch (err) {
           console.error('Ошибка активации пробной подписки:', err);
           Telegram.WebApp.showAlert(err.response?.data?.detail || 'Ошибка активации пробной подписки');
@@ -528,8 +528,16 @@
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
                 h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
                 h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
-                  h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading || sub.email.startsWith('DE-FRA-TRIAL-') }, 'Продлить'),
-                  h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка'),
+                  !sub.email.startsWith('DE-FRA-TRIAL-') && h('button', { 
+                    className: 'button button-success', 
+                    onClick: () => { setSelectedSub(sub); setView('extend'); }, 
+                    disabled: loading 
+                  }, 'Продлить'),
+                  h('button', { 
+                    className: 'button button-primary', 
+                    onClick: () => { setSelectedSub(sub); setView('setup'); }, 
+                    disabled: loading 
+                  }, 'Настройка'),
                 ]),
               ])
             ),
@@ -622,7 +630,7 @@
           Header({ title: 'Настройка', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup') )}, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
             !error && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
             !error && h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, [
