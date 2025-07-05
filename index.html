@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="./texts.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -186,6 +187,29 @@
     }
     .clickable:hover {
       text-decoration: underline;
+    }
+    .manual-content {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.5;
+    }
+    .manual-content a {
+      color: #3b82f6;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .manual-content a:hover {
+      text-decoration: underline;
+    }
+    .manual-content pre {
+      background-color: #e5e7eb;
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .manual-content code {
+      font-family: monospace;
+      font-size: 12px;
     }
   </style>
 </head>
@@ -557,23 +581,79 @@
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
             !error && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
-            !error && h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://plvideo.ru/watch?v=1'), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '💻'),
-              'Инструкция для ПК',
+              window.TEXTS.setup.manualPC.title,
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://plvideo.ru/watch?v=2'), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '📱'),
-              'Инструкция для Android',
+              window.TEXTS.setup.manualAndroid.title,
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://plvideo.ru/watch?v=3'), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '🍏'),
-              'Инструкция для iOS/MacOS',
+              window.TEXTS.setup.manualIOS.title,
             ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.showAlert('Обратитесь в бот за инструкцией для Android TV.'), disabled: loading }, [
+            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '📺'),
-              'Инструкция для Android TV',
+              window.TEXTS.setup.manualAndroidTV.title,
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад'),
+          ]),
+        ]);
+
+      const renderManualPC = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualPC')) }, 'Повторить'),
+            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
+            !error && selectedSub && h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualPC.content(selectedSub.email) } })
+            ]),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
+          ]),
+        ]);
+
+      const renderManualAndroid = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroid')) }, 'Повторить'),
+            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
+            !error && h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroid.content } })
+            ]),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
+          ]),
+        ]);
+
+      const renderManualIOS = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
+            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
+            !error && h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualIOS.content } })
+            ]),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
+          ]),
+        ]);
+
+      const renderManualAndroidTV = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
+            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
+            !error && selectedSub && h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub.email) } })
+            ]),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
           ]),
         ]);
 
@@ -638,12 +718,14 @@
 
       const renderTerms = () =>
         h('div', { className: 'container' }, [
-          Header({ title: 'Пользовательское соглашение', onBack: () => setView('info') }),
+          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
-            !error && h('p', { className: 'card' }, 'Используя WSocks VPN, вы соглашаетесь соблюдать законы Российской Федерации, не обходить блокировки и не участвовать в незаконной деятельности. Мы оставляем за собой право приостановить доступ при нарушении условий.'),
+            !error && h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
+            ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад'),
           ]),
         ]);
@@ -673,6 +755,10 @@
         extend: renderExtend,
         payment: renderPayment,
         setup: renderSetup,
+        manualPC: renderManualPC,
+        manualAndroid: renderManualAndroid,
+        manualIOS: renderManualIOS,
+        manualAndroidTV: renderManualAndroidTV,
         info: renderInfo,
         service: renderService,
         subscription: renderSubscription,
