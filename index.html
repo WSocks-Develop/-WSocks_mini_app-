@@ -197,7 +197,7 @@
 
     function App() {
       const [user, setUser] = useState(null);
-      const [view, setView] = useState(() => localStorage.getItem('view') || 'main');
+      const [view, setView] = useState('main'); // Всегда начинать с 'main'
       const [subscriptions, setSubscriptions] = useState([]);
       const [referrals, setReferrals] = useState([]);
       const [loading, setLoading] = useState(false);
@@ -368,7 +368,7 @@
             !error && h('div', { className: 'tooltip' }, [
               h('button', { className: 'button button-primary', onClick: fetchSubscriptions, disabled: loading }, [
                 h('span', { className: 'button-icon' }, '🛒'),
-                loading ? 'Loading...' : 'Subscriptions',
+                'Subscriptions',
               ]),
               h('span', { className: 'tooltip-text' }, 'Manage your subscriptions'),
             ]),
