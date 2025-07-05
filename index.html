@@ -318,8 +318,7 @@
             headers: { 'Cache-Control': 'no-cache' }
           });
           console.log('Ответ подписок:', response.data);
-          const nonTrialSubs = response.data.subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
-          setSubscriptions(nonTrialSubs || []);
+          setSubscriptions(response.data.subscriptions || []);
           setView('subscriptions');
         } catch (err) {
           console.error('Ошибка подписок:', err);
@@ -358,6 +357,33 @@
         }
       }, 500);
 
+      const activateTrial = debounce(async () => {
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
+        }
+        const requestId = generateRequestId();
+        if (processingActions[requestId]) {
+          return;
+        }
+        setProcessingActions(prev => ({ ...prev, [requestId]: true }));
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await axiosInstance.post(`${API_URL}/api/activate-trial`, { tg_id: user.telegram_id });
+          console.log('Ответ пробной подписки:', response.data);
+          setPaymentData({ ...response.data, isExtension: false });
+          setView('payment');
+        } catch (err) {
+          console.error('Ошибка активации пробной подписки:', err);
+          Telegram.WebApp.showAlert(err.response?.data?.detail || 'Ошибка активации пробной подписки');
+          setError(`Ошибка: ${err.response?.data?.detail || err.message}`);
+        } finally {
+          setLoading(false);
+          setProcessingActions(prev => ({ ...prev, [requestId]: false }));
+        }
+      }, 500);
+
       const confirmActivation = async () => {
         if (!user || !paymentData) {
           setError('Данные для активации отсутствуют');
@@ -371,7 +397,7 @@
           Telegram.WebApp.showAlert(
             paymentData.isExtension 
               ? `Подписка успешно продлена на ${paymentData.days} дней до ${paymentData.expiry_date}!` 
-              : 'Подписка успешно активирована!'
+              : `Подписка успешно активирована на ${paymentData.days} дней до ${paymentData.expiry_date}!`
           );
           setPaymentData(null);
           localStorage.removeItem('paymentData');
@@ -504,11 +530,18 @@
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
                 h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
                 h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
-                  h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить'),
+                  h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading || sub.email.startsWith('DE-FRA-TRIAL-') }, 'Продлить'),
                   h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка'),
                 ]),
               ])
             ),
+            !error && h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: activateTrial, disabled: loading }, [
+                h('span', { className: 'button-icon' }, '🎁'),
+                'Пробная подписка',
+              ]),
+              h('span', { className: 'tooltip-text' }, 'Активируйте бесплатную подписку на 3 дня'),
+            ]),
             !error && h('button', { className: 'button button-primary', onClick: () => setView('buy'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '💳'),
               'Купить подписку',
@@ -574,10 +607,7 @@
             error && h('button', { className: 'button button-secondary', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }, 'Назад'),
             !error && paymentData && h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
             !error && paymentData && h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
-            !error && paymentData && paymentData.isExtension && selectedSub && h('p', { className: 'card' }, [
-              h('b', null, 'Новая дата окончания: '), 
-              paymentData.expiry_date
-            ]),
+            !error && paymentData && h('p', { className: 'card' }, [h('b', null, 'Дата окончания: '), new Date(paymentData.expiry_date).toLocaleString()]),
             !error && paymentData && h('button', { className: 'button button-success', onClick: confirmActivation, disabled: loading }, [
               h('span', { className: 'button-icon' }, '✅'),
               'Подтвердить',
@@ -755,7 +785,7 @@
             error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
             !error && h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
             !error && h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '🔗'),
+              h('span', { className: 'button-icon' }, '🔒'),
               'Открыть политику',
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад'),
