@@ -348,7 +348,6 @@
           const response = await axiosInstance.post(`${API_URL}${endpoint}`, payload);
           console.log('Ответ подписки:', response.data);
           setPaymentData({ ...response.data, isExtension });
-          setView('payment');
         } catch (err) {
           console.error('Ошибка активации подписки:', err);
           setError(`Ошибка активации подписки: ${err.response?.data?.detail || err.message}`);
@@ -373,6 +372,15 @@
               ? `Подписка успешно продлена на ${paymentData.days} дней до ${paymentData.expiry_date}!` 
               : 'Подписка успешно активирована!'
           );
+          // Обновляем selectedSub с данными из paymentData
+          if (paymentData.email) {
+            setSelectedSub(prev => ({
+              ...prev,
+              email: paymentData.email,
+              expiry_date: paymentData.expiry_date,
+              key: paymentData.key || prev?.key // Сохраняем key, если он есть
+            }));
+          }
           setPaymentData(null);
           localStorage.removeItem('paymentData');
         } catch (err) {
@@ -393,10 +401,14 @@
       };
 
       const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text).catch(err => {
-          console.error('Ошибка копирования:', err);
-          Telegram.WebApp.showAlert('Не удалось скопировать текст');
-        });
+        navigator.clipboard.writeText(text)
+          .then(() => {
+            Telegram.WebApp.showAlert('Ключ скопирован!');
+          })
+          .catch(err => {
+            console.error('Ошибка копирования:', err);
+            Telegram.WebApp.showAlert('Не удалось скопировать текст');
+          });
       };
 
       const Header = ({ title, onBack }) =>
@@ -503,6 +515,7 @@
                 h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
                 h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
+                sub.key && h('p', null, [h('b', null, 'Ключ: '), h('span', { className: 'clickable', onClick: () => copyToClipboard(sub.key) }, sub.key)]),
                 h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
                   h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить'),
                   h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка'),
@@ -549,6 +562,7 @@
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
             !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
             !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Текущая дата окончания: '), new Date(selectedSub.expiry_date).toLocaleString()]),
+            !error && selectedSub && selectedSub.key && h('p', { className: 'card' }, [h('b', null, 'Ключ: '), selectedSub.key]),
             !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-30'] }, [
               'Продлить на 30 дней - 89 ₽',
             ]),
@@ -574,6 +588,7 @@
             error && h('button', { className: 'button button-secondary', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }, 'Назад'),
             !error && paymentData && h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
             !error && paymentData && h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
+            !error && paymentData && paymentData.key && h('p', { className: 'card' }, [h('b', null, 'Ключ: '), paymentData.key]),
             !error && paymentData && paymentData.isExtension && selectedSub && h('p', { className: 'card' }, [
               h('b', null, 'Новая дата окончания: '), 
               paymentData.expiry_date
@@ -596,7 +611,8 @@
             error && h('p', { className: 'error' }, error),
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
-            !error && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+            !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+            !error && selectedSub && selectedSub.key && h('p', { className: 'card' }, [h('b', null, 'Ключ: '), selectedSub.key]),
             !error && h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, [
               h('span', { className: 'button-icon' }, '💻'),
               window.TEXTS.setup.manualPC.title,
@@ -625,7 +641,16 @@
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualPC')) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
             !error && selectedSub && h('div', { className: 'card' }, [
-              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualPC.content(selectedSub) } })
+              h('div', { 
+                className: 'manual-content', 
+                dangerouslySetInnerHTML: { 
+                  __html: window.TEXTS.setup.manualPC.content(selectedSub.key || selectedSub.email)
+                    .replace(
+                      `<span class="clickable-manual">${selectedSub.key || selectedSub.email}</span>`, 
+                      `<span class="clickable-manual" onclick="navigator.clipboard.writeText('${selectedSub.key || selectedSub.email}').then(() => Telegram.WebApp.showAlert('Ключ скопирован!')).catch(() => Telegram.WebApp.showAlert('Не удалось скопировать текст'))">${selectedSub.key || selectedSub.email}</span>`
+                    )
+                } 
+              })
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
           ]),
@@ -667,7 +692,16 @@
             error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
             !error && selectedSub && h('div', { className: 'card' }, [
-              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub) } })
+              h('div', { 
+                className: 'manual-content', 
+                dangerouslySetInnerHTML: { 
+                  __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub.key || selectedSub.email)
+                    .replace(
+                      `<span class="clickable-manual">${selectedSub.key || selectedSub.email}</span>`, 
+                      `<span class="clickable-manual" onclick="navigator.clipboard.writeText('${selectedSub.key || selectedSub.email}').then(() => Telegram.WebApp.showAlert('Ключ скопирован!')).catch(() => Telegram.WebApp.showAlert('Не удалось скопировать текст'))">${selectedSub.key || selectedSub.email}</span>`
+                    )
+                } 
+              })
             ]),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
           ]),
