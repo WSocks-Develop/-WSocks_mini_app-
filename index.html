@@ -264,7 +264,7 @@
       const API_URL = 'https://wsocks-api-bot-o2if.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
-      const BOT_USERNAME = 't.me/penis2008_bot?start=ref_1615487633'; // Замените на реальное имя вашего бота
+      const BOT_USERNAME = '@YourBot'; // Замените на реальное имя вашего бота
       const axiosInstance = axios.create({ timeout: 0 });
 
       useEffect(() => {
@@ -407,72 +407,43 @@
         }
       }, 500);
 
-const applyReferralBonus = debounce(async (referee_id) => {
-    try {
-        setLoading(true);
-        // Запросить подписки
-        const { data } = await axiosInstance.get(`${API_URL}/api/subscriptions?tg_id=${user.telegram_id}`);
-        const nonTrialSubs = data.subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
-        
-        if (nonTrialSubs.length === 0) {
-            // Условие 1: Создать новую подписку
-            const response = await axiosInstance.post(`${API_URL}/api/apply-referral-bonus`, {
-                tg_id: user.telegram_id,
-                referee_id,
-                email: null
-            });
-            setReferrals(prev => prev.map(ref =>
-                ref.referee_id === referee_id ? { ...ref, bonus_applied: true, bonus_date: new Date() } : ref
-            ));
-            alert(`Бонус применён! Новая подписка: ${response.data.email}`);
-        } else if (nonTrialSubs.length === 1) {
-            // Условие 2: Автоматически продлить единственную подписку
-            const response = await axiosInstance.post(`${API_URL}/api/apply-referral-bonus`, {
-                tg_id: user.telegram_id,
-                referee_id,
-                email: nonTrialSubs[0].email
-            });
-            setReferrals(prev => prev.map(ref =>
-                ref.referee_id === referee_id ? { ...ref, bonus_applied: true, bonus_date: new Date() } : ref
-            ));
-            alert(`Бонус применён! Подписка ${nonTrialSubs[0].email} продлена до ${response.data.expiry_date}`);
-        } else {
-            // Условие 3: Показать экран выбора подписки
-            setView('select-subscription');
-            setSelectedRefereeId(referee_id);
-            setSubscriptions(nonTrialSubs);
+      const applyReferralBonus = debounce(async (referee_id, email = null) => {
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
         }
-    } catch (error) {
-        console.error('Error applying referral bonus:', error);
-        alert(`Ошибка: ${error.response?.data?.detail || 'Не удалось применить бонус'}`);
-    } finally {
-        setLoading(false);
-    }
-});
-
-// Обработка выбора подписки
-const selectSubscription = async (email) => {
-    try {
+        const requestId = generateRequestId();
+        if (processingActions[requestId]) {
+          return;
+        }
+        setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
-        const response = await axiosInstance.post(`${API_URL}/api/apply-referral-bonus`, {
-            tg_id: user.telegram_id,
-            referee_id: selectedRefereeId,
-            email
-        });
-        setReferrals(prev => prev.map(ref =>
-            ref.referee_id === selectedRefereeId ? { ...ref, bonus_applied: true, bonus_date: new Date() } : ref
-        ));
-        setView('referrals');
-        alert(`Бонус применён! Подписка ${email} продлена до ${response.data.expiry_date}`);
-    } catch (error) {
-        console.error('Error applying referral bonus:', error);
-        alert(`Ошибка: ${error.response?.data?.detail || 'Не удалось применить бонус'}`);
-    } finally {
-        setLoading(false);
-    }
-};
+        setError(null);
+        try {
+          const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
+          if (nonTrialSubs.length > 1 && !email) {
+            setSelectedReferee(referee_id);
+            setView('selectsubscription');
+            return;
+          }
+          const payload = { tg_id: user.telegram_id, referee_id, email };
+          const response = await axiosInstance.post(`${API_URL}/api/apply-referral-bonus`, payload);
+          console.log('Ответ реферального бонуса:', response.data);
+          await fetchSubscriptions();
+          await fetchReferrals();
+          Telegram.WebApp.showAlert(
+            response.data.email.startsWith('DE-FRA-USER-')
+              ? `Реферальная подписка активирована на 7 дней до ${response.data.expiry_date}!`
+              : `Подписка продлена на 7 дней до ${response.data.expiry_date}!`
+          );
+        } catch (err) {
+          console.error('Ошибка применения реферального бонуса:', err);
+          setError(`Ошибка применения реферального бонуса: ${err.response?.data?.detail || err.message}`);
+        } finally {
+          setLoading(false);
           setProcessingActions(prev => ({ ...prev, [requestId]: false }));
         }
+      }, 500);
 
       const confirmActivation = async () => {
         if (!user || !paymentData) {
@@ -985,6 +956,8 @@ const selectSubscription = async (email) => {
               !error && h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...'),
             ]),
           ]);
+    }
+
     ReactDOM.render(h(App), document.getElementById('root'));
   </script>
 </body>
