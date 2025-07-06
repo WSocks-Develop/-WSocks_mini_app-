@@ -212,7 +212,14 @@
       color: var(--text-color);
       font-size: clamp(11px, 2.5vw, 12px);
       text-align: center;
-      overflow-wrap: break-word; /* Добавлено для предотвращения переполнения текста */
+      overflow-wrap: break-word;
+      white-space: normal; /* Разрешить перенос текста */
+      line-height: 1.2; /* Высота строки для читаемости */
+      max-height: 2.4em; /* Ограничение на две строки */
+    }
+
+    .button-square span {
+      flex-shrink: 1; /* Текст может сжиматься, чтобы не вытеснять иконку */
     }
 
     .button-square:hover:not(:disabled) {
@@ -441,13 +448,20 @@
       }
 
       .button-square {
-        font-size: clamp(8.8px, 2vw, 9.6px); /* Восстановлено исходное значение */
-        padding: 4px; /* Уменьшено для компактности */
-        overflow-wrap: break-word; /* Предотвращение переполнения текста */
+        font-size: clamp(12px, 3vw, 14px); /* Увеличен для читаемости */
+        padding: 4px;
+        overflow-wrap: break-word;
+        white-space: normal; /* Разрешить перенос текста */
+        line-height: 1.2; /* Высота строки */
+        max-height: 2.4em; /* Ограничение на две строки */
+      }
+
+      .button-square span {
+        flex-shrink: 1; /* Текст может сжиматься */
       }
 
       .button-square .icon {
-        width: clamp(160px, 35vw, 180px); /* Восстановлено для баланса */
+        width: clamp(160px, 35vw, 180px);
         height: clamp(160px, 35vw, 180px);
         max-width: 133px;
         max-height: 133px;
@@ -455,7 +469,7 @@
 
       .button-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 4px; /* Уменьшено для компактности */
+        gap: 4px;
       }
     }
 
@@ -478,22 +492,29 @@
       }
 
       .button-square {
-        font-size: clamp(16.8px, 2.8vw, 19.6px); /* Увеличено в 3.5 раза */
-        padding: 2px; /* Уменьшено для сохранения размера кнопок */
-        overflow-wrap: break-word; /* Предотвращение переполнения текста */
+        font-size: clamp(5.6px, 0.93vw, 6.53px); /* Уменьшено в 3 раза */
+        padding: 1px; /* Уменьшено для пропорций */
+        overflow-wrap: break-word;
+        white-space: normal; /* Разрешить перенос текста */
+        line-height: 1.2; /* Высота строки */
+        max-height: 2.4em; /* Ограничение на две строки */
+      }
+
+      .button-square span {
+        flex-shrink: 1; /* Текст может сжиматься */
       }
 
       .button-square .icon {
-        width: clamp(80px, 12vw, 100px); /* Уменьшено для устранения прокрутки */
-        height: clamp(80px, 12vw, 100px); /* Уменьшено для устранения прокрутки */
-        max-width: 60px; /* Уменьшено для сохранения пропорций */
-        max-height: 60px; /* Уменьшено для сохранения пропорций */
+        width: clamp(26.67px, 4vw, 33.33px); /* Уменьшено в 3 раза */
+        height: clamp(26.67px, 4vw, 33.33px); /* Уменьшено в 3 раза */
+        max-width: 20px; /* Уменьшено в 3 раза */
+        max-height: 20px; /* Уменьшено в 3 раза */
       }
 
       .button-grid {
-        gap: 6px; /* Уменьшено для компактности */
-        max-height: calc(100vh - 180px); /* Ограничение высоты для устранения прокрутки */
-        overflow: hidden; /* Убираем прокрутку */
+        gap: 2px; /* Уменьшено в 3 раза */
+        max-height: calc(100vh - 180px);
+        overflow: hidden;
       }
     }
   </style>
