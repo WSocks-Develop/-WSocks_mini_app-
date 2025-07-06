@@ -9,7 +9,33 @@
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
-  <script src="./texts.js"></script>
+  <script>
+    // Заглушка для texts.js
+    window.TEXTS = {
+      setup: {
+        manualPC: {
+          title: 'Настройка для ПК',
+          content: (sub) => `Инструкция для настройки на ПК с email: ${sub.email}`
+        },
+        manualAndroid: {
+          title: 'Настройка для Android',
+          content: 'Инструкция для настройки на Android'
+        },
+        manualIOS: {
+          title: 'Настройка для iOS',
+          content: 'Инструкция для настройки на iOS'
+        },
+        manualAndroidTV: {
+          title: 'Настройка для Android TV',
+          content: (sub) => `Инструкция для настройки на Android TV с email: ${sub.email}`
+        }
+      },
+      terms: {
+        title: 'Пользовательское соглашение',
+        content: 'Текст пользовательского соглашения'
+      }
+    };
+  </script>
   <style>
     /* CSS Custom Properties for Themes */
     :root[data-theme="dark"] {
@@ -26,7 +52,8 @@
       --button-success-hover-bg: #50ffa6;
       --button-danger-bg: #ef4444;
       --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(0, 207, 255, 0.3);
+      --shadow-color: rgba(0, 207, 255, 0.5);
+      --button-glow: 0 0 15px rgba(0, 207, 255, 0.7);
     }
 
     :root[data-theme="light"] {
@@ -43,7 +70,8 @@
       --button-success-hover-bg: #059669;
       --button-danger-bg: #ef4444;
       --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(0, 188, 212, 0.3);
+      --shadow-color: rgba(0, 188, 212, 0.5);
+      --button-glow: 0 0 15px rgba(0, 188, 212, 0.7);
     }
 
     /* Общие стили */
@@ -61,12 +89,13 @@
     }
 
     .container {
-      max-width: 420px;
+      max-width: min(90vw, 1200px);
       margin: 0 auto;
       min-height: 100vh;
       background-color: var(--background-color);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       position: relative;
+      padding: 0 16px;
     }
 
     .header {
@@ -85,7 +114,7 @@
 
     .header-title {
       flex: 1;
-      font-size: 18px;
+      font-size: clamp(20px, 4vw, 28px);
       font-weight: 700;
       text-align: center;
       text-shadow: 0 0 5px var(--text-color);
@@ -122,7 +151,7 @@
 
     .logo-text {
       font-family: 'Oswald', sans-serif;
-      font-size: 24px;
+      font-size: clamp(28px, 5vw, 36px);
       font-weight: 700;
       color: var(--text-color);
       text-shadow: 0 0 5px var(--text-color);
@@ -136,11 +165,13 @@
       margin-bottom: 8px;
       border: none;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
       font-family: 'Inter', sans-serif;
+      background-color: var(--button-bg);
+      box-shadow: var(--button-glow);
     }
 
     .button:disabled {
@@ -151,7 +182,7 @@
 
     .button:hover:not(:disabled) {
       transform: translateY(-1px);
-      box-shadow: 0 0 10px var(--shadow-color);
+      box-shadow: 0 0 20px var(--shadow-color);
     }
 
     .button:active:not(:disabled) {
@@ -194,9 +225,11 @@
       background: var(--button-danger-hover-bg);
     }
 
-    .button-icon {
-      margin-right: 8px;
-      font-size: 20px;
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .card {
@@ -213,7 +246,7 @@
     }
 
     .card p {
-      font-size: 14px;
+      font-size: clamp(13px, 2.5vw, 14px);
       margin: 8px 0;
       color: var(--text-color);
     }
@@ -225,7 +258,7 @@
 
     .error {
       color: var(--button-danger-bg);
-      font-size: 14px;
+      font-size: clamp(13px, 2.5vw, 14px);
       text-align: center;
       margin-bottom: 16px;
     }
@@ -258,7 +291,7 @@
       bottom: 125%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 12px;
+      font-size: clamp(11px, 2vw, 12px);
       white-space: nowrap;
       opacity: 0;
       transition: opacity 0.2s;
@@ -291,7 +324,7 @@
     }
 
     .manual-content {
-      font-size: 14px;
+      font-size: clamp(13px, 2.5vw, 14px);
       color: var(--text-color);
       line-height: 1.5;
     }
@@ -315,7 +348,7 @@
 
     .manual-content code {
       font-family: monospace;
-      font-size: 12px;
+      font-size: clamp(11px, 2vw, 12px);
     }
 
     .manual-content ul {
@@ -338,7 +371,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Анимации для элементов */
     .button, .card {
       opacity: 0;
       animation: fadeInUp 0.6s ease-in-out forwards;
@@ -348,32 +380,56 @@
     .button:nth-child(2) { animation-delay: 0.2s; }
     .button:nth-child(3) { animation-delay: 0.3s; }
     .button:nth-child(4) { animation-delay: 0.4s; }
-    .button:nth-child(5) { animation-delay: 0.5s; }
     .card:nth-child(1) { animation-delay: 0.1s; }
     .card:nth-child(2) { animation-delay: 0.2s; }
     .card:nth-child(3) { animation-delay: 0.3s; }
 
     /* Адаптивность */
-    @media (max-width: 420px) {
+    @media (max-width: 600px) {
       .container {
         max-width: 100%;
+        padding: 0 8px;
       }
 
       .header-title {
-        font-size: 16px;
+        font-size: clamp(18px, 4vw, 24px);
       }
 
       .logo-text {
-        font-size: 20px;
+        font-size: clamp(24px, 5vw, 32px);
       }
 
       .button {
-        font-size: 14px;
+        font-size: clamp(13px, 2.5vw, 14px);
         padding: 10px 12px;
       }
 
-      .card p {
-        font-size: 13px;
+      .button-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .container {
+        max-width: min(80vw, 1400px);
+      }
+
+      .header-title {
+        font-size: clamp(24px, 3vw, 32px);
+      }
+
+      .logo-text {
+        font-size: clamp(32px, 4vw, 40px);
+      }
+
+      .button {
+        font-size: clamp(15px, 2vw, 18px);
+        padding: 14px 20px;
+      }
+
+      .button-grid {
+        gap: 16px;
       }
     }
   </style>
@@ -383,7 +439,6 @@
   <script type="text/javascript">
     const { useState, useEffect, createElement: h } = React;
 
-    // Функция debounce для предотвращения множественных вызовов
     function debounce(func, wait) {
       let timeout;
       return function (...args) {
@@ -413,7 +468,8 @@
       const API_URL = 'https://wsocks-api-bot-git.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
-      const BOT_USERNAME = '@YourBot'; // Замените на реальное имя вашего бота
+      const BOT_USERNAME = '@YourBot';
+
       const axiosInstance = axios.create({ timeout: 0 });
 
       useEffect(() => {
@@ -424,7 +480,7 @@
 
       useEffect(() => {
         console.log('Приложение запускается...');
-        if (!window.Telegram?.WebApp) {
+        if (!window.Telegram || !window.Telegram.WebApp) {
           setError('Telegram Web App SDK не загружен');
           setLoading(false);
           return;
@@ -637,441 +693,563 @@
         });
       };
 
-      const Header = ({ title, onBack }) =>
-        h('div', { className: 'header' }, [
-          onBack && h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'),
-          h('div', { className: 'header-title' }, title),
-          onBack && h('div', { style: { width: '40px' } }),
-        ]);
+      const Header = ({ title, onBack }) => {
+        const children = [];
+        if (onBack) {
+          children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'));
+        }
+        children.push(h('div', { className: 'header-title' }, title));
+        if (onBack) {
+          children.push(h('div', { style: { width: '40px' } }));
+        }
+        return h('div', { className: 'header' }, children);
+      };
 
-      const renderMainMenu = () =>
-        h('div', { className: 'container' }, [
+      const renderMainMenu = () => {
+        const contentChildren = [
+          h('div', { className: 'logo' }, [
+            h('div', { className: 'logo-text' }, 'WSocks VPN')
+          ])
+        ];
+
+        if (user) {
+          contentChildren.push(
+            h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: 'clamp(14px, 2.5vw, 16px)' } }, `Добро пожаловать, ${user.first_name}!`)
+          );
+        }
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
+            h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'button-grid' }, [
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'button button-primary', onClick: fetchReferrals, disabled: loading }, 'Реферальная система'),
+                h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
+              ]),
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'button button-primary', onClick: fetchSubscriptions, disabled: loading }, 'Подписки'),
+                h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
+              ]),
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'button button-primary', onClick: () => setView('info'), disabled: loading }, 'Информация'),
+                h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
+              ]),
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'button button-primary', onClick: () => setView('support'), disabled: loading }, 'Поддержка Telegram'),
+                h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
+              ])
+            ])
+          );
+        }
+
+        return h('div', { className: 'container' }, [
           Header({ title: 'WSocks VPN' }),
-          h('div', { className: 'content' }, [
-            h('div', { className: 'logo' }, h('div', { className: 'logo-text' }, 'WSocks VPN')),
-            user && h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: '16px' } }, `Добро пожаловать, ${user.first_name}!`),
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
-            error && h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение'),
-            !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: fetchReferrals, disabled: loading }, [
-                h('span', { className: 'button-icon' }, '👥'),
-                'Реферальная система',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы'),
-            ]),
-            !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: fetchSubscriptions, disabled: loading }, [
-                h('span', { className: 'button-icon' }, '🛒'),
-                'Подписки',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Управление вашими подписками'),
-            ]),
-            !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => setView('info'), disabled: loading }, [
-                h('span', { className: 'button-icon' }, '📌'),
-                'Информация',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN'),
-            ]),
-            !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => setView('support'), disabled: loading }, [
-                h('span', { className: 'button-icon' }, '❤️'),
-                'Поддержка Telegram',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой'),
-            ]),
-          ]),
+          h('div', { className: 'content' }, contentChildren)
         ]);
+      };
 
-      const renderSupport = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Поддержка', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('support')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
-            !error && h('div', { className: 'card' }, [
+      const renderSupport = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('support')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('p', null, [
                 'Для связи с нашей поддержкой отправьте сообщение сюда, ',
-                h('span', {
-                  className: 'clickable',
-                  onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK)
-                }, SUPPORT_HANDLE),
-                ' и наша команда ответит вам в ближайшее время!',
+                h('span', { className: 'clickable', onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK) }, SUPPORT_HANDLE),
+                ' и наша команда ответит вам в ближайшее время!'
               ]),
               h('p', null, [
-                'Ваш id в телеграмм: 👉🏿 ',
-                h('span', {
-                  className: 'clickable',
-                  onClick: () => copyToClipboard(user.telegram_id)
-                }, user.telegram_id),
-                ' 👈🏿',
+                'Ваш id в телеграмм: ',
+                h('span', { className: 'clickable', onClick: () => copyToClipboard(user.telegram_id) }, user.telegram_id)
               ]),
-              h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)'),
+              h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)')
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderReferrals = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Реферальная система', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
-            !error && h('p', { className: 'card' }, [
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Поддержка', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderReferrals = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('p', { className: 'card' }, [
               'Приглашайте друзей и получайте ',
               h('b', null, '7 дней'),
               ' бесплатно:'
-            ]),
-            !error && user && h('div', { className: 'card' }, [
-              h('p', null, [
-                'Ваша реферальная ссылка: ',
-                h('span', {
-                  className: 'clickable',
-                  onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`)
-                }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`),
-              ]),
-              h('p', { style: { fontStyle: 'italic' } }, '(нажмите на ссылку чтобы скопировать)'),
-            ]),
-            !error && referrals.length === 0 && h('p', { className: 'card' }, 'У вас пока нет рефералов.'),
-            !error && referrals.map((ref, index) =>
-              h('div', { key: index, className: 'card' }, [
-                h('p', null, [h('b', null, 'ID реферала: '), ref.referee_id]),
-                ref.bonus_applied
-                  ? h('p', null, [
-                      h('b', null, 'Бонус получен: '),
-                      new Date(ref.bonus_date).toLocaleString()
-                    ])
-                  : h('button', {
-                      className: 'button button-success',
-                      onClick: () => applyReferralBonus(ref.referee_id),
-                      disabled: loading
-                    }, [
-                      h('span', { className: 'button-icon' }, '🎁'),
-                      'Получить бонус'
-                    ])
-              ])
-            ),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            ])
+          );
 
-      const renderSubscriptions = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Подписки', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
-            !error && subscriptions.length === 0 && h('p', { className: 'card' }, 'Нет активных подписок.'),
-            !error && subscriptions.map((sub, index) =>
-              h('div', { key: index, className: 'card' }, [
+          if (user) {
+            contentChildren.push(
+              h('div', { className: 'card' }, [
+                h('p', null, [
+                  'Ваша реферальная ссылка: ',
+                  h('span', { className: 'clickable', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`)
+                ]),
+                h('p', { style: { fontStyle: 'italic' } }, '(нажмите на ссылку чтобы скопировать)')
+              ])
+            );
+          }
+
+          if (referrals.length === 0) {
+            contentChildren.push(h('p', { className: 'card' }, 'У вас пока нет рефералов.'));
+          } else {
+            referrals.forEach((ref, index) => {
+              const cardChildren = [
+                h('p', null, [h('b', null, 'ID реферала: '), ref.referee_id])
+              ];
+              if (ref.bonus_applied) {
+                cardChildren.push(
+                  h('p', null, [h('b', null, 'Бонус получен: '), new Date(ref.bonus_date).toLocaleString()])
+                );
+              } else {
+                cardChildren.push(
+                  h('button', { className: 'button button-success', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
+                );
+              }
+              contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
+            });
+          }
+
+          contentChildren.push(
+            h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Реферальная система', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderSubscriptions = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
+          );
+        } else {
+          if (subscriptions.length === 0) {
+            contentChildren.push(h('p', { className: 'card' }, 'Нет активных подписок.'));
+          } else {
+            subscriptions.forEach((sub, index) => {
+              const cardChildren = [
                 h('p', null, [h('b', null, 'Email: '), sub.email]),
                 h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
                 h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
                 h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
-                  !sub.email.startsWith('DE-FRA-TRIAL-') && h('button', {
-                    className: 'button button-success',
-                    onClick: () => { setSelectedSub(sub); setView('extend'); },
-                    disabled: loading
-                  }, 'Продлить'),
-                  h('button', {
-                    className: 'button button-primary',
-                    onClick: () => { setSelectedSub(sub); setView('setup'); },
-                    disabled: loading
-                  }, 'Настройка'),
-                ]),
-              ])
-            ),
-            !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: activateTrial, disabled: loading }, [
-                h('span', { className: 'button-icon' }, '🎁'),
-                'Пробная подписка',
-              ]),
-              h('span', { className: 'tooltip-text' }, 'Активируйте бесплатную подписку на 3 дня'),
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('buy'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '💳'),
-              'Купить подписку',
-            ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
-
-      const renderBuy = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Купить подписку', onBack: () => setView('subscriptions') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, false, null, generateRequestId())) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, [
-              '30 дней - 89 ₽',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, [
-              '90 дней - 249 ₽',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, [
-              '180 дней - 449 ₽',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, [
-              '360 дней - 849 ₽',
-            ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
-
-      const renderExtend = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Продлить подписку', onBack: () => setView('subscriptions') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, true, selectedSub.email, generateRequestId())) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
-            !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
-            !error && selectedSub && h('p', { className: 'card' }, [h('b', null, 'Текущая дата окончания: '), new Date(selectedSub.expiry_date).toLocaleString()]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-30'] }, [
-              'Продлить на 30 дней - 89 ₽',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-90'] }, [
-              'Продлить на 90 дней - 249 ₽',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-180'] }, [
-              'Продлить на 180 дней - 449 ₽',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub.email, generateRequestId()), disabled: loading || processingActions['extend-360'] }, [
-              'Продлить на 360 дней - 849 ₽',
-            ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
-
-      const renderSelectSubscription = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Выберите подписку', onBack: () => setView('referrals') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => applyReferralBonus(selectedReferee)) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('referrals') }, 'Назад'),
-            !error && h('p', { className: 'card' }, 'Выберите подписку для продления на 7 дней:'),
-            !error && subscriptions
-              .filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'))
-              .map((sub, index) =>
-                h('div', { key: index, className: 'card' }, [
-                  h('p', null, [h('b', null, 'Email: '), sub.email]),
-                  h('p', null, [h('b', null, 'Панель: '), sub.panel]),
-                  h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                  h('button', {
-                    className: 'button button-success',
-                    onClick: () => applyReferralBonus(selectedReferee, sub.email),
-                    disabled: loading
-                  }, [
-                    h('span', { className: 'button-icon' }, '🎁'),
-                    'Продлить на 7 дней'
-                  ]),
+                  !sub.email.startsWith('DE-FRA-TRIAL-') ? h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить') : null,
+                  h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка')
                 ])
-              ),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('referrals'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+              ];
+              contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
+            });
+          }
 
-      const renderPayment = () =>
-        h('div', { className: 'container' }, [
+          contentChildren.push(
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'button button-primary', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
+              h('span', { className: 'tooltip-text' }, 'Активируйте бесплатную подписку на 3 дня')
+            ]),
+            h('button', { className: 'button button-primary', onClick: () => setView('buy'), disabled: loading }, 'Купить подписку'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Подписки', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderBuy = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, false, null, generateRequestId())) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней - 89 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней - 249 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней - 449 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней - 849 ₽'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Купить подписку', onBack: () => setView('subscriptions') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderExtend = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => activateSubscription(30, true, selectedSub.email, generateRequestId())) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад')
+          );
+        } else {
+          if (selectedSub) {
+            contentChildren.push(
+              h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
+              h('p', { className: 'card' }, [h('b', null, 'Текущая дата окончания: '), new Date(selectedSub.expiry_date).toLocaleString()])
+            );
+          }
+          contentChildren.push(
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней - 89 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней - 249 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней - 449 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней - 849 ₽'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Продлить подписку', onBack: () => setView('subscriptions') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderSelectSubscription = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => applyReferralBonus(selectedReferee)) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('referrals') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(h('p', { className: 'card' }, 'Выберите подписку для продления на 7 дней:'));
+          const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
+          nonTrialSubs.forEach((sub, index) => {
+            contentChildren.push(
+              h('div', { key: index, className: 'card' }, [
+                h('p', null, [h('b', null, 'Email: '), sub.email]),
+                h('p', null, [h('b', null, 'Панель: '), sub.panel]),
+                h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
+                h('button', { className: 'button button-success', onClick: () => applyReferralBonus(selectedReferee, sub.email), disabled: loading }, 'Продлить на 7 дней')
+              ])
+            );
+          });
+          contentChildren.push(h('button', { className: 'button button-secondary', onClick: () => setView('referrals'), disabled: loading }, 'Назад'));
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Выберите подписку', onBack: () => setView('referrals') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderPayment = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(confirmActivation) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }, 'Назад')
+          );
+        } else if (paymentData) {
+          contentChildren.push(
+            h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
+            h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
+            h('p', { className: 'card' }, [h('b', null, 'Дата окончания: '), new Date(paymentData.expiry_date).toLocaleString()]),
+            h('button', { className: 'button button-success', onClick: confirmActivation, disabled: loading }, 'Подтвердить'),
+            h('button', { className: 'button button-danger', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, 'Отмена')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
           Header({ title: 'Подтверждение подписки', onBack: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(confirmActivation) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }, 'Назад'),
-            !error && paymentData && h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
-            !error && paymentData && h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
-            !error && paymentData && h('p', { className: 'card' }, [h('b', null, 'Дата окончания: '), new Date(paymentData.expiry_date).toLocaleString()]),
-            !error && paymentData && h('button', { className: 'button button-success', onClick: confirmActivation, disabled: loading }, [
-              h('span', { className: 'button-icon' }, '✅'),
-              'Подтвердить',
-            ]),
-            !error && paymentData && h('button', { className: 'button button-danger', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, [
-              h('span', { className: 'button-icon' }, '❌'),
-              'Отмена',
-            ]),
-          ]),
+          h('div', { className: 'content' }, contentChildren)
         ]);
+      };
 
-      const renderSetup = () =>
-        h('div', { className: 'container' }, [
+      const renderSetup = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад')
+          );
+        } else {
+          if (selectedSub) {
+            contentChildren.push(h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]));
+          }
+          contentChildren.push(
+            h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, window.TEXTS.setup.manualPC.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, window.TEXTS.setup.manualAndroid.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, window.TEXTS.setup.manualIOS.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, window.TEXTS.setup.manualAndroidTV.title),
+            h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
           Header({ title: 'Настройка', onBack: () => setView('subscriptions') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
-            !error && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '💻'),
-              window.TEXTS.setup.manualPC.title,
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '📱'),
-              window.TEXTS.setup.manualAndroid.title,
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '🍏'),
-              window.TEXTS.setup.manualIOS.title,
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '📺'),
-              window.TEXTS.setup.manualAndroidTV.title,
-            ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад'),
-          ]),
+          h('div', { className: 'content' }, contentChildren)
         ]);
+      };
 
-      const renderManualPC = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualPC')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
-            !error && selectedSub && h('div', { className: 'card' }, [
+      const renderManualPC = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualPC')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
+          );
+        } else if (selectedSub) {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualPC.content(selectedSub) } })
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderManualAndroid = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroid')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
-            !error && h('div', { className: 'card' }, [
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderManualAndroid = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroid')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroid.content } })
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderManualIOS = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
-            !error && h('div', { className: 'card' }, [
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderManualIOS = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualIOS.content } })
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderManualAndroidTV = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад'),
-            !error && selectedSub && h('div', { className: 'card' }, [
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderManualAndroidTV = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
+          );
+        } else if (selectedSub) {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub) } })
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderInfo = () =>
-        h('div', { className: 'container' }, [
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderInfo = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('button', { className: 'button button-primary', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
+            h('button', { className: 'button button-primary', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
+            h('button', { className: 'button button-primary', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
+            h('button', { className: 'button button-primary', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
           Header({ title: 'Информация', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('service'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '🌐'),
-              'О сервисе',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('subscription'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '📋'),
-              'О подписке',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('terms'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '📜'),
-              'Пользовательское соглашение',
-            ]),
-            !error && h('button', { className: 'button button-primary', onClick: () => setView('privacy'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '🔒'),
-              'Политика конфиденциальности',
-            ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад'),
-          ]),
+          h('div', { className: 'content' }, contentChildren)
         ]);
+      };
 
-      const renderService = () =>
-        h('div', { className: 'container' }, [
+      const renderService = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
           Header({ title: 'О сервисе', onBack: () => setView('info') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
-            !error && h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад'),
-          ]),
+          h('div', { className: 'content' }, contentChildren)
         ]);
+      };
 
-      const renderSubscription = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'О подписке', onBack: () => setView('info') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
-            !error && h('div', { className: 'card' }, [
+      const renderSubscription = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('p', null, [h('b', null, 'Стоимость:'), ' 89 ₽/месяц']),
               h('p', null, [h('b', null, 'Ограничение скорости:'), ' Отсутствует']),
               h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
               h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
               h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
               h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
-              h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.']),
+              h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderTerms = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
-            !error && h('div', { className: 'card' }, [
+        return h('div', { className: 'container' }, [
+          Header({ title: 'О подписке', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderTerms = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
             ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад'),
-          ]),
-        ]);
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
 
-      const renderPrivacy = () =>
-        h('div', { className: 'container' }, [
-          Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
-          h('div', { className: 'content' }, [
-            error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
-            error && h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад'),
-            !error && h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
-            !error && h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, [
-              h('span', { className: 'button-icon' }, '🔒'),
-              'Открыть политику',
-            ]),
-            !error && h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад'),
-          ]),
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
         ]);
+      };
+
+      const renderPrivacy = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
+            h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
 
       const views = {
         main: renderMainMenu,
@@ -1091,20 +1269,26 @@
         service: renderService,
         subscription: renderSubscription,
         terms: renderTerms,
-        privacy: renderPrivacy,
+        privacy: renderPrivacy
       };
 
-      return user
-        ? h('div', null, views[view]())
-        : h('div', { className: 'container' }, [
-            Header({ title: 'WSocks VPN' }),
-            h('div', { className: 'content' }, [
-              error && h('p', { className: 'error' }, error),
-              error && h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
-              error && h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение'),
-              !error && h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...'),
-            ]),
-          ]);
+      const contentChildren = [];
+
+      if (!user) {
+        contentChildren.push(
+          Header({ title: 'WSocks VPN' }),
+          h('div', { className: 'content' }, [
+            error ? h('p', { className: 'error' }, error) : null,
+            error ? h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить') : null,
+            error ? h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение') : null,
+            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...') : null
+          ])
+        );
+      } else {
+        contentChildren.push(views[view]());
+      }
+
+      return h('div', null, contentChildren);
     }
 
     ReactDOM.render(h(App), document.getElementById('root'));
