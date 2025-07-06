@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=stylesheet" rel="stylesheet">
   <script>
     // Заглушка для texts.js
     window.TEXTS = {
@@ -221,10 +221,10 @@
     }
 
     .button-square .icon {
-      width: clamp(180px, 40vw, 200px); /* Уменьшено в 1.5 раза */
-      height: clamp(180px, 40vw, 200px); /* Уменьшено в 1.5 раза */
-      max-width: 133px; /* Уменьшено в 1.5 раза */
-      max-height: 133px; /* Уменьшено в 1.5 раза */
+      width: clamp(180px, 40vw, 200px);
+      height: clamp(180px, 40vw, 200px);
+      max-width: 133px;
+      max-height: 133px;
     }
 
     .button-square .icon svg {
@@ -440,18 +440,18 @@
       }
 
       .button-square {
-        font-size: clamp(8.8px, 2vw, 9.6px); /* Уменьшено на 20% */
-        padding: 6.4px; /* Уменьшено на 20% */
+        font-size: clamp(28.8px, 5vw, 33.6px); /* Увеличено в 3.5 раза */
+        padding: 6.4px;
       }
 
       .button-square .icon {
-        width: clamp(160px, 30vw, 180px); /* Уменьшено в 1.5 раза */
-        height: clamp(160px, 30vw, 180px); /* Уменьшено в 1.5 раза */
+        width: clamp(160px, 30vw, 180px);
+        height: clamp(160px, 30vw, 180px);
       }
 
       .button-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px; /* Уменьшено для предотвращения съезжания */
+        gap: 6px;
       }
     }
 
@@ -474,19 +474,21 @@
       }
 
       .button-square {
-        font-size: clamp(4.8px, 0.8vw, 5.6px); /* Уменьшено в 2.5 раза */
-        padding: 5px; /* Уменьшено в 2.5 раза */
+        font-size: clamp(16.8px, 2.8vw, 19.6px); /* Увеличено в 3.5 раза */
+        padding: 3px; /* Уменьшено для сохранения размера кнопок */
       }
 
       .button-square .icon {
-        width: clamp(180px, 30vw, 200px); /* Уменьшено в 1.5 раза */
-        height: clamp(180px, 30vw, 200px); /* Уменьшено в 1.5 раза */
-        max-width: 133px; /* Уменьшено в 1.5 раза */
-        max-height: 133px; /* Уменьшено в 1.5 раза */
+        width: clamp(100px, 15vw, 120px); /* Уменьшено для устранения прокрутки */
+        height: clamp(100px, 15vw, 120px); /* Уменьшено для устранения прокрутки */
+        max-width: 80px; /* Уменьшено для сохранения пропорций */
+        max-height: 80px; /* Уменьшено для сохранения пропорций */
       }
 
       .button-grid {
-        gap: 12px;
+        gap: 8px; /* Уменьшено для компактности */
+        max-height: calc(100vh - 200px); /* Ограничение высоты для устранения прокрутки */
+        overflow: hidden; /* Убираем прокрутку */
       }
     }
   </style>
@@ -763,11 +765,7 @@
       };
 
       const renderMainMenu = () => {
-        const contentChildren = [
-          h('div', { className: 'logo' }, [
-            h('div', { className: 'logo-text' }, 'WSocks VPN')
-          ])
-        ];
+        const contentChildren = [];
 
         if (user) {
           contentChildren.push(
@@ -1169,215 +1167,215 @@
         const contentChildren = [];
 
         if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
-            );
-          } else {
-            contentChildren.push(
-              h('div', { className: 'card' }, [
-                h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualIOS.content } })
-              ]),
-              h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const renderManualAndroidTV = () => {
-          const contentChildren = [];
-  
-          if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
-            );
-          } else if (selectedSub) {
-            contentChildren.push(
-              h('div', { className: 'card' }, [
-                h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub) } })
-              ]),
-              h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const renderInfo = () => {
-          const contentChildren = [];
-  
-          if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
-            );
-          } else {
-            contentChildren.push(
-              h('button', { className: 'button button-primary', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
-              h('button', { className: 'button button-primary', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
-              h('button', { className: 'button button-primary', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
-              h('button', { className: 'button button-primary', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: 'Информация', onBack: () => setView('main') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const renderService = () => {
-          const contentChildren = [];
-  
-          if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-            );
-          } else {
-            contentChildren.push(
-              h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: 'О сервисе', onBack: () => setView('info') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const renderSubscription = () => {
-          const contentChildren = [];
-  
-          if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-            );
-          } else {
-            contentChildren.push(
-              h('div', { className: 'card' }, [
-                h('p', null, [h('b', null, 'Стоимость:'), ' 89 ₽/месяц']),
-                h('p', null, [h('b', null, 'Ограничение скорости:'), ' Отсутствует']),
-                h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
-                h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
-                h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
-                h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
-                h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
-              ]),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: 'О подписке', onBack: () => setView('info') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const renderTerms = () => {
-          const contentChildren = [];
-  
-          if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-            );
-          } else {
-            contentChildren.push(
-              h('div', { className: 'card' }, [
-                h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
-              ]),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const renderPrivacy = () => {
-          const contentChildren = [];
-  
-          if (error) {
-            contentChildren.push(
-              h('p', { className: 'error' }, error),
-              h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-            );
-          } else {
-            contentChildren.push(
-              h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
-              h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
-              h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-            );
-          }
-  
-          return h('div', { className: 'container' }, [
-            Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
-            h('div', { className: 'content' }, contentChildren)
-          ]);
-        };
-  
-        const views = {
-          main: renderMainMenu,
-          support: renderSupport,
-          referrals: renderReferrals,
-          subscriptions: renderSubscriptions,
-          buy: renderBuy,
-          extend: renderExtend,
-          selectsubscription: renderSelectSubscription,
-          payment: renderPayment,
-          setup: renderSetup,
-          manualPC: renderManualPC,
-          manualAndroid: renderManualAndroid,
-          manualIOS: renderManualIOS,
-          manualAndroidTV: renderManualAndroidTV,
-          info: renderInfo,
-          service: renderService,
-          subscription: renderSubscription,
-          terms: renderTerms,
-          privacy: renderPrivacy
-        };
-  
-        const contentChildren = [];
-  
-        if (!user) {
           contentChildren.push(
-            Header({ title: 'WSocks VPN' }),
-            h('div', { className: 'content' }, [
-              error ? h('p', { className: 'error' }, error) : null,
-              error ? h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить') : null,
-              error ? h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение') : null,
-              !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...') : null
-            ])
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
           );
         } else {
-          contentChildren.push(views[view]());
+          contentChildren.push(
+            h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualIOS.content } })
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+          );
         }
-  
-        return h('div', null, contentChildren);
+
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderManualAndroidTV = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
+          );
+        } else if (selectedSub) {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub) } })
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderInfo = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('button', { className: 'button button-primary', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
+            h('button', { className: 'button button-primary', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
+            h('button', { className: 'button button-primary', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
+            h('button', { className: 'button button-primary', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Информация', onBack: () => setView('main') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderService = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'О сервисе', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderSubscription = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
+              h('p', null, [h('b', null, 'Стоимость:'), ' 89 ₽/месяц']),
+              h('p', null, [h('b', null, 'Ограничение скорости:'), ' Отсутствует']),
+              h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
+              h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
+              h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
+              h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
+              h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'О подписке', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderTerms = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
+            ]),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const renderPrivacy = () => {
+        const contentChildren = [];
+
+        if (error) {
+          contentChildren.push(
+            h('p', { className: 'error' }, error),
+            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
+          );
+        } else {
+          contentChildren.push(
+            h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
+            h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
+            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+          );
+        }
+
+        return h('div', { className: 'container' }, [
+          Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
+          h('div', { className: 'content' }, contentChildren)
+        ]);
+      };
+
+      const views = {
+        main: renderMainMenu,
+        support: renderSupport,
+        referrals: renderReferrals,
+        subscriptions: renderSubscriptions,
+        buy: renderBuy,
+        extend: renderExtend,
+        selectsubscription: renderSelectSubscription,
+        payment: renderPayment,
+        setup: renderSetup,
+        manualPC: renderManualPC,
+        manualAndroid: renderManualAndroid,
+        manualIOS: renderManualIOS,
+        manualAndroidTV: renderManualAndroidTV,
+        info: renderInfo,
+        service: renderService,
+        subscription: renderSubscription,
+        terms: renderTerms,
+        privacy: renderPrivacy
+      };
+
+      const contentChildren = [];
+
+      if (!user) {
+        contentChildren.push(
+          Header({ title: 'WSocks VPN' }),
+          h('div', { className: 'content' }, [
+            error ? h('p', { className: 'error' }, error) : null,
+            error ? h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить') : null,
+            error ? h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение') : null,
+            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...') : null
+          ])
+        );
+      } else {
+        contentChildren.push(views[view]());
       }
-  
-      ReactDOM.render(h(App), document.getElementById('root'));
-    </script>
-  </body>
+
+      return h('div', null, contentChildren);
+    }
+
+    ReactDOM.render(h(App), document.getElementById('root'));
+  </script>
+</body>
 </html>
