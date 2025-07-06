@@ -423,7 +423,7 @@
           const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
           if (nonTrialSubs.length > 1 && !email) {
             setSelectedReferee(referee_id);
-            setView('select-subscription');
+            setView('selectsubscription');
             return;
           }
           const payload = { tg_id: user.telegram_id, referee_id, email };
