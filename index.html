@@ -39,7 +39,7 @@
   <style>
     /* CSS Custom Properties for Themes */
     :root[data-theme="dark"] {
-      --background-color: linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2A3244 100%);
+      --background-color: url('https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjM2M2Y5ZTA2MTE0ZmVhNDUyZGQ0ODVhMWFjNzVhM2ZiZDM4M2Q2MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7bu3XilJ5BOiSGic/giphy.gif') no-repeat center/cover;
       --text-color: #ffffff;
       --card-bg: rgba(0, 0, 0, 0.8);
       --header-bg: #000000;
@@ -86,6 +86,7 @@
       background: var(--background-color);
       color: var(--text-color);
       overflow-x: hidden;
+      background-attachment: fixed;
     }
 
     .container {
@@ -205,11 +206,11 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 16px;
+      gap: 6px;
+      padding: 10px;
       background: var(--button-bg);
       color: var(--text-color);
-      font-size: clamp(13px, 2.5vw, 14px);
+      font-size: clamp(11px, 2.5vw, 12px);
       text-align: center;
     }
 
@@ -220,7 +221,14 @@
     }
 
     .button-square .icon {
-      font-size: clamp(20px, 4vw, 24px);
+      width: clamp(18px, 4vw, 20px);
+      height: clamp(18px, 4vw, 20px);
+    }
+
+    .button-square .icon svg {
+      width: 100%;
+      height: 100%;
+      fill: var(--text-color);
     }
 
     .button-secondary {
@@ -253,7 +261,7 @@
     .button-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 16px;
     }
 
@@ -430,16 +438,17 @@
       }
 
       .button-square {
-        font-size: clamp(12px, 2.5vw, 13px);
-        padding: 12px;
+        font-size: clamp(11px, 2.5vw, 12px);
+        padding: 8px;
       }
 
       .button-square .icon {
-        font-size: clamp(18px, 4vw, 20px);
+        width: clamp(16px, 3vw, 18px);
+        height: clamp(16px, 3vw, 18px);
       }
 
       .button-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
       }
     }
@@ -463,16 +472,17 @@
       }
 
       .button-square {
-        font-size: clamp(14px, 2vw, 16px);
-        padding: 16px;
+        font-size: clamp(12px, 2vw, 14px);
+        padding: 12px;
       }
 
       .button-square .icon {
-        font-size: clamp(22px, 4vw, 26px);
+        width: clamp(18px, 3vw, 20px);
+        height: clamp(18px, 3vw, 20px);
       }
 
       .button-grid {
-        gap: 16px;
+        gap: 12px;
       }
     }
   </style>
@@ -772,28 +782,45 @@
             h('div', { className: 'button-grid' }, [
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: fetchReferrals, disabled: loading }, [
-                  h('span', { className: 'icon' }, '👥'),
+                  h('span', { className: 'icon' }, [
+                    h('svg', { viewBox: '0 0 24 24' }, [
+                      h('path', { d: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' }),
+                      h('path', { d: 'M20 12c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.67 0-5 1.34-5 4v2h4v-2c0-1.66 3.34-4 5-4z' })
+                    ])
+                  ]),
                   h('span', null, 'Реферальная система')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: fetchSubscriptions, disabled: loading }, [
-                  h('span', { className: 'icon' }, '🛡️'),
+                  h('span', { className: 'icon' }, [
+                    h('svg', { viewBox: '0 0 24 24' }, [
+                      h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z' })
+                    ])
+                  ]),
                   h('span', null, 'Подписки')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: () => setView('info'), disabled: loading }, [
-                  h('span', { className: 'icon' }, 'ℹ️'),
+                  h('span', { className: 'icon' }, [
+                    h('svg', { viewBox: '0 0 24 24' }, [
+                      h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' })
+                    ])
+                  ]),
                   h('span', null, 'Информация')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: () => setView('support'), disabled: loading }, [
-                  h('span', { className: 'icon' }, '📞'),
+                  h('span', { className: 'icon' }, [
+                    h('svg', { viewBox: '0 0 24 24' }, [
+                      h('path', { d: 'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z' })
+                    ])
+                  ]),
                   h('span', null, 'Поддержка Telegram')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
