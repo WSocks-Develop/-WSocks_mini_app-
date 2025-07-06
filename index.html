@@ -39,7 +39,7 @@
   <style>
     /* CSS Custom Properties for Themes */
     :root[data-theme="dark"] {
-      --background-color: url('https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjM2M2Y5ZTA2MTE0ZmVhNDUyZGQ0ODVhMWFjNzVhM2ZiZDM4M2Q2MCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7bu3XilJ5BOiSGic/giphy.gif') no-repeat center/cover;
+      --background-color: #333333; /* Заменено на тёмно-серый */
       --text-color: #ffffff;
       --card-bg: rgba(0, 0, 0, 0.8);
       --header-bg: #000000;
@@ -57,7 +57,7 @@
     }
 
     :root[data-theme="light"] {
-      --background-color: linear-gradient(135deg, #E0E1DD 0%, #D6D8D4 50%, #C9CBC4 100%);
+      --background-color: #333333; /* Заменено на тёмно-серый */
       --text-color: #333333;
       --card-bg: rgba(255, 255, 255, 0.9);
       --header-bg: #ffffff;
@@ -492,8 +492,8 @@
       }
 
       .button-square {
-        font-size: clamp(5.6px, 0.93vw, 6.53px); /* Уменьшено в 3 раза */
-        padding: 1px; /* Уменьшено для пропорций */
+        font-size: clamp(16.8px, 2.8vw, 19.6px);
+        padding: 2px;
         overflow-wrap: break-word;
         white-space: normal; /* Разрешить перенос текста */
         line-height: 1.2; /* Высота строки */
@@ -505,14 +505,14 @@
       }
 
       .button-square .icon {
-        width: clamp(26.67px, 4vw, 33.33px); /* Уменьшено в 3 раза */
-        height: clamp(26.67px, 4vw, 33.33px); /* Уменьшено в 3 раза */
-        max-width: 20px; /* Уменьшено в 3 раза */
-        max-height: 20px; /* Уменьшено в 3 раза */
+        width: clamp(80px, 12vw, 100px);
+        height: clamp(80px, 12vw, 100px);
+        max-width: 60px;
+        max-height: 60px;
       }
 
       .button-grid {
-        gap: 2px; /* Уменьшено в 3 раза */
+        gap: 6px;
         max-height: calc(100vh - 180px);
         overflow: hidden;
       }
@@ -549,6 +549,7 @@
       });
       const [selectedReferee, setSelectedReferee] = useState(null);
       const [processingActions, setProcessingActions] = useState({});
+      const [isSubscriptionsVisible, setIsSubscriptionsVisible] = useState(false); // Состояние для разворачивания подписок
 
       const API_URL = 'https://wsocks-api-bot-git.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -790,13 +791,39 @@
         return h('div', { className: 'header' }, children);
       };
 
+      const UserInfo = () => {
+        const toggleSubscriptions = () => setIsSubscriptionsVisible(!isSubscriptionsVisible);
+        const children = [
+          h('p', null, [h('b', null, 'Имя: '), user.first_name]),
+          h('p', null, [h('b', null, 'Количество рефералов: '), referrals.length]),
+          h('div', { className: 'clickable', onClick: toggleSubscriptions }, isSubscriptionsVisible ? 'Скрыть подписки' : 'Показать подписки')
+        ];
+
+        if (isSubscriptionsVisible) {
+          if (subscriptions.length === 0) {
+            children.push(h('p', { className: 'card' }, 'Нет активных подписок'));
+          } else {
+            subscriptions.forEach((sub, index) => {
+              children.push(
+                h('div', { key: index, className: 'card' }, [
+                  h('p', null, [h('b', null, 'Email: '), sub.email]),
+                  h('p', null, [h('b', null, 'Панель: '), sub.panel]),
+                  h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
+                  h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна'])
+                ])
+              );
+            });
+          }
+        }
+
+        return h('div', { className: 'card' }, children);
+      };
+
       const renderMainMenu = () => {
         const contentChildren = [];
 
         if (user) {
-          contentChildren.push(
-            h('p', { style: { marginBottom: '16px', textAlign: 'center', fontSize: 'clamp(16.8px, 3vw, 19.2px)' } }, `Добро пожаловать, ${user.first_name}!`)
-          );
+          contentChildren.push(h(UserInfo));
         }
 
         if (error) {
@@ -1227,7 +1254,7 @@
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub) } })
             ]),
-            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'НаSteel')
           );
         }
 
