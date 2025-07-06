@@ -212,6 +212,7 @@
       color: var(--text-color);
       font-size: clamp(11px, 2.5vw, 12px);
       text-align: center;
+      overflow-wrap: break-word; /* Добавлено для предотвращения переполнения текста */
     }
 
     .button-square:hover:not(:disabled) {
@@ -440,18 +441,21 @@
       }
 
       .button-square {
-        font-size: clamp(28.8px, 5vw, 33.6px); /* Увеличено в 3.5 раза */
-        padding: 6.4px;
+        font-size: clamp(8.8px, 2vw, 9.6px); /* Восстановлено исходное значение */
+        padding: 4px; /* Уменьшено для компактности */
+        overflow-wrap: break-word; /* Предотвращение переполнения текста */
       }
 
       .button-square .icon {
-        width: clamp(160px, 30vw, 180px);
-        height: clamp(160px, 30vw, 180px);
+        width: clamp(160px, 35vw, 180px); /* Восстановлено для баланса */
+        height: clamp(160px, 35vw, 180px);
+        max-width: 133px;
+        max-height: 133px;
       }
 
       .button-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 6px;
+        gap: 4px; /* Уменьшено для компактности */
       }
     }
 
@@ -475,19 +479,20 @@
 
       .button-square {
         font-size: clamp(16.8px, 2.8vw, 19.6px); /* Увеличено в 3.5 раза */
-        padding: 3px; /* Уменьшено для сохранения размера кнопок */
+        padding: 2px; /* Уменьшено для сохранения размера кнопок */
+        overflow-wrap: break-word; /* Предотвращение переполнения текста */
       }
 
       .button-square .icon {
-        width: clamp(100px, 15vw, 120px); /* Уменьшено для устранения прокрутки */
-        height: clamp(100px, 15vw, 120px); /* Уменьшено для устранения прокрутки */
-        max-width: 80px; /* Уменьшено для сохранения пропорций */
-        max-height: 80px; /* Уменьшено для сохранения пропорций */
+        width: clamp(80px, 12vw, 100px); /* Уменьшено для устранения прокрутки */
+        height: clamp(80px, 12vw, 100px); /* Уменьшено для устранения прокрутки */
+        max-width: 60px; /* Уменьшено для сохранения пропорций */
+        max-height: 60px; /* Уменьшено для сохранения пропорций */
       }
 
       .button-grid {
-        gap: 8px; /* Уменьшено для компактности */
-        max-height: calc(100vh - 200px); /* Ограничение высоты для устранения прокрутки */
+        gap: 6px; /* Уменьшено для компактности */
+        max-height: calc(100vh - 180px); /* Ограничение высоты для устранения прокрутки */
         overflow: hidden; /* Убираем прокрутку */
       }
     }
