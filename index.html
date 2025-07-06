@@ -258,11 +258,13 @@
         const saved = localStorage.getItem('selectedSub');
         return saved ? JSON.parse(saved) : null;
       });
+      const [selectedReferee, setSelectedReferee] = useState(null);
       const [processingActions, setProcessingActions] = useState({});
 
       const API_URL = 'https://wsocks-api-bot-o2if.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
+      const BOT_USERNAME = '@YourBot'; // Замените на реальное имя вашего бота
       const axiosInstance = axios.create({ timeout: 0 });
 
       useEffect(() => {
@@ -328,6 +330,28 @@
         }
       };
 
+      const fetchReferrals = async () => {
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
+        }
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await axiosInstance.get(`${API_URL}/api/referrals?tg_id=${user.telegram_id}`, {
+            headers: { 'Cache-Control': 'no-cache' }
+          });
+          console.log('Ответ рефералов:', response.data);
+          setReferrals(response.data.referrals || []);
+          setView('referrals');
+        } catch (err) {
+          console.error('Ошибка рефералов:', err);
+          setError(`Ошибка получения рефералов: ${err.response?.data?.detail || err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      };
+
       const activateSubscription = debounce(async (days, isExtension = false, email = null, requestId) => {
         if (!user) {
           setError('Пользователь не авторизован');
@@ -368,14 +392,53 @@
         }
         setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
+        setError(null);
         try {
           const response = await axiosInstance.post(`${API_URL}/api/activate-trial`, { tg_id: user.telegram_id });
           console.log('Ответ пробной подписки:', response.data);
           await fetchSubscriptions();
-          Telegram.WebApp.showAlert(`Пробная подписка успешно активирована на 3 дня до ${new Date(response.data.expiry_date).toLocaleString()}!`);
+          Telegram.WebApp.showAlert(`Пробная подписка активирована на 3 дня до ${response.data.expiry_date}!`);
         } catch (err) {
           console.error('Ошибка активации пробной подписки:', err);
           Telegram.WebApp.showAlert(err.response?.data?.detail || 'Ошибка активации пробной подписки');
+        } finally {
+          setLoading(false);
+          setProcessingActions(prev => ({ ...prev, [requestId]: false }));
+        }
+      }, 500);
+
+      const applyReferralBonus = debounce(async (referee_id, email = null) => {
+        if (!user) {
+          setError('Пользователь не авторизован');
+          return;
+        }
+        const requestId = generateRequestId();
+        if (processingActions[requestId]) {
+          return;
+        }
+        setProcessingActions(prev => ({ ...prev, [requestId]: true }));
+        setLoading(true);
+        setError(null);
+        try {
+          const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
+          if (nonTrialSubs.length > 1 && !email) {
+            setSelectedReferee(referee_id);
+            setView('select-subscription');
+            return;
+          }
+          const payload = { tg_id: user.telegram_id, referee_id, email };
+          const response = await axiosInstance.post(`${API_URL}/api/apply-referral-bonus`, payload);
+          console.log('Ответ реферального бонуса:', response.data);
+          await fetchSubscriptions();
+          await fetchReferrals();
+          Telegram.WebApp.showAlert(
+            response.data.email.startsWith('DE-FRA-USER-')
+              ? `Реферальная подписка активирована на 7 дней до ${response.data.expiry_date}!`
+              : `Подписка продлена на 7 дней до ${response.data.expiry_date}!`
+          );
+        } catch (err) {
+          console.error('Ошибка применения реферального бонуса:', err);
+          setError(`Ошибка применения реферального бонуса: ${err.response?.data?.detail || err.message}`);
         } finally {
           setLoading(false);
           setProcessingActions(prev => ({ ...prev, [requestId]: false }));
@@ -413,11 +476,13 @@
       };
 
       const generateRequestId = () => {
-        return Date.now().toString() + '-' + Math.random().toString(36).substr(2, 9);
+        return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       };
 
       const copyToClipboard = (text) => {
-        navigator.clipboard.writeText(text).catch(err => {
+        navigator.clipboard.writeText(text).then(() => {
+          Telegram.WebApp.showAlert('Ссылка скопирована!');
+        }).catch(err => {
           console.error('Ошибка копирования:', err);
           Telegram.WebApp.showAlert('Не удалось скопировать текст');
         });
@@ -440,7 +505,7 @@
             error && h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
             error && h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение'),
             !error && h('div', { className: 'tooltip' }, [
-              h('button', { className: 'button button-primary', onClick: () => setView('referrals'), disabled: loading }, [
+              h('button', { className: 'button button-primary', onClick: fetchReferrals, disabled: loading }, [
                 h('span', { className: 'button-icon' }, '👥'),
                 'Реферальная система',
               ]),
@@ -505,10 +570,42 @@
           Header({ title: 'Реферальная система', onBack: () => setView('main') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('referrals')) }, 'Повторить'),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад'),
-            !error && h('p', { className: 'card' }, ['Приглашайте друзей и получайте ', h('b', null, '7 дней'), ' бесплатно:']),
-            !error && h('p', { className: 'card' }, 'Реферальная система пока не реализована.'),
+            !error && h('p', { className: 'card' }, [
+              'Приглашайте друзей и получайте ',
+              h('b', null, '7 дней'),
+              ' бесплатно:'
+            ]),
+            !error && user && h('div', { className: 'card' }, [
+              h('p', null, [
+                'Ваша реферальная ссылка: ',
+                h('span', {
+                  className: 'clickable',
+                  onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`)
+                }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`),
+              ]),
+              h('p', { style: { fontStyle: 'italic' } }, '(нажмите на ссылку чтобы скопировать)'),
+            ]),
+            !error && referrals.length === 0 && h('p', { className: 'card' }, 'У вас пока нет рефералов.'),
+            !error && referrals.map((ref, index) =>
+              h('div', { key: index, className: 'card' }, [
+                h('p', null, [h('b', null, 'ID реферала: '), ref.referee_id]),
+                ref.bonus_applied
+                  ? h('p', null, [
+                      h('b', null, 'Бонус получен: '),
+                      new Date(ref.bonus_date).toLocaleString()
+                    ])
+                  : h('button', {
+                      className: 'button button-success',
+                      onClick: () => applyReferralBonus(ref.referee_id),
+                      disabled: loading
+                    }, [
+                      h('span', { className: 'button-icon' }, '🎁'),
+                      'Получить бонус'
+                    ])
+              ])
+            ),
             !error && h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад'),
           ]),
         ]);
@@ -528,15 +625,15 @@
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
                 h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
                 h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
-                  !sub.email.startsWith('DE-FRA-TRIAL-') && h('button', { 
-                    className: 'button button-success', 
-                    onClick: () => { setSelectedSub(sub); setView('extend'); }, 
-                    disabled: loading 
+                  !sub.email.startsWith('DE-FRA-TRIAL-') && h('button', {
+                    className: 'button button-success',
+                    onClick: () => { setSelectedSub(sub); setView('extend'); },
+                    disabled: loading
                   }, 'Продлить'),
-                  h('button', { 
-                    className: 'button button-primary', 
-                    onClick: () => { setSelectedSub(sub); setView('setup'); }, 
-                    disabled: loading 
+                  h('button', {
+                    className: 'button button-primary',
+                    onClick: () => { setSelectedSub(sub); setView('setup'); },
+                    disabled: loading
                   }, 'Настройка'),
                 ]),
               ])
@@ -604,6 +701,35 @@
           ]),
         ]);
 
+      const renderSelectSubscription = () =>
+        h('div', { className: 'container' }, [
+          Header({ title: 'Выберите подписку', onBack: () => setView('referrals') }),
+          h('div', { className: 'content' }, [
+            error && h('p', { className: 'error' }, error),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => applyReferralBonus(selectedReferee)) }, 'Повторить'),
+            error && h('button', { className: 'button button-secondary', onClick: () => setView('referrals') }, 'Назад'),
+            !error && h('p', { className: 'card' }, 'Выберите подписку для продления на 7 дней:'),
+            !error && subscriptions
+              .filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'))
+              .map((sub, index) =>
+                h('div', { key: index, className: 'card' }, [
+                  h('p', null, [h('b', null, 'Email: '), sub.email]),
+                  h('p', null, [h('b', null, 'Панель: '), sub.panel]),
+                  h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
+                  h('button', {
+                    className: 'button button-success',
+                    onClick: () => applyReferralBonus(selectedReferee, sub.email),
+                    disabled: loading
+                  }, [
+                    h('span', { className: 'button-icon' }, '🎁'),
+                    'Продлить на 7 дней'
+                  ]),
+                ])
+              ),
+            !error && h('button', { className: 'button button-secondary', onClick: () => setView('referrals'), disabled: loading }, 'Назад'),
+          ]),
+        ]);
+
       const renderPayment = () =>
         h('div', { className: 'container' }, [
           Header({ title: 'Подтверждение подписки', onBack: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }),
@@ -630,7 +756,7 @@
           Header({ title: 'Настройка', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, [
             error && h('p', { className: 'error' }, error),
-            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup') )}, 'Повторить'),
+            error && h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
             error && h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions') }, 'Назад'),
             !error && h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]),
             !error && h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, [
@@ -805,6 +931,7 @@
         subscriptions: renderSubscriptions,
         buy: renderBuy,
         extend: renderExtend,
+        selectsubscription: renderSelectSubscription,
         payment: renderPayment,
         setup: renderSetup,
         manualPC: renderManualPC,
