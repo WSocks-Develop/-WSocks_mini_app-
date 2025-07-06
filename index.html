@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,68 +8,126 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
   <script src="./texts.js"></script>
   <style>
+    /* CSS Custom Properties for Themes */
+    :root[data-theme="dark"] {
+      --background-color: #000000;
+      --text-color: #ffffff;
+      --card-bg: rgba(0, 0, 0, 0.8);
+      --header-bg: #000000;
+      --button-bg: #00cfff;
+      --button-hover-bg: #26e5ff;
+      --accent-color: #00cfff;
+      --button-secondary-bg: #444444;
+      --button-secondary-hover-bg: #666666;
+      --button-success-bg: #00ffae;
+      --button-success-hover-bg: #50ffa6;
+      --button-danger-bg: #ef4444;
+      --button-danger-hover-bg: #dc2626;
+      --shadow-color: rgba(0, 207, 255, 0.3);
+    }
+
+    :root[data-theme="light"] {
+      --background-color: #f0f0f0;
+      --text-color: #333333;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --header-bg: #ffffff;
+      --button-bg: #00bcd4;
+      --button-hover-bg: #26c6da;
+      --accent-color: #00bcd4;
+      --button-secondary-bg: #6b7280;
+      --button-secondary-hover-bg: #4b5563;
+      --button-success-bg: #10b981;
+      --button-success-hover-bg: #059669;
+      --button-danger-bg: #ef4444;
+      --button-danger-hover-bg: #dc2626;
+      --shadow-color: rgba(0, 188, 212, 0.3);
+    }
+
+    /* Общие стили */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f0f4f8;
-      color: #1f2a44;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      overflow-x: hidden;
     }
+
     .container {
       max-width: 420px;
       margin: 0 auto;
       min-height: 100vh;
-      background-color: white;
+      background-color: var(--background-color);
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      overflow-x: hidden;
       position: relative;
     }
+
     .header {
       position: sticky;
       top: 0;
-      background-color: #3b82f6;
-      color: white;
+      background-color: var(--header-bg);
+      color: var(--text-color);
       padding: 12px 16px;
       display: flex;
       align-items: center;
       z-index: 10;
+      font-family: 'Oswald', sans-serif;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
     }
+
     .header-title {
       flex: 1;
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       text-align: center;
+      text-shadow: 0 0 5px var(--text-color);
     }
+
     .back-button {
       background: none;
       border: none;
-      color: white;
+      color: var(--text-color);
       font-size: 24px;
       cursor: pointer;
       padding: 4px 8px;
+      transition: color 0.3s ease;
     }
+
     .back-button:disabled {
       cursor: not-allowed;
       pointer-events: none;
+      opacity: 0.5;
     }
+
+    .back-button:hover:not(:disabled) {
+      color: var(--accent-color);
+    }
+
     .content {
       padding: 16px;
     }
+
     .logo {
       text-align: center;
       margin-bottom: 16px;
     }
+
     .logo-text {
+      font-family: 'Oswald', sans-serif;
       font-size: 24px;
       font-weight: 700;
-      color: #1f2a44;
+      color: var(--text-color);
+      text-shadow: 0 0 5px var(--text-color);
     }
+
     .button {
       display: flex;
       align-items: center;
@@ -81,88 +139,117 @@
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.2s, transform 0.1s;
+      transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+      font-family: 'Inter', sans-serif;
     }
+
     .button:disabled {
       cursor: not-allowed;
       pointer-events: none;
+      opacity: 0.5;
     }
+
     .button:hover:not(:disabled) {
       transform: translateY(-1px);
+      box-shadow: 0 0 10px var(--shadow-color);
     }
+
     .button:active:not(:disabled) {
-      transform: translateY(0);
+      transform: scale(0.97);
     }
+
     .button-primary {
-      background-color: #3b82f6;
-      color: white;
+      background: var(--button-bg);
+      color: #000000;
     }
+
     .button-primary:hover:not(:disabled) {
-      background-color: #2563eb;
+      background: var(--button-hover-bg);
     }
+
     .button-secondary {
-      background-color: #6b7280;
-      color: white;
+      background: var(--button-secondary-bg);
+      color: var(--text-color);
     }
+
     .button-secondary:hover:not(:disabled) {
-      background-color: #4b5563;
+      background: var(--button-secondary-hover-bg);
     }
+
     .button-success {
-      background-color: #10b981;
-      color: white;
+      background: var(--button-success-bg);
+      color: #000000;
     }
+
     .button-success:hover:not(:disabled) {
-      background-color: #059669;
+      background: var(--button-success-hover-bg);
     }
+
     .button-danger {
-      background-color: #ef4444;
-      color: white;
+      background: var(--button-danger-bg);
+      color: #ffffff;
     }
+
     .button-danger:hover:not(:disabled) {
-      background-color: #dc2626;
+      background: var(--button-danger-hover-bg);
     }
+
     .button-icon {
       margin-right: 8px;
       font-size: 20px;
     }
+
     .card {
-      background-color: #f9fafb;
+      background: var(--card-bg);
       padding: 16px;
       margin-bottom: 16px;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      box-shadow: none;
+      transition: box-shadow 0.3s ease;
     }
+
+    .card:hover {
+      box-shadow: 0 0 15px var(--shadow-color);
+    }
+
     .card p {
       font-size: 14px;
       margin: 8px 0;
-      color: #374151;
+      color: var(--text-color);
     }
+
     .card b {
-      color: #1f2a44;
+      color: var(--text-color);
+      font-weight: 600;
     }
+
     .error {
-      color: #dc2626;
+      color: var(--button-danger-bg);
       font-size: 14px;
       text-align: center;
       margin-bottom: 16px;
     }
+
     .link {
-      color: #3b82f6;
+      color: var(--accent-color);
       text-decoration: none;
       font-weight: 600;
     }
+
     .link:hover {
       text-decoration: underline;
     }
+
     .tooltip {
       position: relative;
       display: inline-block;
       width: 100%;
     }
+
     .tooltip .tooltip-text {
       visibility: hidden;
-      background-color: #1f2a44;
-      color: white;
+      background-color: var(--header-bg);
+      color: var(--text-color);
       text-align: center;
       border-radius: 4px;
       padding: 4px 8px;
@@ -176,56 +263,118 @@
       opacity: 0;
       transition: opacity 0.2s;
     }
+
     .tooltip:hover .tooltip-text {
       visibility: visible;
       opacity: 1;
     }
+
     .clickable {
-      color: #3b82f6;
+      color: var(--accent-color);
       cursor: pointer;
       font-weight: 600;
     }
+
     .clickable:hover {
       text-decoration: underline;
     }
+
     .clickable-manual {
       cursor: pointer;
-      color: inherit;
+      color: var(--text-color);
       font-weight: 600;
     }
+
     .clickable-manual:hover {
       text-decoration: none;
+      color: var(--accent-color);
     }
+
     .manual-content {
       font-size: 14px;
-      color: #374151;
+      color: var(--text-color);
       line-height: 1.5;
     }
+
     .manual-content a {
-      color: #3b82f6;
+      color: var(--accent-color);
       text-decoration: none;
       font-weight: 600;
     }
+
     .manual-content a:hover {
       text-decoration: underline;
     }
+
     .manual-content pre {
-      background-color: #e5e7eb;
+      background-color: var(--button-secondary-bg);
       padding: 8px;
       border-radius: 4px;
       overflow-x: auto;
     }
+
     .manual-content code {
       font-family: monospace;
       font-size: 12px;
     }
+
     .manual-content ul {
       list-style-type: disc;
       margin-left: 20px;
       margin-bottom: 8px;
     }
+
     .manual-content li {
       margin-bottom: 4px;
+    }
+
+    /* Анимации */
+    .animate-fade-in-up {
+      animation: fadeInUp 0.6s ease-in-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Анимации для элементов */
+    .button, .card {
+      opacity: 0;
+      animation: fadeInUp 0.6s ease-in-out forwards;
+    }
+
+    .button:nth-child(1) { animation-delay: 0.1s; }
+    .button:nth-child(2) { animation-delay: 0.2s; }
+    .button:nth-child(3) { animation-delay: 0.3s; }
+    .button:nth-child(4) { animation-delay: 0.4s; }
+    .button:nth-child(5) { animation-delay: 0.5s; }
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.2s; }
+    .card:nth-child(3) { animation-delay: 0.3s; }
+
+    /* Адаптивность */
+    @media (max-width: 420px) {
+      .container {
+        max-width: 100%;
+      }
+
+      .header-title {
+        font-size: 16px;
+      }
+
+      .logo-text {
+        font-size: 20px;
+      }
+
+      .button {
+        font-size: 14px;
+        padding: 10px 12px;
+      }
+
+      .card p {
+        font-size: 13px;
+      }
     }
   </style>
 </head>
