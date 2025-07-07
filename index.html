@@ -41,19 +41,20 @@
     :root[data-theme="dark"] {
       --background-color: linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2A3244 100%);
       --text-color: #ffffff;
-      --card-bg: rgba(0, 0, 0, 0.8);
+      --card-bg: rgba(0, 0, 0, 0.9);
       --header-bg: #000000;
-      --button-bg: rgba(0, 207, 255, 0.2);
-      --button-hover-bg: rgba(38, 229, 255, 0.3);
-      --accent-color: #00cfff;
-      --button-secondary-bg: #444444;
-      --button-secondary-hover-bg: #666666;
+      --button-bg: #8b5cf6; /* Фиолетовый для действий */
+      --button-hover-bg: #a78bfa;
+      --accent-color: #8b5cf6;
+      --button-secondary-bg: #1f2937;
+      --button-secondary-hover-bg: #374151;
       --button-success-bg: #00ffae;
       --button-success-hover-bg: #50ffa6;
       --button-danger-bg: #ef4444;
       --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(0, 207, 255, 0.5);
-      --button-glow: 0 0 10px rgba(0, 207, 255, 0.5);
+      --shadow-color: rgba(139, 92, 246, 0.5);
+      --button-glow: 0 0 10px rgba(139, 92, 246, 0.5);
+      --error-color: #ef4444;
     }
 
     :root[data-theme="light"] {
@@ -61,17 +62,18 @@
       --text-color: #333333;
       --card-bg: rgba(255, 255, 255, 0.9);
       --header-bg: #ffffff;
-      --button-bg: rgba(0, 188, 212, 0.2);
-      --button-hover-bg: rgba(38, 198, 218, 0.3);
-      --accent-color: #00bcd4;
+      --button-bg: #8b5cf6;
+      --button-hover-bg: #a78bfa;
+      --accent-color: #8b5cf6;
       --button-secondary-bg: #6b7280;
       --button-secondary-hover-bg: #4b5563;
       --button-success-bg: #10b981;
       --button-success-hover-bg: #059669;
       --button-danger-bg: #ef4444;
       --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(0, 188, 212, 0.5);
-      --button-glow: 0 0 10px rgba(0, 188, 212, 0.5);
+      --shadow-color: rgba(139, 92, 246, 0.5);
+      --button-glow: 0 0 10px rgba(139, 92, 246, 0.5);
+      --error-color: #ef4444;
     }
 
     /* Общие стили */
@@ -168,10 +170,9 @@
 
     .user-panel {
       background: var(--card-bg);
-      padding: 12px;
+      padding: 16px;
       border-radius: 8px;
       box-shadow: var(--button-glow);
-      cursor: pointer;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
@@ -188,10 +189,27 @@
       align-items: center;
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
+      margin-bottom: 12px;
     }
 
     .user-panel-header span {
       color: var(--accent-color);
+    }
+
+    .user-panel-header button {
+      background: var(--button-bg);
+      color: var(--text-color);
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: clamp(12px, 2vw, 14px);
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .user-panel-header button:hover {
+      background: var(--button-hover-bg);
+      transform: translateY(-1px);
     }
 
     .user-panel-content {
@@ -201,14 +219,86 @@
     }
 
     .user-panel-content.open {
-      max-height: 500px;
+      max-height: 1000px;
       padding-top: 12px;
     }
 
-    .user-panel-content p {
-      font-size: clamp(13px, 2.5vw, 14px);
-      color: var(--text-color);
+    .user-panel-content .subscription {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .user-panel-content .subscription h3 {
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 600;
       margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .user-panel-content .subscription .status-error {
+      color: var(--error-color);
+      text-decoration: underline;
+    }
+
+    .user-panel-content .subscription .status-error::before {
+      content: '🔴';
+      margin-right: 4px;
+    }
+
+    .user-panel-content .subscription p {
+      font-size: clamp(12px, 2vw, 14px);
+      margin-bottom: 6px;
+    }
+
+    .user-panel-content .subscription .details {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .user-panel-content .subscription .details b {
+      font-weight: 600;
+    }
+
+    .user-panel-content .subscription .buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .user-panel-content .subscription .buttons button {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: clamp(12px, 2vw, 14px);
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .user-panel-content .subscription .buttons .copy-button {
+      background: var(--button-bg);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .user-panel-content .subscription .buttons .copy-button:hover {
+      background: var(--button-hover-bg);
+      transform: translateY(-1px);
+    }
+
+    .user-panel-content .subscription .buttons .instruction-button {
+      background: var(--button-secondary-bg);
+      color: var(--text-color);
+    }
+
+    .user-panel-content .subscription .buttons .instruction-button:hover {
+      background: var(--button-secondary-hover-bg);
+      transform: translateY(-1px);
     }
 
     .button {
@@ -216,10 +306,10 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 12px;
       border: none;
       border-radius: 8px;
-      font-size: clamp(14px, 2.5vw, 16px);
+      font-size: clamp(13px, 2.5vw, 15px);
       font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
@@ -256,17 +346,17 @@
     }
 
     .button-square {
-      aspect-ratio: 1/1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px;
+      gap: 6px;
+      padding: 10px;
       background: var(--button-bg);
       color: var(--text-color);
-      font-size: clamp(13px, 2.5vw, 14px);
+      font-size: clamp(12px, 2.5vw, 14px);
       text-align: center;
+      min-height: 100px;
     }
 
     .button-square:hover:not(:disabled) {
@@ -276,7 +366,7 @@
     }
 
     .button-square .icon {
-      font-size: clamp(18px, 3vw, 20px);
+      font-size: clamp(16px, 3vw, 18px);
     }
 
     .button-secondary {
@@ -308,7 +398,7 @@
 
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin-bottom: 16px;
     }
@@ -329,7 +419,7 @@
     }
 
     .card p {
-      font-size: clamp(13px, 2.5vw, 14px);
+      font-size: clamp(12px, 2.5vw, 14px);
       margin: 8px 0;
       color: var(--text-color);
     }
@@ -340,8 +430,8 @@
     }
 
     .error {
-      color: var(--button-danger-bg);
-      font-size: clamp(13px, 2.5vw, 14px);
+      color: var(--error-color);
+      font-size: clamp(12px, 2.5vw, 14px);
       text-align: center;
       margin-bottom: 16px;
       opacity: 0;
@@ -408,7 +498,7 @@
     }
 
     .manual-content {
-      font-size: clamp(13px, 2.5vw, 14px);
+      font-size: clamp(12px, 2.5vw, 14px);
       color: var(--text-color);
       line-height: 1.5;
     }
@@ -478,22 +568,18 @@
       }
 
       .button {
-        font-size: clamp(13px, 2.5vw, 14px);
-        padding: 10px 12px;
+        font-size: clamp(12px, 2.5vw, 14px);
+        padding: 8px 10px;
       }
 
       .button-square {
-        font-size: clamp(12px, 2.5vw, 13px);
-        padding: 10px;
+        font-size: clamp(11px, 2.5vw, 13px);
+        padding: 8px;
+        min-height: 80px;
       }
 
       .button-square .icon {
-        font-size: clamp(16px, 3vw, 18px);
-      }
-
-      .button-grid {
-        grid-template-columns: 1fr;
-        gap: 8px;
+        font-size: clamp(14px, 3vw, 16px);
       }
 
       .user-panel-header {
@@ -515,20 +601,22 @@
       }
 
       .button {
-        font-size: clamp(15px, 2vw, 17px);
-        padding: 12px 16px;
+        font-size: clamp(14px, 2vw, 16px);
+        padding: 10px 14px;
       }
 
       .button-square {
-        font-size: clamp(14px, 2vw, 15px);
-        padding: 14px;
+        font-size: clamp(13px, 2vw, 14px);
+        padding: 10px;
+        min-height: 90px;
       }
 
       .button-square .icon {
-        font-size: clamp(20px, 3vw, 22px);
+        font-size: clamp(18px, 3vw, 20px);
       }
 
       .button-grid {
+        grid-template-columns: repeat(4, 1fr);
         gap: 16px;
       }
     }
@@ -570,6 +658,7 @@
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
       const BOT_USERNAME = '@YourBot';
+      const APP_DOWNLOAD_LINK = 'https://example.com/download'; // Заменить на реальную ссылку
 
       const axiosInstance = axios.create({ timeout: 0 });
 
@@ -787,10 +876,10 @@
 
       const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text).then(() => {
-          Telegram.WebApp.showAlert('Ссылка скопирована!');
+          Telegram.WebApp.showAlert('Ключ скопирован!');
         }).catch(err => {
           console.error('Ошибка копирования:', err);
-          Telegram.WebApp.showAlert('Не удалось скопировать текст');
+          Telegram.WebApp.showAlert('Не удалось скопировать ключ');
         });
       };
 
@@ -817,18 +906,41 @@
         if (user) {
           const subContent = subscriptions.length === 0
             ? [h('p', null, 'Нет активных подписок')]
-            : subscriptions.map((sub, index) => 
-                h('p', { key: index }, [
-                  h('b', null, 'Email: '), sub.email, ' | ',
-                  h('b', null, 'До: '), new Date(sub.expiry_date).toLocaleDateString()
-                ])
-              );
+            : subscriptions.map((sub, index) => {
+                const isExpired = sub.is_expired;
+                return h('div', { key: index, className: 'subscription' }, [
+                  h('h3', null, [
+                    '🔐 Подключение #',
+                    sub.email.split('-').pop(),
+                    isExpired ? h('span', { className: 'status-error' }, 'Заблокировано') : null
+                  ]),
+                  h('p', null, [
+                    '📡 Активировано: ',
+                    new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' }),
+                    ' UTC'
+                  ]),
+                  h('div', { className: 'details' }, [
+                    h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
+                    h('b', null, 'Регион:'), h('span', null, 'Франкфурт'),
+                    h('b', null, 'Статус:'), h('span', { className: isExpired ? 'status-error' : '' }, isExpired ? '🔴 Заблокировано' : '🟢 Активно'),
+                    h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать'),
+                    h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
+                  ]),
+                  h('div', { className: 'buttons' }, [
+                    h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                      '📋 Скопировать'
+                    ]),
+                    h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, '📄 Инструкция')
+                  ])
+                ]);
+              });
 
           contentChildren.push(
-            h('div', { className: 'user-panel', onClick: toggleUserPanel }, [
+            h('div', { className: 'user-panel' }, [
               h('div', { className: 'user-panel-header' }, [
-                h('span', null, user.first_name),
-                h('span', null, `Рефералов: ${referrals.length}`)
+                h('span', null, `🔒 Ключи доступа: ${user.first_name}`),
+                h('span', null, `Рефералов: ${referrals.length}`),
+                h('button', { onClick: toggleUserPanel }, isUserPanelOpen ? 'Скрыть' : 'Показать')
               ]),
               h('div', { className: `user-panel-content ${isUserPanelOpen ? 'open' : ''}` }, subContent)
             ])
@@ -854,7 +966,7 @@
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: fetchReferrals, disabled: loading }, [
                   h('span', { className: 'icon' }, '🔗'),
-                  h('span', null, 'Реферальная система')
+                  h('span', null, 'Рефералы')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
