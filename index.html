@@ -41,13 +41,13 @@
     :root[data-theme="dark"] {
       --glass-bg: rgba(75, 156, 211, 0.3);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 0 10px #fff; /* Белая подсветка для хеадера */
+      --glass-shadow: 0 0 10px #fff;
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       --background-color: #131313;
       --text-color: #ffffff;
       --header-bg: rgba(0, 0, 0, 0.5);
-      --button-bg: #404040; /* Цвет кнопок */
+      --button-bg: #404040;
       --button-hover-bg: rgba(90, 180, 229, 0.4);
       --accent-color: #4b9cd3;
       --button-secondary-bg: rgba(31, 41, 55, 0.3);
@@ -58,7 +58,7 @@
       --button-danger-hover-bg: rgba(220, 38, 38, 0.4);
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
-      --telegram-block-bg: #2196f3; /* Цвет кнопки "Подпишись на ТГК" */
+      --telegram-block-bg: #2196f3;
     }
 
     :root[data-theme="light"] {
@@ -88,7 +88,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-weight: bold; /* Жирные шрифты */
+      font-weight: bold;
     }
 
     body {
@@ -123,7 +123,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000; /* У干еличен z-index для предотвращения перекрытия */
+      z-index: 1000;
       font-family: 'Oswald', sans-serif;
       border-radius: 12px;
     }
@@ -178,7 +178,7 @@
       text-shadow: var(--text-shadow);
     }
 
-    .user-panel, .subscriptions-panel, .card, .telegram-block, .subscription {
+    .subscriptions-panel, .card, .telegram-block, .subscription {
       background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
       box-shadow: var(--glass-shadow);
@@ -189,35 +189,18 @@
       animation: slideIn 0.5s ease-out forwards;
     }
 
-    .user-panel {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #1a1a1a; /* Более светлый цвет личного кабинета */
-      transform: scale(0.5); /* Уменьшение блока личного кабинета в 2 раза */
-      transform-origin: top;
-    }
-
-    .user-panel > div {
-      text-align: center;
-      padding: 10px;
-      border-radius: 8px;
-    }
-
-    .user-panel:hover {
-      transform: scale(0.52);
-      box-shadow: 0 6px 12px var(--shadow-color);
-    }
-
     .subscriptions-panel {
       padding: 16px;
-      max-height: 0; /* Скрытие блока подписок по умолчанию */
+      transition: max-height 0.3s ease-out, transform 0.3s ease, box-shadow 0.3s ease;
+      max-height: 0;
       overflow: hidden;
-      transition: max-height 0.3s ease-out;
+      opacity: 0;
     }
 
     .subscriptions-panel.open {
-      max-height: 1000px; /* Открытие блока при нажатии */
+      max-height: 1000px;
+      opacity: 1;
+      padding: 16px;
     }
 
     .subscriptions-panel:hover {
@@ -306,7 +289,7 @@
       transition: all 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
-      background: var(--telegram-block-bg); /* Цвет кнопки "Подпишись на ТГК" */
+      background: var(--telegram-block-bg);
     }
 
     .telegram-block:hover {
@@ -364,11 +347,11 @@
     }
 
     .button-primary {
-      background: #64b6f7; /* Новый цвет для кнопок "VPN" и "Магазин" */
+      background: var(--button-bg);
     }
 
     .button-primary:hover:not(:disabled) {
-      background: #4a9cd6; /* Цвет при наведении */
+      background: var(--button-hover-bg);
     }
 
     .button-square {
@@ -401,6 +384,24 @@
       text-shadow: var(--text-shadow);
     }
 
+    .button-square.small {
+      font-size: clamp(10px, 2vw, 12px);
+      padding: 5px;
+      min-height: 50px;
+    }
+
+    .button-square.small .icon {
+      font-size: clamp(40px, 8vw, 48px);
+    }
+
+    .accent-button {
+      background: #64b6f7;
+    }
+
+    .accent-button:hover:not(:disabled) {
+      background: #7cc7ff;
+    }
+
     .button-secondary {
       background: var(--button-secondary-bg);
     }
@@ -427,7 +428,7 @@
 
     .button-row {
       display: flex;
-      gap: 12px; 
+      gap: 12px;
       margin-bottom: 16px;
     }
 
@@ -437,15 +438,6 @@
 
     .button-row.second-row {
       justify-content: space-around;
-    }
-
-    .button-small {
-      transform: scale(0.5); /* Уменьшение кнопок в 2 раза */
-      font-size: clamp(10px, 2vw, 12px); /* Уменьшение текста */
-    }
-
-    .button-small .icon {
-      font-size: clamp(16px, 3vw, 20px); /* Уменьшение иконок */
     }
 
     .card {
@@ -494,7 +486,7 @@
       color: var(--accent-color);
       text-decoration: none;
       font-weight: 600;
- =     text-shadow: var(--text-shadow);
+      text-shadow: var(--text-shadow);
     }
 
     .link:hover {
@@ -667,7 +659,7 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    .button:nth-child(1), .card:nth-child(1), .user-panel:nth-child(1), .telegram-block:nth-child(1) { animation-delay: 0.1s; }
+    .button:nth-child(1), .card:nth-child(1), .telegram-block:nth-child(1) { animation-delay: 0.1s; }
     .button:nth-child(2), .card:nth-child(2) { animation-delay: 0.2s; }
     .button:nth-child(3), .card:nth-child(3) { animation-delay: 0.3s; }
     .button:nth-child(4), .card:nth-child(4) { animation-delay: 0.4s; }
@@ -700,15 +692,7 @@
       }
 
       .button-square .icon {
-        font-size: clamp(80px,16vw, 96px);
-      }
-
-      .user-panel {
-        transform: scale(0.5);
-      }
-
-      .user-panel:hover {
-        transform: scale(0.52);
+        font-size: clamp(80px, 16vw, 96px);
       }
 
       .product-grid {
@@ -741,46 +725,14 @@
       }
 
       .button-square .icon {
-        font-size: clamp(96px,16vw,120px);
+        font-size: clamp(96px, 16vw, 120px);
       }
-
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/javascript">
-    var gk_isXlsx = false;
-    var gk_xlsxFileLookup = {};
-    var gk_fileData = {};
-    function filledCell(cell) {
-      return cell !== '' && cell != null;
-    }
-    function loadFileData(filename) {
-      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-        try {
-          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-          var firstSheetName = workbook.SheetNames[0];
-          var worksheet = workbook.Sheets[firstSheetName];
-          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-          var filteredData = jsonData.filter(row => row.some(filledCell));
-          var headerRowIndex = filteredData.findIndex((row, index) =>
-            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-          );
-          if (headerRowIndex === -1 || headerRowIndex > 25) {
-            headerRowIndex = 0;
-          }
-          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
-          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-          return csv;
-        } catch (e) {
-          console.error(e);
-          return "";
-        }
-      }
-      return gk_fileData[filename] || "";
-    }
-
     const { useState, useEffect, createElement: h } = React;
 
     function debounce(func, wait) {
@@ -861,7 +813,7 @@
           })
           .catch(err => {
             console.error('Ошибка авторизации:', err);
-            setError(`Ошибка авторизации: ${err.response?.data?.detail || err.message}`);
+            setError(`Ошибка авторизации: ${err.response?.data?.detail || errагиеssage}`);
             setLoading(false);
           });
       }, []);
@@ -1064,9 +1016,6 @@
 
         if (user) {
           contentChildren.push(
-            h('div', { className: 'user-panel' }, [
-              h('div', null, `Здравствуйте, ${user.first_name}!`)
-            ]),
             h('button', { className: 'button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
             h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
               subscriptions.length === 0
@@ -1075,7 +1024,7 @@
                     const isExpired = sub.is_expired;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
-                        h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                        h('i', { className: 'far fa-key', style: { marginRight: '4px' } }),
                         `Подключение #${sub.email.split('-').pop()}`,
                         isExpired ? h('span', { className: 'status-error' }, [
                           h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
@@ -1083,7 +1032,7 @@
                         ]) : null
                       ]),
                       h('p', null, [
-                        h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                        h('i', { className: 'far fa-calendar', style: { marginRight: '4px' } }),
                         `Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
                       ]),
                       h('div', { className: 'details' }, [
@@ -1098,11 +1047,11 @@
                       ]),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                          h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                          h('i', { className: 'far fa-copy', style: { marginRight: '4px' } }),
                           'Скопировать'
                         ]),
                         h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
-                          h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                          h('i', { className: 'far fa-book', style: { marginRight: '4px' } }),
                           'Инструкция'
                         ])
                       ])
@@ -1122,15 +1071,15 @@
           contentChildren.push(
             h('div', { className: 'button-row first-row' }, [
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: fetchSubscriptions, disabled: loading }, [
-                  h('i', { className: 'fas fa-cog icon' }),
+                h('button', { className: 'button button-square accent-button', onClick: fetchSubscriptions, disabled: loading }, [
+                  h('i', { className: 'far fa-lock icon' }),
                   h('span', null, 'VPN')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: () => setView('shop'), disabled: loading }, [
-                  h('i', { className: 'fas fa-shopping-cart icon' }),
+                h('button', { className: 'button button-square accent-button', onClick: () => setView('shop'), disabled: loading }, [
+                  h('i', { className: 'far fa-store icon' }),
                   h('span', null, 'Магазин')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Посетите наш магазин')
@@ -1138,29 +1087,29 @@
             ]),
             h('div', { className: 'button-row second-row' }, [
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square button-small', onClick: fetchReferrals, disabled: loading }, [
-                  h('i', { className: 'fas fa-link icon' }),
+                h('button', { className: 'button button-square small', onClick: fetchReferrals, disabled: loading }, [
+                  h('i', { className: 'far fa-users icon' }),
                   h('span', null, 'Рефералы')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square button-small', onClick: () => setView('support'), disabled: loading }, [
-                  h('i', { className: 'fas fa-envelope icon' }),
+                h('button', { className: 'button button-square small', onClick: () => setView('support'), disabled: loading }, [
+                  h('i', { className: 'far fa-headset icon' }),
                   h('span', null, 'Поддержка')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square button-small', onClick: () => setView('info'), disabled: loading }, [
-                  h('i', { className: 'fas fa-info-circle icon' }),
+                h('button', { className: 'button button-square small', onClick: () => setView('info'), disabled: loading }, [
+                  h('i', { className: 'far fa-info-circle icon' }),
                   h('span', null, 'Информация')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
               ])
             ]),
             h('div', { className: 'telegram-block', onClick: () => Telegram.WebApp.openLink(TELEGRAM_CHANNEL_LINK) }, [
-              h('i', { className: 'fas fa-bullhorn icon' }),
+              h('i', { className: 'far fa-bullhorn icon' }),
               h('span', null, 'Подпишись на наш ТГК')
             ])
           );
@@ -1240,7 +1189,7 @@
           } else {
             referrals.forEach((ref, index) => {
               const cardChildren = [
-                h('p', null, [h('b', null, 'ID реферала: '), ref.referee_id])
+                h('p', null, [h('b# Рефералы', null, ref.referee_id)])
               ];
               if (ref.bonus_applied) {
                 cardChildren.push(
@@ -1283,7 +1232,7 @@
               const isExpired = sub.is_expired;
               const cardChildren = [
                 h('h3', null, [
-                  h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                  h('i', { className: 'far fa-key', style: { marginRight: '4px' } }),
                   `Подключение #${sub.email.split('-').pop()}`,
                   isExpired ? h('span', { className: 'status-error' }, [
                     h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
@@ -1291,7 +1240,7 @@
                   ]) : null
                 ]),
                 h('p', null, [
-                  h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                  h('i', { className: 'far fa-calendar', style: { marginRight: '4px' } }),
                   `Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
                 ]),
                 h('div', { className: 'details' }, [
@@ -1306,11 +1255,11 @@
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                    h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                    h('i', { className: 'far fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
                   h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
-                    h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                    h('i', { className: 'far fa-book', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
                 ])
@@ -1407,7 +1356,7 @@
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
-                  h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                  h('i', { className: 'far fa-key', style: { marginRight: '4px' } }),
                   `Подключение #${sub.email.split('-').pop()}`,
                   sub.is_expired ? h('span', { className: 'status-error' }, [
                     h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
@@ -1415,7 +1364,7 @@
                   ]) : null
                 ]),
                 h('p', null, [
-                  h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                  h('i', { className: 'far fa-calendar', style: { marginRight: '4px' } }),
                   `Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
                 ]),
                 h('div', { className: 'details' }, [
@@ -1426,15 +1375,15 @@
                     sub.is_expired ? 'Заблокировано' : 'Активно'
                   ]),
                   h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать'),
-                  h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
+                  h('b', null, 'Устройство:'), h('1300span', null, 'Смартфон')
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                    h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                    h('i', { className: 'far fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
                   h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
-                    h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                    h('i', { className: 'far fa-book', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
                 ])
