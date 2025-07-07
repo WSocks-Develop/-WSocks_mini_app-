@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WSocks</title>
+  <title>WSocks VPN</title>
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
@@ -39,9 +39,9 @@
   </script>
   <style>
     :root[data-theme="dark"] {
-      --glass-bg: rgba(0, 0, 0, 0.2);
+      --glass-bg: rgba(75, 156, 211, 0.3);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      --glass-shadow: 0 0 10px var(--accent-color);
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       --background-color: #131313;
@@ -59,17 +59,15 @@
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
       --telegram-block-bg: rgba(75, 156, 211, 0.3);
-      --card-bg: rgba(75, 156, 211, 0.3);
-      --card-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
     }
 
     :root[data-theme="light"] {
-      --glass-bg: rgba(255, 255, 255, 0.2);
+      --glass-bg: rgba(255, 255, 255, 0.1);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
+      --glass-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --background-color: #131313;
+      --background-color: linear-gradient(135deg, #E0E1DD 0%, #D6D8D4 50%, #C9CBC4 100%);
       --text-color: #333333;
       --header-bg: rgba(255, 255, 255, 0.5);
       --button-bg: rgba(75, 156, 211, 0.3);
@@ -84,8 +82,6 @@
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
       --telegram-block-bg: rgba(75, 156, 211, 0.3);
-      --card-bg: rgba(75, 156, 211, 0.3);
-      --card-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
     }
 
     * {
@@ -135,7 +131,7 @@
       font-size: clamp(20px, 4vw, 26px);
       font-weight: 700;
       text-align: center;
-      text-shadow: 0 0 10px #ffffff;
+      text-shadow: 0 0 5px #fff;
     }
 
     .back-button {
@@ -186,17 +182,16 @@
       backdrop-filter: var(--glass-blur);
       box-shadow: var(--glass-shadow);
       border-radius: 12px;
-    }
-
-    .user-panel {
       padding: 20px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
-      transform: scale(1.1);
+    }
+
+    .user-panel {
       display: flex;
-      justify-content: space-between;
-      color: #ffffff;
+      justify-content: space-around;
+      transform: scale(1.1);
     }
 
     .user-panel:hover {
@@ -204,19 +199,8 @@
       box-shadow: 0 6px 12px var(--shadow-color);
     }
 
-    .user-panel-header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      font-size: clamp(16px, 3vw, 18px);
-      font-weight: 600;
-      margin-bottom: 12px;
-      gap: 8px;
-      text-shadow: var(--text-shadow);
-    }
-
-    .user-panel-header span {
-      color: var(--accent-color);
+    .user-panel > div {
+      text-align: center;
     }
 
     .subscriptions-panel {
@@ -267,7 +251,7 @@
     .subscriptions-panel .subscription .details {
       display: grid;
       grid-template-columns: 1fr 2fr;
-      gap: 8urrences;
+      gap: 8px;
       margin-bottom: 12px;
     }
 
@@ -332,8 +316,6 @@
       font-weight: 600;
       color: var(--text-color);
       text-shadow: var(--text-shadow);
-   ```html
-      text-shadow: var(--text-shadow);
     }
 
     .telegram-block .icon {
@@ -346,10 +328,10 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border: none;
       border-radius: 8px;
-      font-size: clamp(14px, 2.5vw, 16px);
+      font-size: clamp(12px, 2.5vw, 14px);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -391,11 +373,11 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px;
-      font-size: clamp(28px, 5vw, 32px);
+      padding: 10px;
+      font-size: clamp(20px, 4vw, 24px);
       font-weight: bold;
       text-align: center;
-      min-height: 120px;
+      min-height: 100px;
       transform: scale(1.2);
     }
 
@@ -406,7 +388,7 @@
     }
 
     .button-square .icon {
-      font-size: clamp(106.67px, 20vw, 120px);
+      font-size: clamp(80px, 16vw, 96px);
       color: #ffffff;
       text-shadow: var(--text-shadow);
     }
@@ -458,8 +440,6 @@
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
-      background: var(--card-bg);
-      box-shadow: var(--card-shadow);
     }
 
     .card:hover {
@@ -622,33 +602,24 @@
     }
 
     .product-grid {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 20px;
     }
 
     .product-card {
-      background: var(--card-bg);
+      background: var(--glass-bg);
       backdrop-filter: var(--glass-blur);
-      box-shadow: var(--card-shadow);
+      box-shadow: var(--glass-shadow);
       border-radius: 12px;
       padding: 16px;
       text-align: center;
       transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     .product-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 12px var(--shadow-color);
-    }
-
-    .product-card img {
-      width: 100%;
-      height: auto;
-      margin-bottom: 10px;
     }
 
     .product-card h3 {
@@ -661,6 +632,12 @@
       font-size: 14px;
       margin-bottom: 12px;
       text-shadow: var(--text-shadow);
+    }
+
+    .product-image {
+      height: 100px;
+      background: #ccc;
+      margin-bottom: 10px;
     }
 
     .fas, .far {
@@ -704,13 +681,13 @@
       }
 
       .button-square {
-        font-size: clamp(24px, 5vw, 28px);
+        font-size: clamp(20px, 4vw, 24px);
         padding: 10px;
         min-height: 100px;
       }
 
       .button-square .icon {
-        font-size: clamp(93.33px, 20vw, 106.67px);
+        font-size: clamp(80px, 16vw, 96px);
       }
 
       .user-panel {
@@ -722,7 +699,7 @@
       }
 
       .product-grid {
-        flex-direction: column;
+        grid-template-columns: 1fr;
       }
     }
 
@@ -731,7 +708,7 @@
         max-width: min(80vw, 1400px);
       }
 
-      .header-title |
+      .header-title {
         font-size: clamp(22px, 3vw, 28px);
       }
 
@@ -745,13 +722,13 @@
       }
 
       .button-square {
-        font-size: clamp(28px, 4vw, 32px);
+        font-size: clamp(24px, 4vw, 28px);
         padding: 12px;
         min-height: 110px;
       }
 
       .button-square .icon {
-        font-size: clamp(120px, 20vw, 133.33px);
+        font-size: clamp(96px, 16vw, 120px);
       }
 
       .user-panel {
@@ -795,6 +772,11 @@
       const [selectedReferee, setSelectedReferee] = useState(null);
       const [processingActions, setProcessingActions] = useState({});
       const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
+      const [products] = useState([
+        { name: 'Товар 1', description: 'Описание товара 1' },
+        { name: 'Товар 2', description: 'Описание товара 2' },
+        { name: 'Товар 3', description: 'Описание товара 3' }
+      ]);
       const [searchTerm, setSearchTerm] = useState('');
 
       const API_URL = 'https://wsocks-api-bot-git.onrender.com';
@@ -850,7 +832,7 @@
       const fetchSubscriptions = async () => {
         if (!user) {
           setError('Пользователь не авторизован');
-          return成;
+          return;
         }
         setLoading(true);
         setError(null);
@@ -889,7 +871,8 @@
         } finally {
           setLoading(false);
         }
-      },
+      };
+
       const activateSubscription = debounce(async (days, isExtension = false, email = null, requestId) => {
         if (!user) {
           setError('Пользователь не авторизован');
@@ -1030,10 +1013,6 @@
         setIsSubscriptionsOpen(!isSubscriptionsOpen);
       };
 
-      const handleSearch = (event) => {
-        setSearchTerm(event.target.value.toLowerCase());
-      };
-
       const Header = ({ title, onBack }) => {
         const children = [];
         if (onBack) {
@@ -1049,19 +1028,17 @@
         if (user) {
           contentChildren.push(
             h('div', { className: 'user-panel' }, [
-              h('div', { className: 'user-panel-header' }, [
-                h('span', null, [
-                  h('i', { className: 'fas fa-user', style: { marginRight: '4px' } }),
-                  `${user.first_name} (${user.telegram_id})`
-                ]),
-                h('span', null, [
-                  h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
-                  `Подписки: ${subscriptions.length}`
-                ]),
-                h('span', null, [
-                  h('i', { className: 'fas fa-link', style: { marginRight: '4px' } }),
-                  `Рефералы: ${referrals.length}`
-                ])
+              h('div', { className: 'user-info' }, [
+                h('p', null, `Имя: ${user.first_name}`),
+                h('p', null, `TG ID: ${user.telegram_id}`)
+              ]),
+              h('div', { className: 'subscriptions-info' }, [
+                h('p', null, 'Подписки'),
+                h('p', null, subscriptions.length)
+              ]),
+              h('div', { className: 'referrals-info' }, [
+                h('p', null, 'Рефералы'),
+                h('p', null, referrals.length)
               ])
             ]),
             h('button', { className: 'button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
@@ -1721,26 +1698,24 @@
       };
 
       const renderShop = () => {
-        const products = [
-          { name: 'Товар 1', description: 'Описание товара 1', image: 'https://via.placeholder.com/150' },
-          { name: 'Товар 2', description: 'Описание товара 2', image: 'https://via.placeholder.com/150' },
-          { name: 'Товар 3', description: 'Описание товара 3', image: 'https://via.placeholder.com/150' }
-        ];
-
-        const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm));
-
+        const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
         return h('div', { className: 'container' }, [
           Header({ title: 'Магазин', onBack: () => setView('main') }),
           h('div', { className: 'content' }, [
-            h('input', { type: 'search', className: 'search-bar', placeholder: 'Поиск товаров', onInput: handleSearch }),
-            h('div', { className: 'product-grid' }, filteredProducts.map(product => 
-              h('div', { className: 'product-card' }, [
-                h('img', { src: product.image, alt: product.name }),
+            h('input', { 
+              type: 'search', 
+              className: 'search-bar', 
+              placeholder: 'Поиск товаров', 
+              onChange: (e) => setSearchTerm(e.target.value) 
+            }),
+            h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
+              h('div', { key: index, className: 'product-card' }, [
+                h('div', { className: 'product-image' }, 'Image'),
                 h('h3', null, product.name),
                 h('p', null, product.description),
                 h('button', { className: 'button button-primary' }, 'Купить')
               ])
-            )),
+            ))),
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           ])
         ]);
