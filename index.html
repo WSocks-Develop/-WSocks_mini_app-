@@ -44,7 +44,7 @@
       --glass-shadow: 0 0 10px #fff;
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-      --background-color: linear-gradient(to top, #1a1a1a, #333333);
+      --background-color: linear-gradient(to bottom, #333333, #1a1a1a);
       --text-color: #ffffff;
       --header-bg: rgba(0, 0, 0, 0.5);
       --button-bg: linear-gradient(135deg, #505050, #404040);
@@ -184,7 +184,7 @@
     }
 
     .subscriptions-panel, .card, .subscription {
-      background: var(--glass-bg);
+      background: rgba(0, 0, 0, 0.8);
       backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
@@ -391,6 +391,10 @@
       transform: rotate(30deg);
       animation: shine 3s infinite linear;
       pointer-events: none;
+    }
+
+    .no-shine::before {
+      content: none !important;
     }
 
     @keyframes shine {
@@ -1080,6 +1084,7 @@
                 ? [h('p', null, 'Нет активных подписок')]
                 : subscriptions.map((sub, index) => {
                     const isExpired = sub.is_expired;
+                    const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1091,17 +1096,11 @@
                       ]),
                       h('p', null, [
                         h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                        `Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
+                        `До окончания: ${daysRemaining} дней`
                       ]),
                       h('div', { className: 'details' }, [
                         h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
-                        h('b', null, 'Регион:'), h('span', null, 'Франкфурт'),
-                        h('b', null, 'Статус:'), h('span', { className: isExpired ? 'status-error' : '' }, [
-                          isExpired ? h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }) : h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                          isExpired ? 'Заблокировано' : 'Активно'
-                        ]),
-                        h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать'),
-                        h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
+                        h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
                       ]),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1288,6 +1287,7 @@
           } else {
             subscriptions.forEach((sub, index) => {
               const isExpired = sub.is_expired;
+              const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
               const cardChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1299,17 +1299,11 @@
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                  `Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
+                  `До окончания: ${daysRemaining} дней`
                 ]),
                 h('div', { className: 'details' }, [
-                h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
-                  h('b', null, 'Регион:'), h('span', null, 'Франкфурт'),
-                  h('b', null, 'Статус:'), h('span', { className: isExpired ? 'status-error' : '' }, [
-                    isExpired ? h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }) : h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                    isExpired ? 'Заблокировано' : 'Активно'
-                  ]),
-                  h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать'),
-                  h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
+                  h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
+                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1411,6 +1405,7 @@
           contentChildren.push(h('p', { className: 'card' }, 'Выберите подписку для продления на 7 дней:'));
           const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
           nonTrialSubs.forEach((sub, index) => {
+            const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
@@ -1423,17 +1418,11 @@
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                  `Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
+                  `До окончания: ${daysRemaining} дней`
                 ]),
                 h('div', { className: 'details' }, [
                   h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
-                  h('b', null, 'Регион:'), h('span', null, 'Франкфурт'),
-                  h('b', null, 'Статус:'), h('span', { className: sub.is_expired ? 'status-error' : '' }, [
-                    sub.is_expired ? h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }) : h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                    sub.is_expired ? 'Заблокировано' : 'Активно'
-                  ]),
-                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать'),
-                  h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
+                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1612,16 +1601,16 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('main') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main') }, 'Назад')
           );
         } else {
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
-            h('button', { className: 'glass-button button-primary', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
-            h('button', { className: 'glass-button button-primary', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
-            h('button', { className: 'glass-button button-primary', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
 
@@ -1637,13 +1626,13 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
 
@@ -1659,8 +1648,8 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
           );
         } else {
           contentChildren.push(
@@ -1673,7 +1662,7 @@
               h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
               h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
 
@@ -1689,15 +1678,15 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
             ]),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
 
@@ -1713,14 +1702,14 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
-            h('button', { className: 'glass-button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
-            h('button', { className: 'glass-button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
 
