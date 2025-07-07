@@ -123,7 +123,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 1000; /* Увеличен z-index для предотвращения перекрытия */
+      z-index: 1000; /* У干еличен z-index для предотвращения перекрытия */
       font-family: 'Oswald', sans-serif;
       border-radius: 12px;
     }
@@ -194,7 +194,8 @@
       justify-content: center;
       align-items: center;
       background: #1a1a1a; /* Более светлый цвет личного кабинета */
-      transform: scale(1.1);
+      transform: scale(0.5); /* Уменьшение блока личного кабинета в 2 раза */
+      transform-origin: top;
     }
 
     .user-panel > div {
@@ -204,22 +205,19 @@
     }
 
     .user-panel:hover {
-      transform: scale(1.12);
+      transform: scale(0.52);
       box-shadow: 0 6px 12px var(--shadow-color);
     }
 
     .subscriptions-panel {
       padding: 16px;
-      transition: max-height 0.3s ease-out, transform 0.3s ease, box-shadow 0.3s ease;
-      max-height: 0;
+      max-height: 0; /* Скрытие блока подписок по умолчанию */
       overflow: hidden;
-      opacity: 0;
+      transition: max-height 0.3s ease-out;
     }
 
     .subscriptions-panel.open {
-      max-height: 1000px;
-      opacity: 1;
-      padding: 16px;
+      max-height: 1000px; /* Открытие блока при нажатии */
     }
 
     .subscriptions-panel:hover {
@@ -366,11 +364,11 @@
     }
 
     .button-primary {
-      background: var(--button-bg);
+      background: #64b6f7; /* Новый цвет для кнопок "VPN" и "Магазин" */
     }
 
     .button-primary:hover:not(:disabled) {
-      background: var(--button-hover-bg);
+      background: #4a9cd6; /* Цвет при наведении */
     }
 
     .button-square {
@@ -429,7 +427,7 @@
 
     .button-row {
       display: flex;
-      gap: 12px;
+      gap: 12px; 
       margin-bottom: 16px;
     }
 
@@ -443,6 +441,11 @@
 
     .button-small {
       transform: scale(0.5); /* Уменьшение кнопок в 2 раза */
+      font-size: clamp(10px, 2vw, 12px); /* Уменьшение текста */
+    }
+
+    .button-small .icon {
+      font-size: clamp(16px, 3vw, 20px); /* Уменьшение иконок */
     }
 
     .card {
@@ -491,7 +494,7 @@
       color: var(--accent-color);
       text-decoration: none;
       font-weight: 600;
-      text-shadow: var(--text-shadow);
+ =     text-shadow: var(--text-shadow);
     }
 
     .link:hover {
@@ -701,11 +704,11 @@
       }
 
       .user-panel {
-        transform: scale(1.05);
+        transform: scale(0.5);
       }
 
       .user-panel:hover {
-        transform: scale(1.07);
+        transform: scale(0.52);
       }
 
       .product-grid {
@@ -741,19 +744,43 @@
         font-size: clamp(96px,16vw,120px);
       }
 
-      .user-panel {
-        transform: scale(1.15);
-      }
-
-      .user-panel:hover {
-        transform: scale(1.17);
-      }
     }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error(e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+
     const { useState, useEffect, createElement: h } = React;
 
     function debounce(func, wait) {
@@ -1038,7 +1065,7 @@
         if (user) {
           contentChildren.push(
             h('div', { className: 'user-panel' }, [
-              h('div', null, `ЗДРАВСТВУЙТЕ, ${user.first_name}!`)
+              h('div', null, `Здравствуйте, ${user.first_name}!`)
             ]),
             h('button', { className: 'button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
             h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
