@@ -123,7 +123,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 10;
+      z-index: 1000; /* Увеличен z-index для предотвращения перекрытия */
       font-family: 'Oswald', sans-serif;
       border-radius: 12px;
     }
@@ -191,14 +191,14 @@
 
     .user-panel {
       display: flex;
-      justify-content: space-around;
-      background: #0e0e0e; /* Цвет личного кабинета */
+      justify-content: center;
+      align-items: center;
+      background: #1a1a1a; /* Более светлый цвет личного кабинета */
       transform: scale(1.1);
     }
 
     .user-panel > div {
       text-align: center;
-      border: 1px solid #fff; /* Обособленные блоки */
       padding: 10px;
       border-radius: 8px;
     }
@@ -291,7 +291,7 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .subscription .buttons .copy-button hovered,
+    .subscriptions-panel .subscription .buttons .copy-button:hover,
     .subscriptions-panel .subscription .buttons .instruction-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow-color);
@@ -433,7 +433,7 @@
       margin-bottom: 16px;
     }
 
-    .button-row.first first-row {
+    .button-row.first-row {
       justify-content: space-between;
     }
 
@@ -697,7 +697,7 @@
       }
 
       .button-square .icon {
-        font-size: clamp(80px, 16vw, 96px);
+        font-size: clamp(80px,16vw, 96px);
       }
 
       .user-panel {
@@ -705,7 +705,7 @@
       }
 
       .user-panel:hover {
-        transform:Behind: scale(1.07);
+        transform: scale(1.07);
       }
 
       .product-grid {
@@ -738,7 +738,7 @@
       }
 
       .button-square .icon {
-        font-size: clamp(96px, 16vw, 120px);
+        font-size: clamp(96px,16vw,120px);
       }
 
       .user-panel {
@@ -1038,18 +1038,7 @@
         if (user) {
           contentChildren.push(
             h('div', { className: 'user-panel' }, [
-              h('div', { className: 'user-info' }, [
-                h('p', null, `Имя: ${user.first_name}`),
-                h('p', null, `TG ID: ${user.telegram_id}`)
-              ]),
-              h('div', { className: 'subscriptions-info' }, [
-                h('p', null, 'Подписки'),
-                h('p', null, subscriptions.length)
-              ]),
-              h('div', { className: 'referrals-info' }, [
-                h('p', null, 'Рефералы'),
-                h('p', null, referrals.length)
-              ])
+              h('div', null, `ЗДРАВСТВУЙТЕ, ${user.first_name}!`)
             ]),
             h('button', { className: 'button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
             h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
@@ -1224,7 +1213,7 @@
           } else {
             referrals.forEach((ref, index) => {
               const cardChildren = [
-                h('p', null, [h('b', null, 'id: '), ref.referee_id])
+                h('p', null, [h('b', null, 'ID реферала: '), ref.referee_id])
               ];
               if (ref.bonus_applied) {
                 cardChildren.push(
