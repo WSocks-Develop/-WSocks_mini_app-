@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=stylesheet" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
   <script>
     // Заглушка для texts.js
     window.TEXTS = {
@@ -39,19 +39,39 @@
   <style>
     /* CSS Custom Properties for Themes */
     :root[data-theme="dark"] {
-      --background-color: #1a1a1a;
+      --background-color: linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2A3244 100%);
       --text-color: #ffffff;
-      --card-bg: rgba(255, 255, 255, 0.1);
+      --card-bg: rgba(0, 0, 0, 0.8);
       --header-bg: #000000;
-      --button-primary-bg: rgba(0, 191, 255, 0.8);
-      --button-primary-hover-bg: rgba(0, 191, 255, 1);
-      --accent-color: #00bfff;
-      --button-secondary-bg: rgba(255, 255, 255, 0.2);
-      --button-secondary-hover-bg: rgba(255, 255, 255, 0.3);
-      --button-danger-bg: #ff0000;
-      --button-danger-hover-bg: #cc0000;
-      --shadow-color: rgba(0, 191, 255, 0.5);
-      --button-glow: 0 0 15px rgba(0, 191, 255, 0.7);
+      --button-bg: rgba(0, 207, 255, 0.2);
+      --button-hover-bg: rgba(38, 229, 255, 0.3);
+      --accent-color: #00cfff;
+      --button-secondary-bg: #444444;
+      --button-secondary-hover-bg: #666666;
+      --button-success-bg: #00ffae;
+      --button-success-hover-bg: #50ffa6;
+      --button-danger-bg: #ef4444;
+      --button-danger-hover-bg: #dc2626;
+      --shadow-color: rgba(0, 207, 255, 0.5);
+      --button-glow: 0 0 10px rgba(0, 207, 255, 0.5);
+    }
+
+    :root[data-theme="light"] {
+      --background-color: linear-gradient(135deg, #E0E1DD 0%, #D6D8D4 50%, #C9CBC4 100%);
+      --text-color: #333333;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --header-bg: #ffffff;
+      --button-bg: rgba(0, 188, 212, 0.2);
+      --button-hover-bg: rgba(38, 198, 218, 0.3);
+      --accent-color: #00bcd4;
+      --button-secondary-bg: #6b7280;
+      --button-secondary-hover-bg: #4b5563;
+      --button-success-bg: #10b981;
+      --button-success-hover-bg: #059669;
+      --button-danger-bg: #ef4444;
+      --button-danger-hover-bg: #dc2626;
+      --shadow-color: rgba(0, 188, 212, 0.5);
+      --button-glow: 0 0 10px rgba(0, 188, 212, 0.5);
     }
 
     /* Общие стили */
@@ -66,17 +86,20 @@
       background: var(--background-color);
       color: var(--text-color);
       overflow-x: hidden;
-      background-attachment: fixed;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .container {
-      max-width: min(90vw, 1200px);
+      max-width: 100%;
+      width: 100%;
       margin: 0 auto;
-      min-height: 100vh;
-      background-color: transparent;
-      box-shadow: 0 0 10px var(--shadow-color);
-      position: relative;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
       padding: 16px;
+      overflow-y: auto;
     }
 
     .header {
@@ -84,46 +107,108 @@
       top: 0;
       background-color: var(--header-bg);
       color: var(--text-color);
-      padding: 16px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
+      justify-content: center;
       z-index: 10;
-      font-weight: 700;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      font-family: 'Oswald', sans-serif;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
     }
 
     .header-title {
-      flex: 1;
-      font-size: clamp(24px, 4vw, 32px);
+      font-size: clamp(20px, 4vw, 26px);
+      font-weight: 700;
       text-align: center;
-      text-shadow: 0 0 5px var(--accent-color);
+      text-shadow: 0 0 4px var(--text-color);
+    }
+
+    .back-button {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      font-size: 20px;
+      cursor: pointer;
+      padding: 4px 8px;
+      position: absolute;
+      left: 16px;
+      transition: color 0.3s ease;
+    }
+
+    .back-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .back-button:hover:not(:disabled) {
+      color: var(--accent-color);
     }
 
     .content {
+      flex: 1;
       padding: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    .card {
-      background: var(--card-bg);
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px var(--shadow-color);
-      transition: box-shadow 0.3s ease;
+    .logo {
+      text-align: center;
+      margin-bottom: 16px;
     }
 
-    .card:hover {
-      box-shadow: 0 0 20px var(--shadow-color);
-    }
-
-    .card p {
-      font-size: clamp(14px, 2.5vw, 16px);
-      margin: 10px 0;
-    }
-
-    .card b {
-      color: var(--text-color);
+    .logo-text {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(28px, 5vw, 34px);
       font-weight: 700;
+      color: var(--text-color);
+      text-shadow: 0 0 4px var(--text-color);
+    }
+
+    .user-panel {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: var(--button-glow);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .user-panel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px var(--shadow-color);
+    }
+
+    .user-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 600;
+    }
+
+    .user-panel-header span {
+      color: var(--accent-color);
+    }
+
+    .user-panel-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+    }
+
+    .user-panel-content.open {
+      max-height: 500px;
+      padding-top: 12px;
+    }
+
+    .user-panel-content p {
+      font-size: clamp(13px, 2.5vw, 14px);
+      color: var(--text-color);
+      margin-bottom: 8px;
     }
 
     .button {
@@ -131,40 +216,43 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 16px;
-      margin-bottom: 12px;
+      padding: 12px 16px;
       border: none;
-      border-radius: 10px;
-      font-size: clamp(16px, 2.5vw, 18px);
-      font-weight: 700;
+      border-radius: 8px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
+      transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
       font-family: 'Inter', sans-serif;
-      background-color: var(--button-primary-bg);
+      background-color: var(--button-bg);
+      color: var(--text-color);
       box-shadow: var(--button-glow);
       opacity: 0;
-      animation: scaleFadeIn 0.5s ease-out forwards;
+      animation: slideIn 0.5s ease-out forwards;
     }
-
-    .button:nth-child(1) { animation-delay: 0.1s; }
-    .button:nth-child(2) { animation-delay: 0.3s; }
-    .button:nth-child(3) { animation-delay: 0.5s; }
-    .button:nth-child(4) { animation-delay: 0.7s; }
 
     .button:disabled {
       cursor: not-allowed;
-      pointer-events: none;
       opacity: 0.5;
     }
 
     .button:hover:not(:disabled) {
+      background: var(--button-hover-bg);
       transform: translateY(-2px);
-      box-shadow: 0 0 25px var(--shadow-color);
-      background-color: var(--button-primary-hover-bg);
+      box-shadow: 0 0 15px var(--shadow-color);
     }
 
     .button:active:not(:disabled) {
-      transform: scale(0.95);
+      transform: scale(0.98);
+    }
+
+    .button-primary {
+      background: var(--button-bg);
+      color: var(--text-color);
+    }
+
+    .button-primary:hover:not(:disabled) {
+      background: var(--button-hover-bg);
     }
 
     .button-square {
@@ -175,44 +263,20 @@
       justify-content: center;
       gap: 8px;
       padding: 12px;
-      background: var(--button-primary-bg);
+      background: var(--button-bg);
       color: var(--text-color);
-      font-size: clamp(14px, 2.5vw, 16px);
+      font-size: clamp(13px, 2.5vw, 14px);
       text-align: center;
-      overflow-wrap: break-word;
-      white-space: normal;
-      line-height: 1.2;
-      max-height: 2.4em;
-      opacity: 0;
-      animation: scaleFadeIn 0.5s ease-out forwards;
-    }
-
-    .button-square:nth-child(1) { animation-delay: 0.1s; }
-    .button-square:nth-child(2) { animation-delay: 0.3s; }
-    .button-square:nth-child(3) { animation-delay: 0.5s; }
-    .button-square:nth-child(4) { animation-delay: 0.7s; }
-
-    .button-square span {
-      flex-shrink: 1;
     }
 
     .button-square:hover:not(:disabled) {
-      background: var(--button-primary-hover-bg);
+      background: var(--button-hover-bg);
       transform: translateY(-2px);
-      box-shadow: 0 0 25px var(--shadow-color);
+      box-shadow: 0 0 15px var(--shadow-color);
     }
 
     .button-square .icon {
-      width: clamp(180px, 40vw, 200px);
-      height: clamp(1080px, 240vw, 1200px);
-      max-width: 133px;
-      max-height: 798px;
-    }
-
-    .button-square .icon svg {
-      width: 100%;
-      height: 100%;
-      fill: var(--text-color);
+      font-size: clamp(18px, 3vw, 20px);
     }
 
     .button-secondary {
@@ -222,6 +286,15 @@
 
     .button-secondary:hover:not(:disabled) {
       background: var(--button-secondary-hover-bg);
+    }
+
+    .button-success {
+      background: var(--button-success-bg);
+      color: #000000;
+    }
+
+    .button-success:hover:not(:disabled) {
+      background: var(--button-success-hover-bg);
     }
 
     .button-danger {
@@ -235,22 +308,50 @@
 
     .button-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 8px;
+      box-shadow: var(--button-glow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px var(--shadow-color);
+    }
+
+    .card p {
+      font-size: clamp(13px, 2.5vw, 14px);
+      margin: 8px 0;
+      color: var(--text-color);
+    }
+
+    .card b {
+      color: var(--text-color);
+      font-weight: 600;
     }
 
     .error {
       color: var(--button-danger-bg);
-      font-size: clamp(14px, 2.5vw, 16px);
+      font-size: clamp(13px, 2.5vw, 14px);
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: slideIn 0.5s ease-out forwards;
     }
 
     .link {
       color: var(--accent-color);
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .link:hover {
@@ -268,17 +369,17 @@
       background-color: var(--header-bg);
       color: var(--text-color);
       text-align: center;
-      border-radius: 6px;
-      padding: 6px 10px;
+      border-radius: 4px;
+      padding: 4px 8px;
       position: absolute;
       z-index: 1;
       bottom: 125%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: clamp(12px, 2vw, 14px);
+      font-size: clamp(11px, 2vw, 12px);
       white-space: nowrap;
       opacity: 0;
-      transition: opacity 0.2s;
+      transition: opacity 0.3s ease;
     }
 
     .tooltip:hover .tooltip-text {
@@ -289,60 +390,114 @@
     .clickable {
       color: var(--accent-color);
       cursor: pointer;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     .clickable:hover {
       text-decoration: underline;
     }
 
-    /* Анимации */
-    @keyframes scaleFadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.8);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
+    .clickable-manual {
+      cursor: pointer;
+      color: var(--text-color);
+      font-weight: 600;
     }
+
+    .clickable-manual:hover {
+      color: var(--accent-color);
+    }
+
+    .manual-content {
+      font-size: clamp(13px, 2.5vw, 14px);
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    .manual-content a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .manual-content a:hover {
+      text-decoration: underline;
+    }
+
+    .manual-content pre {
+      background-color: var(--button-secondary-bg);
+      padding: 8px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+
+    .manual-content code {
+      font-family: monospace;
+      font-size: clamp(11px, 2vw, 12px);
+    }
+
+    .manual-content ul {
+      list-style-type: disc;
+      margin-left: 20px;
+      margin-bottom: 8px;
+    }
+
+    .manual-content li {
+      margin-bottom: 4px;
+    }
+
+    /* Новые анимации */
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes scaleIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .button:nth-child(1), .card:nth-child(1), .user-panel:nth-child(1) { animation-delay: 0.1s; }
+    .button:nth-child(2), .card:nth-child(2) { animation-delay: 0.2s; }
+    .button:nth-child(3), .card:nth-child(3) { animation-delay: 0.3s; }
+    .button:nth-child(4), .card:nth-child(4) { animation-delay: 0.4s; }
+
+    .logo { animation: scaleIn 0.6s ease-out forwards; }
 
     /* Адаптивность */
     @media (max-width: 600px) {
       .container {
-        max-width: 100%;
         padding: 8px;
-      }
-
-      .header {
-        padding: 12px;
       }
 
       .header-title {
-        font-size: clamp(20px, 4vw, 24px);
+        font-size: clamp(18px, 4vw, 22px);
+      }
+
+      .logo-text {
+        font-size: clamp(24px, 5vw, 30px);
       }
 
       .button {
-        font-size: clamp(14px, 2.5vw, 16px);
-        padding: 12px;
+        font-size: clamp(13px, 2.5vw, 14px);
+        padding: 10px 12px;
       }
 
       .button-square {
-        font-size: clamp(12px, 3vw, 14px);
-        padding: 8px;
+        font-size: clamp(12px, 2.5vw, 13px);
+        padding: 10px;
       }
 
       .button-square .icon {
-        width: clamp(160px, 35vw, 180px);
-        height: clamp(960px, 210vw, 1080px);
-        max-width: 133px;
-        max-height: 798px;
+        font-size: clamp(16px, 3vw, 18px);
       }
 
       .button-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: 1fr;
         gap: 8px;
+      }
+
+      .user-panel-header {
+        font-size: clamp(13px, 2.5vw, 14px);
       }
     }
 
@@ -352,24 +507,25 @@
       }
 
       .header-title {
-        font-size: clamp(28px, 3vw, 36px);
+        font-size: clamp(22px, 3vw, 28px);
+      }
+
+      .logo-text {
+        font-size: clamp(30px, 4vw, 36px);
       }
 
       .button {
-        font-size: clamp(18px, 2vw, 20px);
-        padding: 18px;
+        font-size: clamp(15px, 2vw, 17px);
+        padding: 12px 16px;
       }
 
       .button-square {
-        font-size: clamp(16px, 2.8vw, 18px);
-        padding: 10px;
+        font-size: clamp(14px, 2vw, 15px);
+        padding: 14px;
       }
 
       .button-square .icon {
-        width: clamp(80px, 12vw, 100px);
-        height: clamp(480px, 72vw, 600px);
-        max-width: 60px;
-        max-height: 360px;
+        font-size: clamp(20px, 3vw, 22px);
       }
 
       .button-grid {
@@ -408,7 +564,7 @@
       });
       const [selectedReferee, setSelectedReferee] = useState(null);
       const [processingActions, setProcessingActions] = useState({});
-      const [isSubscriptionsVisible, setIsSubscriptionsVisible] = useState(false);
+      const [isUserPanelOpen, setIsUserPanelOpen] = useState(false);
 
       const API_URL = 'https://wsocks-api-bot-git.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -638,51 +794,45 @@
         });
       };
 
+      const toggleUserPanel = () => {
+        setIsUserPanelOpen(!isUserPanelOpen);
+      };
+
       const Header = ({ title, onBack }) => {
         const children = [];
         if (onBack) {
           children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'));
         }
         children.push(h('div', { className: 'header-title' }, title));
-        if (onBack) {
-          children.push(h('div', { style: { width: '40px' } }));
-        }
         return h('div', { className: 'header' }, children);
       };
 
-      const UserInfo = () => {
-        const toggleSubscriptions = () => setIsSubscriptionsVisible(!isSubscriptionsVisible);
-        const children = [
-          h('p', null, [h('b', null, 'Имя: '), user.first_name]),
-          h('p', null, [h('b', null, 'Количество рефералов: '), referrals.length]),
-          h('div', { className: 'clickable', onClick: toggleSubscriptions }, isSubscriptionsVisible ? 'Скрыть подписки' : 'Показать подписки')
+      const renderMainMenu = () => {
+        const contentChildren = [
+          h('div', { className: 'logo' }, [
+            h('div', { className: 'logo-text' }, 'WSocks VPN')
+          ])
         ];
 
-        if (isSubscriptionsVisible) {
-          if (subscriptions.length === 0) {
-            children.push(h('p', { className: 'card' }, 'Нет активных подписок'));
-          } else {
-            subscriptions.forEach((sub, index) => {
-              children.push(
-                h('div', { key: index, className: 'card' }, [
-                  h('p', null, [h('b', null, 'Email: '), sub.email]),
-                  h('p', null, [h('b', null, 'Панель: '), sub.panel]),
-                  h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                  h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Заблокировано' : 'Активна'])
+        if (user) {
+          const subContent = subscriptions.length === 0
+            ? [h('p', null, 'Нет активных подписок')]
+            : subscriptions.map((sub, index) => 
+                h('p', { key: index }, [
+                  h('b', null, 'Email: '), sub.email, ' | ',
+                  h('b', null, 'До: '), new Date(sub.expiry_date).toLocaleDateString()
                 ])
               );
-            });
-          }
-        }
 
-        return h('div', { className: 'card' }, children);
-      };
-
-      const renderMainMenu = () => {
-        const contentChildren = [];
-
-        if (user) {
-          contentChildren.push(h(UserInfo));
+          contentChildren.push(
+            h('div', { className: 'user-panel', onClick: toggleUserPanel }, [
+              h('div', { className: 'user-panel-header' }, [
+                h('span', null, user.first_name),
+                h('span', null, `Рефералов: ${referrals.length}`)
+              ]),
+              h('div', { className: `user-panel-content ${isUserPanelOpen ? 'open' : ''}` }, subContent)
+            ])
+          );
         }
 
         if (error) {
@@ -695,49 +845,32 @@
           contentChildren.push(
             h('div', { className: 'button-grid' }, [
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: fetchReferrals, disabled: loading }, [
-                  h('span', { className: 'icon' }, [
-                    h('svg', { viewBox: '0 0 24 24' }, [
-                      h('path', { d: 'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z' }),
-                      h('path', { d: 'M20 12c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.67 0-5 1.34-5 4v2h4v-2c0-1.66 3.34-4 5-4z' })
-                    ])
-                  ]),
-                  h('span', null, 'Реферальная система')
-                ]),
-                h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
-              ]),
-              h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: fetchSubscriptions, disabled: loading }, [
-                  h('span', { className: 'icon' }, [
-                    h('svg', { viewBox: '0 0 24 24' }, [
-                      h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm4.59-12.42L10 14.17l-2.59-2.58L6 13l4 4 8-8z' })
-                    ])
-                  ]),
+                  h('span', { className: 'icon' }, '🛠️'),
                   h('span', null, 'Подписки')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: () => setView('info'), disabled: loading }, [
-                  h('span', { className: 'icon' }, [
-                    h('svg', { viewBox: '0 0 24 24' }, [
-                      h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' })
-                    ])
-                  ]),
-                  h('span', null, 'Информация')
+                h('button', { className: 'button button-square', onClick: fetchReferrals, disabled: loading }, [
+                  h('span', { className: 'icon' }, '🔗'),
+                  h('span', null, 'Реферальная система')
                 ]),
-                h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
+                h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: () => setView('support'), disabled: loading }, [
-                  h('span', { className: 'icon' }, [
-                    h('svg', { viewBox: '0 0 24 24' }, [
-                      h('path', { d: 'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z' })
-                    ])
-                  ]),
-                  h('span', null, 'Поддержка Telegram')
+                  h('span', { className: 'icon' }, '📧'),
+                  h('span', null, 'Поддержка')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
+              ]),
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'button button-square', onClick: () => setView('info'), disabled: loading }, [
+                  h('span', { className: 'icon' }, 'ℹ️'),
+                  h('span', null, 'Информация')
+                ]),
+                h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
               ])
             ])
           );
@@ -761,8 +894,15 @@
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
-              h('p', null, 'Для связи с нашей поддержкой отправьте сообщение сюда, и наша команда ответит вам в ближайшее время!'),
-              h('p', null, 'Ваш id в телеграмм: ', h('span', { className: 'clickable', onClick: () => copyToClipboard(user.telegram_id) }, user.telegram_id)),
+              h('p', null, [
+                'Для связи с нашей поддержкой отправьте сообщение сюда, ',
+                h('span', { className: 'clickable', onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK) }, SUPPORT_HANDLE),
+                ' и наша команда ответит вам в ближайшее время!'
+              ]),
+              h('p', null, [
+                'Ваш id в телеграмм: ',
+                h('span', { className: 'clickable', onClick: () => copyToClipboard(user.telegram_id) }, user.telegram_id)
+              ]),
               h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)')
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
@@ -786,13 +926,20 @@
           );
         } else {
           contentChildren.push(
-            h('p', { className: 'card' }, 'Приглашайте друзей и получайте бонусы:')
+            h('p', { className: 'card' }, [
+              'Приглашайте друзей и получайте ',
+              h('b', null, '7 дней'),
+              ' бесплатно:'
+            ])
           );
 
           if (user) {
             contentChildren.push(
               h('div', { className: 'card' }, [
-                h('p', null, 'Ваша реферальная ссылка: ', h('span', { className: 'clickable', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`)),
+                h('p', null, [
+                  'Ваша реферальная ссылка: ',
+                  h('span', { className: 'clickable', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`)
+                ]),
                 h('p', { style: { fontStyle: 'italic' } }, '(нажмите на ссылку чтобы скопировать)')
               ])
             );
@@ -811,7 +958,7 @@
                 );
               } else {
                 cardChildren.push(
-                  h('button', { className: 'button button-primary', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
+                  h('button', { className: 'button button-success', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
                 );
               }
               contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
@@ -847,9 +994,9 @@
                 h('p', null, [h('b', null, 'Email: '), sub.email]),
                 h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Заблокировано' : 'Активна']),
-                h('div', { style: { display: 'flex', gap: '12px', marginTop: '12px' } }, [
-                  !sub.email.startsWith('DE-FRA-TRIAL-') ? h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить') : null,
+                h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
+                h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
+                  !sub.email.startsWith('DE-FRA-TRIAL-') ? h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить') : null,
                   h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка')
                 ])
               ];
@@ -884,10 +1031,10 @@
           );
         } else {
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней - 89 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней - 249 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней - 449 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней - 849 ₽'),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -915,10 +1062,10 @@
             );
           }
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней - 89 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней - 249 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней - 449 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней - 849 ₽'),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -947,7 +1094,7 @@
                 h('p', null, [h('b', null, 'Email: '), sub.email]),
                 h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                h('button', { className: 'button button-primary', onClick: () => applyReferralBonus(selectedReferee, sub.email), disabled: loading }, 'Продлить на 7 дней')
+                h('button', { className: 'button button-success', onClick: () => applyReferralBonus(selectedReferee, sub.email), disabled: loading }, 'Продлить на 7 дней')
               ])
             );
           });
@@ -974,7 +1121,7 @@
             h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
             h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
             h('p', { className: 'card' }, [h('b', null, 'Дата окончания: '), new Date(paymentData.expiry_date).toLocaleString()]),
-            h('button', { className: 'button button-primary', onClick: confirmActivation, disabled: loading }, 'Подтвердить'),
+            h('button', { className: 'button button-success', onClick: confirmActivation, disabled: loading }, 'Подтвердить'),
             h('button', { className: 'button button-danger', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, 'Отмена')
           );
         }
@@ -999,10 +1146,10 @@
             contentChildren.push(h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]));
           }
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, 'Настройка для ПК'),
-            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, 'Настройка для Android'),
-            h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, 'Настройка для iOS'),
-            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, 'Настройка для Android TV'),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, window.TEXTS.setup.manualPC.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, window.TEXTS.setup.manualAndroid.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, window.TEXTS.setup.manualIOS.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, window.TEXTS.setup.manualAndroidTV.title),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -1032,7 +1179,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Настройка для ПК', onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1056,7 +1203,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Настройка для Android', onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1080,7 +1227,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Настройка для iOS', onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1104,7 +1251,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Настройка для Android TV', onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1145,9 +1292,7 @@
           );
         } else {
           contentChildren.push(
-            h('div', { className: 'card' }, [
-              h('p', null, 'Информация о сервисе.')
-            ]),
+            h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
@@ -1170,7 +1315,13 @@
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
-              h('p', null, [h('b', null, 'Информация:'), ' Описание подписки'])
+              h('p', null, [h('b', null, 'Стоимость:'), ' 89 ₽/месяц']),
+              h('p', null, [h('b', null, 'Ограничение скорости:'), ' Отсутствует']),
+              h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
+              h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
+              h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
+              h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
+              h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
@@ -1201,7 +1352,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Пользовательское соглашение', onBack: () => setView('info') }),
+          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1217,7 +1368,8 @@
           );
         } else {
           contentChildren.push(
-            h('p', { className: 'card' }, 'Информация о конфиденциальности.'),
+            h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
+            h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
