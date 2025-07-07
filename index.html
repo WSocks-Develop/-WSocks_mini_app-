@@ -1,88 +1,9 @@
-<DOCUMENT filename="index (7).txt">
-<script type="text/javascript">
-var gk_isXlsx = false;
-var gk_xlsxFileLookup = {};
-var gk_fileData = {};
-function filledCell(cell) {
-  return cell !== '' && cell != null;
-}
-function loadFileData(filename) {
-if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-    try {
-        var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-        var firstSheetName = workbook.SheetNames[0];
-        var worksheet = workbook.Sheets[firstSheetName];
-
-        // Convert sheet to JSON to filter blank rows
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-        // Filter out blank rows (rows where all cells are empty, null, or undefined)
-        var filteredData = jsonData.filter(row => row.some(filledCell));
-
-        // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-        var headerRowIndex = filteredData.findIndex((row, index) =>
-          row.filter(filledCell).length >= (filteredData[index + 1] ? filteredData[index + 1].filter(filledCell).length : 0)
-        );
-        // Fallback
-        if (headerRowIndex === -1 || headerRowIndex > 25) {
-          headerRowIndex = 0;
-        }
-
-        // Convert filtered JSON back to CSV
-        var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-        csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-        return csv;
-    } catch (e) {
-        console.error(e);
-        return "";
-    }
-}
-return gk_fileData[filename] || "";
-}
-</script><script type="text/javascript">
-var gk_isXlsx = false;
-var gk_xlsxFileLookup = {};
-var gk_fileData = {};
-function filledCell(cell) {
-  return cell !== '' && cell != null;
-}
-function loadFileData(filename) {
-if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-    try {
-        var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-        var firstSheetName = workbook.SheetNames[0];
-        var worksheet = workbook.Sheets[firstSheetName];
-
-        // Convert sheet to JSON to filter blank rows
-        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-        // Filter out blank rows (rows where all cells are empty, null, or undefined)
-        var filteredData = jsonData.filter(row => row.some(filledCell));
-
-        // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
-        var headerRowIndex = filteredData.findIndex((row, index) =>
-          row.filter(filledCell).length >= (filteredData[index + 1] ? filteredData[index + 1].filter(filledCell).length : 0)
-        );
-        // Fallback
-        if (headerRowIndex === -1 || headerRowIndex > 25) {
-          headerRowIndex = 0;
-        }
-
-        // Convert filtered JSON back to CSV
-        var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
-        csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-        return csv;
-    } catch (e) {
-        console.error(e);
-        return "";
-    }
-}
-return gk_fileData[filename] || "";
-}
-</script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WSocks VPN</title>
+  <title>WSocks</title>
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
@@ -120,10 +41,10 @@ return gk_fileData[filename] || "";
     :root[data-theme="dark"] {
       --glass-bg: rgba(0, 0, 0, 0.2);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+      --glass-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-      --background-color: linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2A3244 100%);
+      --background-color: #131313;
       --text-color: #ffffff;
       --header-bg: rgba(0, 0, 0, 0.5);
       --button-bg: rgba(75, 156, 211, 0.3);
@@ -138,15 +59,17 @@ return gk_fileData[filename] || "";
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
       --telegram-block-bg: rgba(75, 156, 211, 0.3);
+      --card-bg: rgba(75, 156, 211, 0.3);
+      --card-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
     }
 
     :root[data-theme="light"] {
       --glass-bg: rgba(255, 255, 255, 0.2);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --background-color: linear-gradient(135deg, #E0E1DD 0%, #D6D8D4 50%, #C9CBC4 100%);
+      --background-color: #131313;
       --text-color: #333333;
       --header-bg: rgba(255, 255, 255, 0.5);
       --button-bg: rgba(75, 156, 211, 0.3);
@@ -161,6 +84,8 @@ return gk_fileData[filename] || "";
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
       --telegram-block-bg: rgba(75, 156, 211, 0.3);
+      --card-bg: rgba(75, 156, 211, 0.3);
+      --card-shadow: 0 0 10px rgba(75, 156, 211, 0.5);
     }
 
     * {
@@ -204,14 +129,13 @@ return gk_fileData[filename] || "";
       z-index: 10;
       font-family: 'Oswald', sans-serif;
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .header-title {
       font-size: clamp(20px, 4vw, 26px);
       font-weight: 700;
       text-align: center;
-      text-shadow: var(--text-shadow);
+      text-shadow: 0 0 10px #ffffff;
     }
 
     .back-button {
@@ -262,7 +186,6 @@ return gk_fileData[filename] || "";
       backdrop-filter: var(--glass-blur);
       box-shadow: var(--glass-shadow);
       border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .user-panel {
@@ -271,6 +194,9 @@ return gk_fileData[filename] || "";
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
       transform: scale(1.1);
+      display: flex;
+      justify-content: space-between;
+      color: #ffffff;
     }
 
     .user-panel:hover {
@@ -341,7 +267,7 @@ return gk_fileData[filename] || "";
     .subscriptions-panel .subscription .details {
       display: grid;
       grid-template-columns: 1fr 2fr;
-      gap: 8px;
+      gap: 8urrences;
       margin-bottom: 12px;
     }
 
@@ -405,6 +331,8 @@ return gk_fileData[filename] || "";
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       color: var(--text-color);
+      text-shadow: var(--text-shadow);
+   ```html
       text-shadow: var(--text-shadow);
     }
 
@@ -530,6 +458,8 @@ return gk_fileData[filename] || "";
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
+      background: var(--card-bg);
+      box-shadow: var(--card-shadow);
     }
 
     .card:hover {
@@ -692,24 +622,33 @@ return gk_fileData[filename] || "";
     }
 
     .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 20px;
     }
 
     .product-card {
-      background: var(--glass-bg);
+      background: var(--card-bg);
       backdrop-filter: var(--glass-blur);
-      box-shadow: var(--glass-shadow);
+      box-shadow: var(--card-shadow);
       border-radius: 12px;
       padding: 16px;
       text-align: center;
       transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .product-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 6px 12px var(--shadow-color);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: auto;
+      margin-bottom: 10px;
     }
 
     .product-card h3 {
@@ -774,10 +713,6 @@ return gk_fileData[filename] || "";
         font-size: clamp(93.33px, 20vw, 106.67px);
       }
 
-      .user-panel-header {
-        font-size: clamp(14px, 2.5vw, 16px);
-      }
-
       .user-panel {
         transform: scale(1.05);
       }
@@ -787,7 +722,7 @@ return gk_fileData[filename] || "";
       }
 
       .product-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        flex-direction: column;
       }
     }
 
@@ -796,7 +731,7 @@ return gk_fileData[filename] || "";
         max-width: min(80vw, 1400px);
       }
 
-      .header-title {
+      .header-title |
         font-size: clamp(22px, 3vw, 28px);
       }
 
@@ -860,6 +795,7 @@ return gk_fileData[filename] || "";
       const [selectedReferee, setSelectedReferee] = useState(null);
       const [processingActions, setProcessingActions] = useState({});
       const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
+      const [searchTerm, setSearchTerm] = useState('');
 
       const API_URL = 'https://wsocks-api-bot-git.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -914,7 +850,7 @@ return gk_fileData[filename] || "";
       const fetchSubscriptions = async () => {
         if (!user) {
           setError('Пользователь не авторизован');
-          return;
+          return成;
         }
         setLoading(true);
         setError(null);
@@ -953,8 +889,7 @@ return gk_fileData[filename] || "";
         } finally {
           setLoading(false);
         }
-      };
-
+      },
       const activateSubscription = debounce(async (days, isExtension = false, email = null, requestId) => {
         if (!user) {
           setError('Пользователь не авторизован');
@@ -1095,6 +1030,10 @@ return gk_fileData[filename] || "";
         setIsSubscriptionsOpen(!isSubscriptionsOpen);
       };
 
+      const handleSearch = (event) => {
+        setSearchTerm(event.target.value.toLowerCase());
+      };
+
       const Header = ({ title, onBack }) => {
         const children = [];
         if (onBack) {
@@ -1112,11 +1051,17 @@ return gk_fileData[filename] || "";
             h('div', { className: 'user-panel' }, [
               h('div', { className: 'user-panel-header' }, [
                 h('span', null, [
-                  h('i', { className: 'fas fa-lock', style: { marginRight: '4px' } }),
-                  `Ключи доступа: ${user.first_name}`
+                  h('i', { className: 'fas fa-user', style: { marginRight: '4px' } }),
+                  `${user.first_name} (${user.telegram_id})`
                 ]),
-                h('span', null, `Активных подписок: ${subscriptions.length}`),
-                h('span', null, `Рефералов: ${referrals.length}`)
+                h('span', null, [
+                  h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                  `Подписки: ${subscriptions.length}`
+                ]),
+                h('span', null, [
+                  h('i', { className: 'fas fa-link', style: { marginRight: '4px' } }),
+                  `Рефералы: ${referrals.length}`
+                ])
               ])
             ]),
             h('button', { className: 'button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
@@ -1219,7 +1164,7 @@ return gk_fileData[filename] || "";
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'WSocks VPN' }),
+          Header({ title: 'WSocks' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1776,27 +1721,26 @@ return gk_fileData[filename] || "";
       };
 
       const renderShop = () => {
+        const products = [
+          { name: 'Товар 1', description: 'Описание товара 1', image: 'https://via.placeholder.com/150' },
+          { name: 'Товар 2', description: 'Описание товара 2', image: 'https://via.placeholder.com/150' },
+          { name: 'Товар 3', description: 'Описание товара 3', image: 'https://via.placeholder.com/150' }
+        ];
+
+        const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm));
+
         return h('div', { className: 'container' }, [
           Header({ title: 'Магазин', onBack: () => setView('main') }),
           h('div', { className: 'content' }, [
-            h('input', { type: 'search', className: 'search-bar', placeholder: 'Поиск товаров' }),
-            h('div', { className: 'product-grid' }, [
+            h('input', { type: 'search', className: 'search-bar', placeholder: 'Поиск товаров', onInput: handleSearch }),
+            h('div', { className: 'product-grid' }, filteredProducts.map(product => 
               h('div', { className: 'product-card' }, [
-                h('h3', null, 'Товар 1'),
-                h('p', null, 'Описание товара 1'),
-                h('button', { className: 'button button-primary' }, 'Купить')
-              ]),
-              h('div', { className: 'product-card' }, [
-                h('h3', null, 'Товар 2'),
-                h('p', null, 'Описание товара 2'),
-                h('button', { className: 'button button-primary' }, 'Купить')
-              ]),
-              h('div', { className: 'product-card' }, [
-                h('h3', null, 'Товар 3'),
-                h('p', null, 'Описание товара 3'),
+                h('img', { src: product.image, alt: product.name }),
+                h('h3', null, product.name),
+                h('p', null, product.description),
                 h('button', { className: 'button button-primary' }, 'Купить')
               ])
-            ]),
+            )),
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           ])
         ]);
@@ -1828,7 +1772,7 @@ return gk_fileData[filename] || "";
 
       if (!user) {
         contentChildren.push(
-          Header({ title: 'WSocks VPN' }),
+          Header({ title: 'WSocks' }),
           h('div', { className: 'content' }, [
             error ? h('p', { className: 'error' }, error) : null,
             error ? h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить') : null,
@@ -1846,4 +1790,4 @@ return gk_fileData[filename] || "";
     ReactDOM.render(h(App), document.getElementById('root'));
   </script>
 </body>
-</html></DOCUMENT>
+</html>
