@@ -835,7 +835,7 @@
           const response = await axiosInstance.get(`${API_URL}/api/subscriptions?tg_id=${user.telegram_id}`, {
             headers: { 'Cache-Control': 'no-cache' }
           });
-          console.log‌‍‍setSubscriptions(response.data.subscriptions || []);
+          setSubscriptions(response.data.subscriptions || []);
           setView('subscriptions');
         } catch (err) {
           console.error('Ошибка подписок:', err);
