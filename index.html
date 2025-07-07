@@ -8,7 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=stylesheet" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=stylesheet" rel="stylesheet">
   <script>
     // Заглушка для texts.js
     window.TEXTS = {
@@ -39,39 +39,19 @@
   <style>
     /* CSS Custom Properties for Themes */
     :root[data-theme="dark"] {
-      --background-color: #333333;
+      --background-color: #1a1a1a;
       --text-color: #ffffff;
-      --card-bg: rgba(0, 0, 0, 0.8);
+      --card-bg: rgba(255, 255, 255, 0.1);
       --header-bg: #000000;
-      --button-bg: rgba(0, 207, 255, 0.2);
-      --button-hover-bg: rgba(38, 229, 255, 0.3);
-      --accent-color: #00cfff;
-      --button-secondary-bg: #444444;
-      --button-secondary-hover-bg: #666666;
-      --button-success-bg: #00ffae;
-      --button-success-hover-bg: #50ffa6;
-      --button-danger-bg: #ef4444;
-      --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(0, 207, 255, 0.5);
-      --button-glow: 0 0 15px rgba(0, 207, 255, 0.7);
-    }
-
-    :root[data-theme="light"] {
-      --background-color: #333333;
-      --text-color: #333333;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --header-bg: #ffffff;
-      --button-bg: rgba(0, 188, 212, 0.2);
-      --button-hover-bg: rgba(38, 198, 218, 0.3);
-      --accent-color: #00bcd4;
-      --button-secondary-bg: #6b7280;
-      --button-secondary-hover-bg: #4b5563;
-      --button-success-bg: #10b981;
-      --button-success-hover-bg: #059669;
-      --button-danger-bg: #ef4444;
-      --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(0, 188, 212, 0.5);
-      --button-glow: 0 0 15px rgba(0, 188, 212, 0.7);
+      --button-primary-bg: rgba(0, 191, 255, 0.8);
+      --button-primary-hover-bg: rgba(0, 191, 255, 1);
+      --accent-color: #00bfff;
+      --button-secondary-bg: rgba(255, 255, 255, 0.2);
+      --button-secondary-hover-bg: rgba(255, 255, 255, 0.3);
+      --button-danger-bg: #ff0000;
+      --button-danger-hover-bg: #cc0000;
+      --shadow-color: rgba(0, 191, 255, 0.5);
+      --button-glow: 0 0 15px rgba(0, 191, 255, 0.7);
     }
 
     /* Общие стили */
@@ -94,9 +74,9 @@
       margin: 0 auto;
       min-height: 100vh;
       background-color: transparent;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px var(--shadow-color);
       position: relative;
-      padding: 0 16px;
+      padding: 16px;
     }
 
     .header {
@@ -104,58 +84,46 @@
       top: 0;
       background-color: var(--header-bg);
       color: var(--text-color);
-      padding: 12px 16px;
+      padding: 16px;
       display: flex;
       align-items: center;
       z-index: 10;
-      font-family: 'Oswald', sans-serif;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease;
+      font-weight: 700;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
     }
 
     .header-title {
       flex: 1;
-      font-size: clamp(20px, 4vw, 28px);
-      font-weight: 700;
+      font-size: clamp(24px, 4vw, 32px);
       text-align: center;
-      text-shadow: 0 0 5px var(--text-color);
-    }
-
-    .back-button {
-      background: none;
-      border: none;
-      color: var(--text-color);
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px 8px;
-      transition: color 0.3s ease;
-    }
-
-    .back-button:disabled {
-      cursor: not-allowed;
-      pointer-events: none;
-      opacity: 0.5;
-    }
-
-    .back-button:hover:not(:disabled) {
-      color: var(--accent-color);
+      text-shadow: 0 0 5px var(--accent-color);
     }
 
     .content {
-      padding: 16px;
+      padding: 16px 0;
     }
 
-    .logo {
-      text-align: center;
-      margin-bottom: 16px;
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px var(--shadow-color);
+      transition: box-shadow 0.3s ease;
     }
 
-    .logo-text {
-      font-family: 'Oswald', sans-serif;
-      font-size: clamp(28px, 5vw, 36px);
-      font-weight: 700;
+    .card:hover {
+      box-shadow: 0 0 20px var(--shadow-color);
+    }
+
+    .card p {
+      font-size: clamp(14px, 2.5vw, 16px);
+      margin: 10px 0;
+    }
+
+    .card b {
       color: var(--text-color);
-      text-shadow: 0 0 5px var(--text-color);
+      font-weight: 700;
     }
 
     .button {
@@ -163,18 +131,25 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 12px 16px;
-      margin-bottom: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
       border: none;
-      border-radius: 8px;
-      font-size: clamp(14px, 2.5vw, 16px);
-      font-weight: 600;
+      border-radius: 10px;
+      font-size: clamp(16px, 2.5vw, 18px);
+      font-weight: 700;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.1s, box-shadow 0.3s;
       font-family: 'Inter', sans-serif;
-      background-color: var(--button-bg);
+      background-color: var(--button-primary-bg);
       box-shadow: var(--button-glow);
+      opacity: 0;
+      animation: scaleFadeIn 0.5s ease-out forwards;
     }
+
+    .button:nth-child(1) { animation-delay: 0.1s; }
+    .button:nth-child(2) { animation-delay: 0.3s; }
+    .button:nth-child(3) { animation-delay: 0.5s; }
+    .button:nth-child(4) { animation-delay: 0.7s; }
 
     .button:disabled {
       cursor: not-allowed;
@@ -183,21 +158,13 @@
     }
 
     .button:hover:not(:disabled) {
-      transform: translateY(-1px);
-      box-shadow: 0 0 20px var(--shadow-color);
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px var(--shadow-color);
+      background-color: var(--button-primary-hover-bg);
     }
 
     .button:active:not(:disabled) {
-      transform: scale(0.97);
-    }
-
-    .button-primary {
-      background: var(--button-bg);
-      color: var(--text-color);
-    }
-
-    .button-primary:hover:not(:disabled) {
-      background: var(--button-hover-bg);
+      transform: scale(0.95);
     }
 
     .button-square {
@@ -206,33 +173,40 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 10px;
-      background: var(--button-bg);
+      gap: 8px;
+      padding: 12px;
+      background: var(--button-primary-bg);
       color: var(--text-color);
-      font-size: clamp(11px, 2.5vw, 12px);
+      font-size: clamp(14px, 2.5vw, 16px);
       text-align: center;
       overflow-wrap: break-word;
       white-space: normal;
       line-height: 1.2;
       max-height: 2.4em;
+      opacity: 0;
+      animation: scaleFadeIn 0.5s ease-out forwards;
     }
+
+    .button-square:nth-child(1) { animation-delay: 0.1s; }
+    .button-square:nth-child(2) { animation-delay: 0.3s; }
+    .button-square:nth-child(3) { animation-delay: 0.5s; }
+    .button-square:nth-child(4) { animation-delay: 0.7s; }
 
     .button-square span {
       flex-shrink: 1;
     }
 
     .button-square:hover:not(:disabled) {
-      background: var(--button-hover-bg);
-      transform: translateY(-1px);
-      box-shadow: 0 0 20px var(--shadow-color);
+      background: var(--button-primary-hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px var(--shadow-color);
     }
 
     .button-square .icon {
       width: clamp(180px, 40vw, 200px);
-      height: clamp(1080px, 240vw, 1200px); /* Увеличено в 6 раз */
+      height: clamp(1080px, 240vw, 1200px);
       max-width: 133px;
-      max-height: 798px; /* Увеличено в 6 раз */
+      max-height: 798px;
     }
 
     .button-square .icon svg {
@@ -250,15 +224,6 @@
       background: var(--button-secondary-hover-bg);
     }
 
-    .button-success {
-      background: var(--button-success-bg);
-      color: #000000;
-    }
-
-    .button-success:hover:not(:disabled) {
-      background: var(--button-success-hover-bg);
-    }
-
     .button-danger {
       background: var(--button-danger-bg);
       color: #ffffff;
@@ -271,49 +236,21 @@
     .button-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      padding: 16px;
-      margin-bottom: 16px;
-      border-radius: 8px;
-      box-shadow: none;
-      transition: box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-      box-shadow: 0 0 15px var(--shadow-color);
-    }
-
-    .card p {
-      font-size: clamp(13px, 2.5vw, 14px);
-      margin: 8px 0;
-      color: var(--text-color);
-    }
-
-    .card b {
-      color: var(--text-color);
-      font-weight: 600;
-    }
-
-    .user-info p, .user-info .clickable {
-      font-size: clamp(19.5px, 3.75vw, 21px); /* Увеличено в 1.5 раза */
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .error {
       color: var(--button-danger-bg);
-      font-size: clamp(13px, 2.5vw, 14px);
+      font-size: clamp(14px, 2.5vw, 16px);
       text-align: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .link {
       color: var(--accent-color);
       text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .link:hover {
@@ -331,14 +268,14 @@
       background-color: var(--header-bg);
       color: var(--text-color);
       text-align: center;
-      border-radius: 4px;
-      padding: 4px 8px;
+      border-radius: 6px;
+      padding: 6px 10px;
       position: absolute;
       z-index: 1;
       bottom: 125%;
       left: 50%;
       transform: translateX(-50%);
-      font-size: clamp(11px, 2vw, 12px);
+      font-size: clamp(12px, 2vw, 14px);
       white-space: nowrap;
       opacity: 0;
       transition: opacity 0.2s;
@@ -352,128 +289,60 @@
     .clickable {
       color: var(--accent-color);
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .clickable:hover {
       text-decoration: underline;
     }
 
-    .clickable-manual {
-      cursor: pointer;
-      color: var(--text-color);
-      font-weight: 600;
-    }
-
-    .clickable-manual:hover {
-      text-decoration: none;
-      color: var(--accent-color);
-    }
-
-    .manual-content {
-      font-size: clamp(13px, 2.5vw, 14px);
-      color: var(--text-color);
-      line-height: 1.5;
-    }
-
-    .manual-content a {
-      color: var(--accent-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .manual-content a:hover {
-      text-decoration: underline;
-    }
-
-    .manual-content pre {
-      background-color: var(--button-secondary-bg);
-      padding: 8px;
-      border-radius: 4px;
-      overflow-x: auto;
-    }
-
-    .manual-content code {
-      font-family: monospace;
-      font-size: clamp(11px, 2vw, 12px);
-    }
-
-    .manual-content ul {
-      list-style-type: disc;
-      margin-left: 20px;
-      margin-bottom: 8px;
-    }
-
-    .manual-content li {
-      margin-bottom: 4px;
-    }
-
     /* Анимации */
-    .animate-fade-in-up {
-      animation: fadeInUp 0.6s ease-in-out forwards;
+    @keyframes scaleFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
-
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .button, .card {
-      opacity: 0;
-      animation: fadeInUp 0.6s ease-in-out forwards;
-    }
-
-    .button:nth-child(1) { animation-delay: 0.1s; }
-    .button:nth-child(2) { animation-delay: 0.2s; }
-    .button:nth-child(3) { animation-delay: 0.3s; }
-    .button:nth-child(4) { animation-delay: 0.4s; }
-    .card:nth-child(1) { animation-delay: 0.1s; }
-    .card:nth-child(2) { animation-delay: 0.2s; }
-    .card:nth-child(3) { animation-delay: 0.3s; }
 
     /* Адаптивность */
     @media (max-width: 600px) {
       .container {
         max-width: 100%;
-        padding: 0 8px;
+        padding: 8px;
+      }
+
+      .header {
+        padding: 12px;
       }
 
       .header-title {
-        font-size: clamp(18px, 4vw, 24px);
-      }
-
-      .logo-text {
-        font-size: clamp(24px, 5vw, 32px);
+        font-size: clamp(20px, 4vw, 24px);
       }
 
       .button {
-        font-size: clamp(13px, 2.5vw, 14px);
-        padding: 10px 12px;
+        font-size: clamp(14px, 2.5vw, 16px);
+        padding: 12px;
       }
 
       .button-square {
         font-size: clamp(12px, 3vw, 14px);
-        padding: 4px;
-        overflow-wrap: break-word;
-        white-space: normal;
-        line-height: 1.2;
-        max-height: 2.4em;
-      }
-
-      .button-square span {
-        flex-shrink: 1;
+        padding: 8px;
       }
 
       .button-square .icon {
         width: clamp(160px, 35vw, 180px);
-        height: clamp(960px, 210vw, 1080px); /* Увеличено в 6 раз */
+        height: clamp(960px, 210vw, 1080px);
         max-width: 133px;
-        max-height: 798px; /* Увеличено в 6 раз */
+        max-height: 798px;
       }
 
       .button-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 4px;
+        gap: 8px;
       }
     }
 
@@ -483,42 +352,28 @@
       }
 
       .header-title {
-        font-size: clamp(24px, 3vw, 32px);
-      }
-
-      .logo-text {
-        font-size: clamp(32px, 4vw, 40px);
+        font-size: clamp(28px, 3vw, 36px);
       }
 
       .button {
-        font-size: clamp(15px, 2vw, 18px);
-        padding: 14px 20px;
+        font-size: clamp(18px, 2vw, 20px);
+        padding: 18px;
       }
 
       .button-square {
-        font-size: clamp(16.8px, 2.8vw, 19.6px);
-        padding: 2px;
-        overflow-wrap: break-word;
-        white-space: normal;
-        line-height: 1.2;
-        max-height: 2.4em;
-      }
-
-      .button-square span {
-        flex-shrink: 1;
+        font-size: clamp(16px, 2.8vw, 18px);
+        padding: 10px;
       }
 
       .button-square .icon {
         width: clamp(80px, 12vw, 100px);
-        height: clamp(480px, 72vw, 600px); /* Увеличено в 6 раз */
+        height: clamp(480px, 72vw, 600px);
         max-width: 60px;
-        max-height: 360px; /* Увеличено в 6 раз */
+        max-height: 360px;
       }
 
       .button-grid {
-        gap: 6px;
-        max-height: calc(100vh - 180px);
-        overflow: hidden;
+        gap: 16px;
       }
     }
   </style>
@@ -813,14 +668,14 @@
                   h('p', null, [h('b', null, 'Email: '), sub.email]),
                   h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                   h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                  h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна'])
+                  h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Заблокировано' : 'Активна'])
                 ])
               );
             });
           }
         }
 
-        return h('div', { className: 'user-info card' }, children);
+        return h('div', { className: 'card' }, children);
       };
 
       const renderMainMenu = () => {
@@ -906,15 +761,8 @@
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
-              h('p', null, [
-                'Для связи с нашей поддержкой отправьте сообщение сюда, ',
-                h('span', { className: 'clickable', onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK) }, SUPPORT_HANDLE),
-                ' и наша команда ответит вам в ближайшее время!'
-              ]),
-              h('p', null, [
-                'Ваш id в телеграмм: ',
-                h('span', { className: 'clickable', onClick: () => copyToClipboard(user.telegram_id) }, user.telegram_id)
-              ]),
+              h('p', null, 'Для связи с нашей поддержкой отправьте сообщение сюда, и наша команда ответит вам в ближайшее время!'),
+              h('p', null, 'Ваш id в телеграмм: ', h('span', { className: 'clickable', onClick: () => copyToClipboard(user.telegram_id) }, user.telegram_id)),
               h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)')
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
@@ -938,20 +786,13 @@
           );
         } else {
           contentChildren.push(
-            h('p', { className: 'card' }, [
-              'Приглашайте друзей и получайте ',
-              h('b', null, '7 дней'),
-              ' бесплатно:'
-            ])
+            h('p', { className: 'card' }, 'Приглашайте друзей и получайте бонусы:')
           );
 
           if (user) {
             contentChildren.push(
               h('div', { className: 'card' }, [
-                h('p', null, [
-                  'Ваша реферальная ссылка: ',
-                  h('span', { className: 'clickable', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`)
-                ]),
+                h('p', null, 'Ваша реферальная ссылка: ', h('span', { className: 'clickable', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`)),
                 h('p', { style: { fontStyle: 'italic' } }, '(нажмите на ссылку чтобы скопировать)')
               ])
             );
@@ -970,7 +811,7 @@
                 );
               } else {
                 cardChildren.push(
-                  h('button', { className: 'button button-success', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
+                  h('button', { className: 'button button-primary', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
                 );
               }
               contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
@@ -1006,9 +847,9 @@
                 h('p', null, [h('b', null, 'Email: '), sub.email]),
                 h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Истёк' : 'Активна']),
-                h('div', { style: { display: 'flex', gap: '8px', marginTop: '8px' } }, [
-                  !sub.email.startsWith('DE-FRA-TRIAL-') ? h('button', { className: 'button button-success', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить') : null,
+                h('p', null, [h('b', null, 'Статус: '), sub.is_expired ? 'Заблокировано' : 'Активна']),
+                h('div', { style: { display: 'flex', gap: '12px', marginTop: '12px' } }, [
+                  !sub.email.startsWith('DE-FRA-TRIAL-') ? h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('extend'); }, disabled: loading }, 'Продлить') : null,
                   h('button', { className: 'button button-primary', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, 'Настройка')
                 ])
               ];
@@ -1043,10 +884,10 @@
           );
         } else {
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней - 89 ₽'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней - 249 ₽'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней - 449 ₽'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней - 849 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней'),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -1074,10 +915,10 @@
             );
           }
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней - 89 ₽'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней - 249 ₽'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней - 449 ₽'),
-            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней - 849 ₽'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней'),
+            h('button', { className: 'button button-primary', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней'),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -1106,7 +947,7 @@
                 h('p', null, [h('b', null, 'Email: '), sub.email]),
                 h('p', null, [h('b', null, 'Панель: '), sub.panel]),
                 h('p', null, [h('b', null, 'Дата окончания: '), new Date(sub.expiry_date).toLocaleString()]),
-                h('button', { className: 'button button-success', onClick: () => applyReferralBonus(selectedReferee, sub.email), disabled: loading }, 'Продлить на 7 дней')
+                h('button', { className: 'button button-primary', onClick: () => applyReferralBonus(selectedReferee, sub.email), disabled: loading }, 'Продлить на 7 дней')
               ])
             );
           });
@@ -1133,7 +974,7 @@
             h('p', { className: 'card' }, `Подписка на ${paymentData.days} дней`),
             h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
             h('p', { className: 'card' }, [h('b', null, 'Дата окончания: '), new Date(paymentData.expiry_date).toLocaleString()]),
-            h('button', { className: 'button button-success', onClick: confirmActivation, disabled: loading }, 'Подтвердить'),
+            h('button', { className: 'button button-primary', onClick: confirmActivation, disabled: loading }, 'Подтвердить'),
             h('button', { className: 'button button-danger', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, 'Отмена')
           );
         }
@@ -1158,10 +999,10 @@
             contentChildren.push(h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]));
           }
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, window.TEXTS.setup.manualPC.title),
-            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, window.TEXTS.setup.manualAndroid.title),
-            h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, window.TEXTS.setup.manualIOS.title),
-            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, window.TEXTS.setup.manualAndroidTV.title),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualPC'), disabled: loading }, 'Настройка для ПК'),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroid'), disabled: loading }, 'Настройка для Android'),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualIOS'), disabled: loading }, 'Настройка для iOS'),
+            h('button', { className: 'button button-primary', onClick: () => setView('manualAndroidTV'), disabled: loading }, 'Настройка для Android TV'),
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -1191,7 +1032,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
+          Header({ title: 'Настройка для ПК', onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1215,7 +1056,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
+          Header({ title: 'Настройка для Android', onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1239,7 +1080,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
+          Header({ title: 'Настройка для iOS', onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1263,7 +1104,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
+          Header({ title: 'Настройка для Android TV', onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1304,7 +1145,9 @@
           );
         } else {
           contentChildren.push(
-            h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
+            h('div', { className: 'card' }, [
+              h('p', null, 'Информация о сервисе.')
+            ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
@@ -1327,13 +1170,7 @@
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
-              h('p', null, [h('b', null, 'Стоимость:'), ' 89 ₽/месяц']),
-              h('p', null, [h('b', null, 'Ограничение скорости:'), ' Отсутствует']),
-              h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
-              h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
-              h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
-              h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
-              h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
+              h('p', null, [h('b', null, 'Информация:'), ' Описание подписки'])
             ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
@@ -1364,7 +1201,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
+          Header({ title: 'Пользовательское соглашение', onBack: () => setView('info') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1380,8 +1217,7 @@
           );
         } else {
           contentChildren.push(
-            h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
-            h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
+            h('p', { className: 'card' }, 'Информация о конфиденциальности.'),
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
