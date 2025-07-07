@@ -6,84 +6,62 @@
   <title>WSocks VPN</title>
   <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.2/dist.com/axios.min.js"></script>
   <script src="https://unpkg.com/@twa-dev/sdk@7.10.0/dist/telegram-web-apps.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <script>
-    // Заглушка для texts.js
     window.TEXTS = {
       setup: {
-        manualPC: {
-          title: 'Настройка для ПК',
-          content: (sub) => `Инструкция для настройки на ПК с email: ${sub.email}`
-        },
-        manualAndroid: {
-          title: 'Настройка для Android',
-          content: 'Инструкция для настройки на Android'
-        },
-        manualIOS: {
-          title: 'Настройка для iOS',
-          content: 'Инструкция для настройки на iOS'
-        },
-        manualAndroidTV: {
-          title: 'Настройка для Android TV',
-          content: (sub) => `Инструкция для настройки на Android TV с email: ${sub.email}`
-        }
+        manualPC: { title: 'Настройка для ПК', content: (sub) => `Инструкция для настройки на ПК с email: ${sub.email}` },
+        manualAndroid: { title: 'Настройка для Android', content: 'Инструкция для настройки на Android' },
+        manualIOS: { title: 'Настройка для iOS', content: 'Инструкция для настройки на iOS' },
+        manualAndroidTV: { title: 'Настройка для Android TV', content: (sub) => `Инструкция для настройки на Android TV с email: ${sub.email}` }
       },
-      terms: {
-        title: 'Пользовательское соглашение',
-        content: 'Текст пользовательского соглашения'
-      }
+      terms: { title: 'Пользовательское соглашение', content: 'Текст пользовательского соглашения' }
     };
   </script>
   <style>
     :root[data-theme="dark"] {
-      --background-color: linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2A3244 100%);
+      --background-color: linear-gradient(135deg, rgba(13, 27, 42, 0.8) 0%, rgba(27, 38, 59, 0.8) 50%, rgba(42, 50, 68, 0.8) 100%);
       --text-color: #ffffff;
-      --card-bg: rgba(0, 0, 0, 0.3);
-      --header-bg: #000000;
-      --button-bg: #4b9cd3;
-      --button-hover-bg: #5ab4e5;
+      --card-bg: rgba(255, 255, 255, 0.1);
+      --header-bg: rgba(0, 0, 0, 0.5);
+      --button-bg: rgba(75, 156, 211, 0.5);
+      --button-hover-bg: rgba(90, 180, 229, 0.5);
       --accent-color: #4b9cd3;
-      --button-secondary-bg: #1f2937;
-      --button-secondary-hover-bg: #374151;
-      --button-success-bg: #00ffae;
-      --button-success-hover-bg: #50ffa6;
-      --button-danger-bg: #ef4444;
-      --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(75, 156, 211, 0.5);
-      --button-glow: 0 0 10px rgba(75, 156, 211, 0.5);
+      --button-secondary-bg: rgba(31, 41, 55, 0.5);
+      --button-secondary-hover-bg: rgba(55, 65, 81, 0.5);
+      --button-success-bg: rgba(0, 255, 174, 0.5);
+      --button-success-hover-bg: rgba(80, 255, 166, 0.5);
+      --button-danger-bg: rgba(239, 68, 68, 0.5);
+      --button-danger-hover-bg: rgba(220, 38, 38, 0.5);
+      --shadow-color: rgba(75, 156, 211, 0.3);
+      --button-glow: 0 0 10px rgba(75, 156, 211, 0.3);
       --error-color: #ef4444;
-      --telegram-block-bg: #4b9cd3;
+      --telegram-block-bg: rgba(75, 156, 211, 0.5);
     }
-
     :root[data-theme="light"] {
-      --background-color: linear-gradient(135deg, #E0E1DD 0%, #D6D8D4 50%, #C9CBC4 100%);
+      --background-color: linear-gradient(135deg, rgba(224, 225, 221, 0.8) 0%, rgba(214, 216, 212, 0.8) 50%, rgba(201, 203, 196, 0.8) 100%);
       --text-color: #333333;
       --card-bg: rgba(255, 255, 255, 0.3);
-      --header-bg: #ffffff;
-      --button-bg: #4b9cd3;
-      --button-hover-bg: #5ab4e5;
+      --header-bg: rgba(255, 255, 255, 0.5);
+Saturday, November 16, 2024, 1:31:02 AM UTC
+      --button-bg: rgba(75, 156, 211, 0.5);
+      --button-hover-bg: rgba(90, 180, 229, 0.5);
       --accent-color: #4b9cd3;
-      --button-secondary-bg: #6b7280;
-      --button-secondary-hover-bg: #4b5563;
-      --button-success-bg: #10b981;
-      --button-success-hover-bg: #059669;
-      --button-danger-bg: #ef4444;
-      --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(75, 156, 211, 0.5);
-      --button-glow: 0 0 10px rgba(75, 156, 211, 0.5);
+      --button-secondary-bg: rgba(107, 114, 128, 0.5);
+      --button-secondary-hover-bg: rgba(75, 85, 99, 0.5);
+      --button-success-bg: rgba(16, 185, 129, 0.5);
+      --button-success-hover-bg: rgba(5, 150, 105, 0.5);
+      --button-danger-bg: rgba(239, 68, 68, 0.5);
+      --button-danger-hover-bg: rgba(220, 38, 38, 0.5);
+      --shadow-color: rgba(75, 156, 211, 0.3);
+      --button-glow: 0 0 10px rgba(75, 156, 211, 0.3);
       --error-color: #ef4444;
-      --telegram-block-bg: #4b9cd3;
+      --telegram-block-bg: rgba(75, 156, 211, 0.5);
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', sans-serif;
       background: var(--background-color);
@@ -93,7 +71,6 @@
       display: flex;
       flex-direction: column;
     }
-
     .container {
       max-width: 100%;
       width: 100%;
@@ -104,7 +81,6 @@
       padding: 16px;
       overflow-y: auto;
     }
-
     .header {
       position: sticky;
       top: 0;
@@ -118,15 +94,14 @@
       font-family: 'Oswald', sans-serif;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: background-color 0.3s ease;
+      backdrop-filter: blur(10px);
     }
-
     .header-title {
       font-size: clamp(20px, 4vw, 26px);
       font-weight: 700;
       text-align: center;
-      text-shadow: 0 0 4px var(--text-color);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
-
     .back-button {
       background: none;
       border: none;
@@ -138,59 +113,40 @@
       left: 16px;
       transition: color 0.3s ease;
     }
-
-    .back-button:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
-    .back-button:hover:not(:disabled) {
-      color: var(--accent-color);
-    }
-
+    .back-button:disabled { cursor: not-allowed; opacity: 0.5; }
+    .back-button:hover:not(:disabled) { color: var(--accent-color); }
     .content {
       flex: 1;
-      padding-sort: 16px;
+      padding-top: 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
-
-    .logo {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
+    .logo { text-align: center; margin-bottom: 16px; }
     .logo-text {
       font-family: 'Oswald', sans-serif;
       font-size: clamp(28px, 5vw, 34px);
       font-weight: 700;
       color: var(--text-color);
-      text-shadow: 0 0 4px var(--text-color);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
-
-    .user-panel, .subscriptions-panel, .card {
+    .user-panel, .subscriptions-panel, .card, .subscription-card, .product-card {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     .user-panel {
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: var(--button-glow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      opacity: 0;
-      animation: slideIn 0.5s ease-out forwards;
       transform: scale(1.1);
     }
-
     .user-panel:hover {
       transform: scale(1.12);
-      box-shadow: 0 0 15px var(--shadow-color);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-
     .user-panel-header {
       display: flex;
       flex-direction: column;
@@ -200,178 +156,125 @@
       margin-bottom: 12px;
       gap: 8px;
     }
-
     .user-panel-header span {
       color: var(--accent-color);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
-
     .subscriptions-panel {
       padding: 16px;
-      border-radius: 8px;
-      box-shadow: var(--button-glow);
       transition: max-height 0.3s ease-out, transform 0.3s ease, box-shadow 0.3s ease;
       max-height: 0;
       overflow: hidden;
       opacity: 0;
     }
-
     .subscriptions-panel.open {
       max-height: 1000px;
       opacity: 1;
       padding: 16px;
     }
-
     .subscriptions-panel:hover {
       transform: translateY(-2px);
-      box-shadow: 0 0 15px var(--shadow-color);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-
-    .subscriptions-panel .subscription {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 12px;
+    .subscription-card {
+      padding: 16px;
+      margin-bottom: 16px;
     }
-
-    .subscriptions-panel .subscription h3 {
+    .subscription-card h3, .product-card h3 {
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       margin-bottom: 8px;
       display: flex;
       align-items: center;
       gap: 8px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
-
-    .subscriptions-panel .subscription .status-error {
-      color: var(--error-color);
-      text-decoration: underline;
-    }
-
-    .subscriptions-panel .subscription p {
+    .status-error { color: var(--error-color); text-decoration: underline; }
+    .subscription-card p, .product-card p {
       font-size: clamp(12px, 2vw, 14px);
       margin-bottom: 6px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
-
-    .subscriptions-panel .subscription .details {
+    .details {
       display: grid;
       grid-template-columns: 1fr 2fr;
       gap: 8px;
       margin-bottom: 12px;
     }
-
-    .subscriptions-panel .subscription .details b {
-      font-weight: 600;
-    }
-
-    .subscriptions-panel .subscription .buttons {
-      display: flex;
-      gap: 8px;
-    }
-
-    .subscriptions-panel .subscription .buttons button {
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: clamp(12px, 2vw, 14px);
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    .subscriptions-panel .subscription .buttons .copy-button {
-      background: var(--button-bg);
-      color: var(--text-color);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .subscriptions-panel .subscription .buttons .copy-button:hover {
-      background: var(--button-hover-bg);
-      transform: translateY(-1px);
-    }
-
-    .subscriptions-panel .subscription .buttons . Sør-button {
-      background: var(--button-secondary-bg);
-      color: var(--text-color);
-    }
-
-    .subscriptions-panel .subscription .buttons .instruction-button:hover {
-      background: var(--button-secondary-hover-bg);
-      transform: translateY(-1px);
-    }
-
-    .telegram-block {
-      background: var(--telegram-block-bg);
-      padding: 16px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease, transform 0.3s ease;
-      opacity: 0;
-      animation: slideIn 0.5s ease-out forwards;
-    }
-
-    .telegram-block:hover {
-      background: var(--button-hover-bg);
-      transform: translateY(-2px);
-    }
-
-    .telegram-block span {
-      font-size: clamp(14px, 2.5vw, 16px);
-      font-weight: 600;
-      color: var(--text-color);
-    }
-
-    .telegram-block .icon {
-      font-size: clamp(20px, 3vw, 24px);
-    }
-
+    .details b { font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }
+    .buttons { display: flex; gap: 8px; }
     .button {
       display: flex;
       align-items: center;
       justify-content: center;
       width: 100%;
       padding: 12px 16px;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 8px;
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
       font-family: 'Inter', sans-serif;
-      background-color: var(--button-bg);
+      background: var(--button-bg);
       color: var(--text-color);
-      box-shadow: var(--button-glow);
-      opacity: 0;
-      animation: slideIn 0.5s ease-out forwards;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
-
-    .button:disabled {
-      cursor: not-allowed;
-      opacity: 0.5;
-    }
-
     .button:hover:not(:disabled) {
       background: var(--button-hover-bg);
       transform: translateY(-2px);
-      box-shadow: 0 0 15px var(--shadow-color);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
     }
-
-    .button:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    .button-primary {
+    .button-copy, .button-instruction {
       background: var(--button-bg);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+    .button-copy:hover:not(:disabled), .button-instruction:hover:not(:disabled) {
+      background: var(--button-hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+    .search-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+    .search-input {
+      flex: 1;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.1);
       color: var(--text-color);
     }
-
-    .button-primary:hover:not(:disabled) {
-      background: var(--button-hover-bg);
+    .search-button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      background: var(--button-bg);
+      color: var(--text-color);
+      cursor: pointer;
+      transition: background-color 0.3s;
     }
-
+    .search-button:hover { background: var(--button-hover-bg); }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .product-card { padding: 16px; text-align: center; }
+    .product-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .fas { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }
+    .button:disabled { cursor: not-allowed; opacity: 0.5; }
+    .button:active:not(:disabled) { transform: scale(0.98); }
+    .button-primary { background: var(--button-bg); color: var(--text-color); }
+    .button-primary:hover:not(:disabled) { background: var(--button-hover-bg); }
     .button-square {
       display: flex;
       flex-direction: column;
@@ -387,113 +290,30 @@
       min-height: 120px;
       transform: scale(1.2);
     }
-
     .button-square:hover:not(:disabled) {
       background: var(--button-hover-bg);
       transform: scale(1.22);
-      box-shadow: 0 0 15px var(--shadow-color);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
     }
-
-    .button-square .icon {
-      font-size: clamp(106.67px, 20vw, 120px);
-      color: #ffffff;
-    }
-
-    .button-square span {
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
-    }
-
-    .button-secondary {
-      background: var(--button-secondary-bg);
-      color: var(--text-color);
-    }
-
-    .button-secondary:hover:not(:disabled) {
-      background: var(--button-secondary-hover-bg);
-    }
-
-    .button-success {
-      background: var(--button-success-bg);
-      color: #000000;
-    }
-
-    .button-success:hover:not(:disabled) {
-      background: var(--button-success-hover-bg);
-    }
-
-    .button-danger {
-      background: var(--button-danger-bg);
-      color: #ffffff;
-    }
-
-    .button-danger:hover:not(:disabled) {
-      background: var(--button-danger-hover-bg);
-    }
-
-    .button-row {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .button-row.first-row {
-      justify-content: space-between;
-    }
-
-    .button-row.second-row {
-      justify-content: space-around;
-    }
-
-    .card {
-      padding: 12px;
-      border-radius: 8px;
-      box-shadow: var(--button-glow);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      opacity: 0;
-      animation: slideIn 0.5s ease-out forwards;
-    }
-
-    .card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 15px var(--shadow-color);
-    }
-
-    .card p {
-      font-size: clamp(12px, 2.5vw, 14px);
-      margin: 8px 0;
-      color: var(--text-color);
-    }
-
-    .card b {
-      color: var(--text-color);
-      font-weight: 600;
-    }
-
-    .error {
-      color: var(--error-color);
-      font-size: clamp(12px, 2.5vw, 14px);
-      text-align: center;
-      margin-bottom: 16px;
-      opacity: 0;
-      animation: slideIn 0.5s ease-out forwards;
-    }
-
-    .link {
-      color: var(--accent-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .link:hover {
-      text-decoration: underline;
-    }
-
-    .tooltip {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-
+    .button-square .icon { font-size: clamp(106.67px, 20vw, 120px); color: #ffffff; }
+    .button-square span { text-shadow: 0 0 5px rgba(255, 255, 255, 0.8); }
+    .button-secondary { background: var(--button-secondary-bg); color: var(--text-color); }
+    .button-secondary:hover:not(:disabled) { background: var(--button-secondary-hover-bg); }
+    .button-success { background: var(--button-success-bg); color: #000000; }
+    .button-success:hover:not(:disabled) { background: var(--button-success-hover-bg); }
+    .button-danger { background: var(--button-danger-bg); color: #ffffff; }
+    .button-danger:hover:not(:disabled) { background: var(--button-danger-hover-bg); }
+    .button-row { display: flex; gap: 12px; margin-bottom: 16px; }
+    .button-row.first-row { justify-content: space-between; }
+    .button-row.second-row { justify-content: space-around; }
+    .card { padding: 12px; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); }
+    .card p { font-size: clamp(12px, 2.5vw, 14px); margin: 8px 0; color: var(--text-color); }
+    .card b { color: var(--text-color); font-weight: 600; }
+    .error { color: var(--error-color); font-size: clamp(12px, 2.5vw, 14px); text-align: center; margin-bottom: 16px; }
+    .link { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .link:hover { text-decoration: underline; }
+    .tooltip { position: relative; display: inline-block; width: 100%; }
     .tooltip .tooltip-text {
       visibility: hidden;
       background-color: var(--header-bg);
@@ -511,164 +331,47 @@
       opacity: 0;
       transition: opacity 0.3s ease;
     }
-
-    .tooltip:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    .clickable {
-      color: var(--accent-color);
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    .clickable:hover {
-      text-decoration: underline;
-    }
-
-    .clickable-manual {
-      cursor: pointer;
-      color: var(--text-color);
-      font-weight: 600;
-    }
-
-    .clickable-manual:hover {
-      color: var(--accent-color);
-    }
-
-    .manual-content {
-      font-size: clamp(12px, 2.5vw, 14px);
-      color: var(--text-color);
-      line-height: 1.5;
-    }
-
-    .manual-content a {
-      color: var(--accent-color);
-      text-decoration: none;
-      font-weight: 600;
-    }
-
-    .manual-content a:hover {
-      text-decoration: underline;
-    }
-
-    .manual-content pre {
-      background-color: var(--button-secondary-bg);
-      padding: 8px;
-      border-radius: 4px;
-      overflow-x: auto;
-    }
-
-    .manual-content code {
-      font-family: monospace;
-      font-size: clamp(11px, 2vw, 12px);
-    }
-
-    .manual-content ul {
-      list-style-type: disc;
-      margin-left: 20px;
-      margin-bottom: 8px;
-    }
-
-    .manual-content li {
-      margin-bottom: 4px;
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-20px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes scaleIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
+    .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+    .clickable { color: var(--accent-color); cursor: pointer; font-weight: 600; }
+    .clickable:hover { text-decoration: underline; }
+    .clickable-manual { cursor: pointer; color: var(--text-color); font-weight: 600; }
+    .clickable-manual:hover { color: var(--accent-color); }
+    .manual-content { font-size: clamp(12px, 2.5vw, 14px); color: var(--text-color); line-height: 1.5; }
+    .manual-content a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+    .manual-content a:hover { text-decoration: underline; }
+    .manual-content pre { background-color: var(--button-secondary-bg); padding: 8px; border-radius: 4px; overflow-x: auto; }
+    .manual-content code { font-family: monospace; font-size: clamp(11px, 2vw, 12px); }
+    .manual-content ul { list-style-type: disc; margin-left: 20px; margin-bottom: 8px; }
+    .manual-content li { margin-bottom: 4px; }
+    @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .button, .card, .user-panel, .telegram-block { animation: slideIn 0.5s ease-out forwards; }
     .button:nth-child(1), .card:nth-child(1), .user-panel:nth-child(1), .telegram-block:nth-child(1) { animation-delay: 0.1s; }
     .button:nth-child(2), .card:nth-child(2) { animation-delay: 0.2s; }
     .button:nth-child(3), .card:nth-child(3) { animation-delay: 0.3s; }
     .button:nth-child(4), .card:nth-child(4) { animation-delay: 0.4s; }
     .subscriptions-panel { animation-delay: 0.5s; }
-
     .logo { animation: scaleIn 0.6s ease-out forwards; }
-
     @media (max-width: 600px) {
-      .container {
-        padding: 8px;
-      }
-
-      .header-title {
-        font-size: clamp(18px, 4vw, 22px);
-      }
-
-      .logo-text {
-        font-size: clamp(24px, 5vw, 30px);
-      }
-
-      .button {
-        font-size: clamp(12px, 2.5vw, 14px);
-        padding: 10px 12px;
-      }
-
-      .button-square {
-        font-size: clamp(24px, 5vw, 28px);
-        padding: 10px;
-        min-height: 100px;
-      }
-
-      .button-square .icon {
-        font-size: clamp(93.33px, 20vw, 106.67px);
-      }
-
-      .user-panel-header {
-        font-size: clamp(14px, 2.5vw, 16px);
-      }
-
-      .user-panel {
-        transform: scale(1.05);
-      }
-
-      .user-panel:hover {
-        transform: scale(1.07);
-      }
+      .container { padding: 8px; }
+      .header-title { font-size: clamp(18px, 4vw, 22px); }
+      .logo-text { font-size: clamp(24px, 5vw, 30px); }
+      .button { font-size: clamp(12px, 2.5vw, 14px); padding: 10px 12px; }
+      .button-square { font-size: clamp(24px, 5vw, 28px); padding: 10px; min-height: 100px; }
+      .button-square .icon { font-size: clamp(93.33px, 20vw, 106.67px); }
+      .user-panel-header { font-size: clamp(14px, 2.5vw, 16px); }
+      .user-panel { transform: scale(1.05); }
+      .user-panel:hover { transform: scale(1.07); }
     }
-
     @media (min-width: 1200px) {
-      .container {
-        max-width: min(80vw, 1400px);
-      }
-
-      .header-title {
-        font-size: clamp(22px, 3vw, 28px);
-      }
-
-      .logo-text {
-        font-size: clamp(30px, 4vw, 36px);
-      }
-
-      .button {
-        font-size: clamp(15px, 2vw, 17px);
-        padding: 14px 18px;
-      }
-
-      .button-square {
-        font-size: clamp(28px, 4vw, 32px);
-        padding: 12px;
-        min-height: 110px;
-      }
-
-      .button-square .icon {
-        font-size: clamp(120px, 20vw, 133.33px);
-      }
-
-      .user-panel {
-        transform: scale(1.15);
-      }
-
-      .user-panel:hover {
-        transform: scale(1.17);
-      }
+      .container { max-width: min(80vw, 1400px); }
+      .header-title { font-size: clamp(22px, 3vw, 28px); }
+      .logo-text { font-size: clamp(30px, 4vw, 36px); }
+      .button { font-size: clamp(15px, 2vw, 17px); padding: 14px 18px; }
+      .button-square { font-size: clamp(28px, 4vw, 32px); padding: 12px; min-height: 110px; }
+      .button-square .icon { font-size: clamp(120px, 20vw, 133.33px); }
+      .user-panel { transform: scale(1.15); }
+      .user-panel:hover { transform: scale(1.17); }
     }
   </style>
 </head>
@@ -726,18 +429,15 @@
           setLoading(false);
           return;
         }
-
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
         const initData = Telegram.WebApp.initData;
         console.log('InitData:', initData);
-
         if (!initData) {
           setError('Не удалось получить initData');
           setLoading(false);
           return;
         }
-
         setLoading(true);
         axiosInstance.post(`${API_URL}/api/auth`, { init_data: initData }, {
           headers: { 'Cache-Control': 'no-cache' }
@@ -755,10 +455,7 @@
       }, []);
 
       const fetchSubscriptions = async () => {
-        if (!user) {
-          setError('Пользователь не авторизован');
-          return;
-        }
+        if (!user) { setError('Пользователь не авторизован'); return; }
         setLoading(true);
         setError(null);
         try {
@@ -771,16 +468,11 @@
         } catch (err) {
           console.error('Ошибка подписок:', err);
           setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
-        } finally {
-          setLoading(false);
-        }
+        } finally { setLoading(false); }
       };
 
       const fetchReferrals = async () => {
-        if (!user) {
-          setError('Пользователь не авторизован');
-          return;
-        }
+        if (!user) { setError('Пользователь не авторизован'); return; }
         setLoading(true);
         setError(null);
         try {
@@ -793,27 +485,18 @@
         } catch (err) {
           console.error('Ошибка рефералов:', err);
           setError(`Ошибка получения рефералов: ${err.response?.data?.detail || err.message}`);
-        } finally {
-          setLoading(false);
-        }
+        } finally { setLoading(false); }
       };
 
       const activateSubscription = debounce(async (days, isExtension = false, email = null, requestId) => {
-        if (!user) {
-          setError('Пользователь не авторизован');
-          return;
-        }
-        if (processingActions[requestId]) {
-          return;
-        }
+        if (!user) { setError('Пользователь не авторизован'); return; }
+        if (processingActions[requestId]) { return; }
         setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
         setError(null);
         try {
           const endpoint = isExtension ? '/api/extend-subscription' : '/api/buy-subscription';
-          const payload = isExtension 
-            ? { tg_id: user.telegram_id, days, email }
-            : { tg_id: user.telegram_id, days };
+          const payload = isExtension ? { tg_id: user.telegram_id, days, email } : { tg_id: user.telegram_id, days };
           const response = await axiosInstance.post(`${API_URL}${endpoint}`, payload);
           console.log('Ответ подписки:', response.data);
           setPaymentData({ ...response.data, isExtension });
@@ -828,14 +511,9 @@
       }, 500);
 
       const activateTrial = debounce(async () => {
-        if (!user) {
-          setError('Пользователь не авторизован');
-          return;
-        }
+        if (!user) { setError('Пользователь не авторизован'); return; }
         const requestId = generateRequestId();
-        if (processingActions[requestId]) {
-          return;
-        }
+        if (processingActions[requestId]) { return; }
         setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
         setError(null);
@@ -854,14 +532,9 @@
       }, 500);
 
       const applyReferralBonus = debounce(async (referee_id, email = null) => {
-        if (!user) {
-          setError('Пользователь не авторизован');
-          return;
-        }
+        if (!user) { setError('Пользователь не авторизован'); return; }
         const requestId = generateRequestId();
-        if (processingActions[requestId]) {
-          return;
-        }
+        if (processingActions[requestId]) { return; }
         setProcessingActions(prev => ({ ...prev, [requestId]: true }));
         setLoading(true);
         setError(null);
@@ -892,18 +565,15 @@
       }, 500);
 
       const confirmActivation = async () => {
-        if (!user || !paymentData) {
-          setError('Данные для активации отсутствуют');
-          return;
-        }
+        if (!user || !paymentData) { setError('Данные для активации отсутствуют'); return; }
         setLoading(true);
         setError(null);
         try {
           setView('subscriptions');
           await fetchSubscriptions();
           Telegram.WebApp.showAlert(
-            paymentData.isExtension 
-              ? `Подписка успешно продлена на ${paymentData.days} дней до ${paymentData.expiry_date}!` 
+            paymentData.isExtension
+              ? `Подписка успешно продлена на ${paymentData.days} дней до ${paymentData.expiry_date}!`
               : `Подписка успешно активирована на ${paymentData.days} дней до ${paymentData.expiry_date}!`
           );
           setPaymentData(null);
@@ -911,19 +581,12 @@
         } catch (err) {
           console.error('Ошибка подтверждения активации:', err);
           setError(`Ошибка подтверждения активации: ${err.message}`);
-        } finally {
-          setLoading(false);
-        }
+        } finally { setLoading(false); }
       };
 
-      const handleRetry = (action) => {
-        setError(null);
-        action();
-      };
+      const handleRetry = (action) => { setError(null); action(); };
 
-      const generateRequestId = () => {
-        return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      };
+      const generateRequestId = () => `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
       const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text).then(() => {
@@ -934,41 +597,33 @@
         });
       };
 
-      const toggleSubscriptionsPanel = () => {
-        setIsSubscriptionsOpen(!isSubscriptionsOpen);
-      };
+      const toggleSubscriptionsPanel = () => setIsSubscriptionsOpen(!isSubscriptionsOpen);
 
       const Header = ({ title, onBack }) => {
         const children = [];
-        if (onBack) {
-          children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'));
-        }
+        if (onBack) children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'));
         children.push(h('div', { className: 'header-title' }, title));
         return h('div', { className: 'header' }, children);
       };
 
       const renderMainMenu = () => {
         const contentChildren = [];
-
         if (user) {
           contentChildren.push(
             h('div', { className: 'user-panel' }, [
               h('div', { className: 'user-panel-header' }, [
-                h('span', null, [
-                  h('i', { className: 'fas fa-lock', style: { marginRight: '4px' } }),
-                  `Ключи доступа: ${user.first_name}`
-                ]),
+                h('span', null, [h('i', { className: 'fas fa-lock', style: { marginRight: '4px' } }), `Ключи доступа: ${user.first_name}`]),
                 h('span', null, `Активных подписок: ${subscriptions.length}`),
                 h('span', null, `Рефералов: ${referrals.length}`)
               ])
             ]),
             h('button', { className: 'button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
-            h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
+            h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` },
               subscriptions.length === 0
                 ? [h('p', null, 'Нет активных подписок')]
                 : subscriptions.map((sub, index) => {
                     const isExpired = sub.is_expired;
-                    return h('div', { key: index, className: 'subscription' }, [
+                    return h('div', { key: index, className: 'subscription-card' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
                         `Подключение #${sub.email.split('-').pop()}`,
@@ -992,11 +647,11 @@
                         h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
                       ]),
                       h('div', { className: 'buttons' }, [
-                        h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                        h('button', { className: 'button button-copy', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                           'Скопировать'
                         ]),
-                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                        h('button', { className: 'button button-instruction', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
                           h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                           'Инструкция'
                         ])
@@ -1006,7 +661,6 @@
             )
           );
         }
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1060,7 +714,6 @@
             ])
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'WSocks VPN' }),
           h('div', { className: 'content' }, contentChildren)
@@ -1069,7 +722,6 @@
 
       const renderSupport = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1093,7 +745,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Поддержка', onBack: () => setView('main') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1102,7 +753,6 @@
 
       const renderReferrals = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1117,7 +767,6 @@
               ' бесплатно:'
             ])
           );
-
           if (user) {
             contentChildren.push(
               h('div', { className: 'card' }, [
@@ -1129,7 +778,6 @@
               ])
             );
           }
-
           if (referrals.length === 0) {
             contentChildren.push(h('p', { className: 'card' }, 'У вас пока нет рефералов.'));
           } else {
@@ -1149,12 +797,10 @@
               contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
             });
           }
-
           contentChildren.push(
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Реферальная система', onBack: () => setView('main') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1163,7 +809,6 @@
 
       const renderSubscriptions = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1176,7 +821,7 @@
           } else {
             subscriptions.forEach((sub, index) => {
               const isExpired = sub.is_expired;
-              const cardChildren = [
+              const subscriptionChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
                   `Подключение #${sub.email.split('-').pop()}`,
@@ -1200,20 +845,19 @@
                   h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
                 ]),
                 h('div', { className: 'buttons' }, [
-                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                  h('button', { className: 'button button-copy', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                  h('button', { className: 'button button-instruction', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
                 ])
               ];
-              contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
+              contentChildren.push(h('div', { key: index, className: 'subscription-card' }, subscriptionChildren));
             });
           }
-
           contentChildren.push(
             h('div', { className: 'tooltip' }, [
               h('button', { className: 'button button-primary', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
@@ -1223,7 +867,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Подписки', onBack: () => setView('main') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1232,7 +875,6 @@
 
       const renderBuy = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1248,7 +890,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Купить подписку', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1257,7 +898,6 @@
 
       const renderExtend = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1279,7 +919,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Продлить подписку', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1288,7 +927,6 @@
 
       const renderSelectSubscription = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1300,7 +938,7 @@
           const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
           nonTrialSubs.forEach((sub, index) => {
             contentChildren.push(
-              h('div', { key: index, className: 'card' }, [
+              h('div', { key: index, className: 'subscription-card' }, [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
                   `Подключение #${sub.email.split('-').pop()}`,
@@ -1324,11 +962,11 @@
                   h('b', null, 'Устройство:'), h('span', null, 'Смартфон')
                 ]),
                 h('div', { className: 'buttons' }, [
-                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                  h('button', { className: 'button button-copy', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                  h('button', { className: 'button button-instruction', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1338,7 +976,6 @@
           });
           contentChildren.push(h('button', { className: 'button button-secondary', onClick: () => setView('referrals'), disabled: loading }, 'Назад'));
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Выберите подписку', onBack: () => setView('referrals') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1347,7 +984,6 @@
 
       const renderPayment = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1363,7 +999,6 @@
             h('button', { className: 'button button-danger', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, 'Отмена')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Подтверждение подписки', onBack: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }),
           h('div', { className: 'content' }, contentChildren)
@@ -1372,7 +1007,6 @@
 
       const renderSetup = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1391,7 +1025,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Настройка', onBack: () => setView('subscriptions') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1400,7 +1033,6 @@
 
       const renderManualPC = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1415,7 +1047,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1424,7 +1055,6 @@
 
       const renderManualAndroid = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1439,7 +1069,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1448,7 +1077,6 @@
 
       const renderManualIOS = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1463,7 +1091,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1472,7 +1099,6 @@
 
       const renderManualAndroidTV = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1487,7 +1113,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1496,7 +1121,6 @@
 
       const renderInfo = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1512,7 +1136,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Информация', onBack: () => setView('main') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1521,7 +1144,6 @@
 
       const renderService = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1534,7 +1156,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'О сервисе', onBack: () => setView('info') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1543,7 +1164,6 @@
 
       const renderSubscription = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1564,7 +1184,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'О подписке', onBack: () => setView('info') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1573,7 +1192,6 @@
 
       const renderTerms = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1588,7 +1206,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1597,7 +1214,6 @@
 
       const renderPrivacy = () => {
         const contentChildren = [];
-
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
@@ -1611,7 +1227,6 @@
             h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
           );
         }
-
         return h('div', { className: 'container' }, [
           Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
           h('div', { className: 'content' }, contentChildren)
@@ -1619,12 +1234,30 @@
       };
 
       const renderShop = () => {
+        const contentChildren = [
+          h('div', { className: 'search-bar' }, [
+            h('input', { type: 'text', placeholder: 'Поиск товаров...', className: 'search-input' }),
+            h('button', { className: 'search-button' }, 'Искать')
+          ]),
+          h('div', { className: 'product-grid' }, [
+            h('div', { className: 'product-card' }, [
+              h('img', { src: 'placeholder.jpg', alt: 'Товар 1' }),
+              h('h3', null, 'Товар 1'),
+              h('p', null, 'Описание товара 1'),
+              h('button', { className: 'button button-primary' }, 'Купить')
+            ]),
+            h('div', { className: 'product-card' }, [
+              h('img', { src: 'placeholder.jpg', alt: 'Товар 2' }),
+              h('h3', null, 'Товар 2'),
+              h('p', null, 'Описание товара 2'),
+              h('button', { className: 'button button-primary' }, 'Купить')
+            ])
+          ]),
+          h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
+        ];
         return h('div', { className: 'container' }, [
           Header({ title: 'Магазин', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, [
-            h('p', { className: 'card' }, 'Добро пожаловать в магазин!'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
-          ])
+          h('div', { className: 'content' }, contentChildren)
         ]);
       };
 
@@ -1651,7 +1284,6 @@
       };
 
       const contentChildren = [];
-
       if (!user) {
         contentChildren.push(
           Header({ title: 'WSocks VPN' }),
@@ -1665,7 +1297,6 @@
       } else {
         contentChildren.push(views[view]());
       }
-
       return h('div', null, contentChildren);
     }
 
