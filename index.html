@@ -41,41 +41,45 @@
     :root[data-theme="dark"] {
       --background-color: linear-gradient(135deg, #0D1B2A 0%, #1B263B 50%, #2A3244 100%);
       --text-color: #ffffff;
-      --card-bg: rgba(0, 0, 0, 0.9);
-      --header-bg: #000000;
-      --button-bg: #4b9cd3; /* Сдержанный голубой для действий */
-      --button-hover-bg: #5ab4e5;
+      --card-bg: rgba(255, 255, 255, 0.1);
+      --card-border: rgba(255, 255, 255, 0.2);
+      --card-blur: blur(12px);
+      --header-bg: rgba(255, 255, 255, 0.1);
+      --button-bg: rgba(255, 255, 255, 0.1);
+      --button-hover-bg: rgba(255, 255, 255, 0.2);
       --accent-color: #4b9cd3;
-      --button-secondary-bg: #1f2937;
-      --button-secondary-hover-bg: #374151;
-      --button-success-bg: #00ffae;
-      --button-success-hover-bg: #50ffa6;
-      --button-danger-bg: #ef4444;
-      --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(75, 156, 211, 0.5);
-      --button-glow: 0 0 10px rgba(75, 156, 211, 0.5);
+      --button-secondary-bg: rgba(255, 255, 255, 0.1);
+      --button-secondary-hover-bg: rgba(255, 255, 255, 0.2);
+      --button-success-bg: rgba(0, 255, 174, 0.2);
+      --button-success-hover-bg: rgba(0, 255, 174, 0.3);
+      --button-danger-bg: rgba(239, 68, 68, 0.2);
+      --button-danger-hover-bg: rgba(239, 68, 68, 0.3);
+      --shadow-color: rgba(75, 156, 211, 0.3);
+      --button-glow: 0 0 8px rgba(75, 156, 211, 0.3);
       --error-color: #ef4444;
-      --telegram-block-bg: #4b9cd3;
+      --telegram-block-bg: rgba(75, 156, 211, 0.2);
     }
 
     :root[data-theme="light"] {
       --background-color: linear-gradient(135deg, #E0E1DD 0%, #D6D8D4 50%, #C9CBC4 100%);
       --text-color: #333333;
-      --card-bg: rgba(255, 255, 255, 0.9);
-      --header-bg: #ffffff;
-      --button-bg: #4b9cd3;
-      --button-hover-bg: #5ab4e5;
+      --card-bg: rgba(255, 255, 255, 0.3);
+      --card-border: rgba(255, 255, 255, 0.5);
+      --card-blur: blur(12px);
+      --header-bg: rgba(255, 255, 255, 0.3);
+      --button-bg: rgba(255, 255, 255, 0.3);
+      --button-hover-bg: rgba(255, 255, 255, 0.4);
       --accent-color: #4b9cd3;
-      --button-secondary-bg: #6b7280;
-      --button-secondary-hover-bg: #4b5563;
-      --button-success-bg: #10b981;
-      --button-success-hover-bg: #059669;
-      --button-danger-bg: #ef4444;
-      --button-danger-hover-bg: #dc2626;
-      --shadow-color: rgba(75, 156, 211, 0.5);
-      --button-glow: 0 0 10px rgba(75, 156, 211, 0.5);
+      --button-secondary-bg: rgba(255, 255, 255, 0.3);
+      --button-secondary-hover-bg: rgba(255, 255, 255, 0.4);
+      --button-success-bg: rgba(16, 185, 129, 0.3);
+      --button-success-hover-bg: rgba(16, 185, 129, 0.4);
+      --button-danger-bg: rgba(239, 68, 68, 0.3);
+      --button-danger-hover-bg: rgba(239, 68, 68, 0.4);
+      --shadow-color: rgba(75, 156, 211, 0.3);
+      --button-glow: 0 0 8px rgba(75, 156, 211, 0.3);
       --error-color: #ef4444;
-      --telegram-block-bg: #4b9cd3;
+      --telegram-block-bg: rgba(75, 156, 211, 0.3);
     }
 
     /* Общие стили */
@@ -109,7 +113,9 @@
     .header {
       position: sticky;
       top: 0;
-      background-color: var(--header-bg);
+      background: var(--header-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       color: var(--text-color);
       padding: 12px 16px;
       display: flex;
@@ -117,7 +123,7 @@
       justify-content: center;
       z-index: 10;
       font-family: 'Oswald', sans-serif;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
       transition: background-color 0.3s ease;
     }
 
@@ -157,21 +163,10 @@
       gap: 16px;
     }
 
-    .logo {
-      text-align: center;
-      margin-bottom: 16px;
-    }
-
-    .logo-text {
-      font-family: 'Oswald', sans-serif;
-      font-size: clamp(28px, 5vw, 34px);
-      font-weight: 700;
-      color: var(--text-color);
-      text-shadow: 0 0 4px var(--text-color);
-    }
-
     .user-panel {
       background: var(--card-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       padding: 20px;
       border-radius: 8px;
       box-shadow: var(--button-glow);
@@ -202,6 +197,8 @@
 
     .subscriptions-panel {
       background: var(--card-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       padding: 16px;
       border-radius: 8px;
       box-shadow: var(--button-glow);
@@ -223,7 +220,9 @@
     }
 
     .subscriptions-panel .subscription {
-      background: rgba(255, 255, 255, 0.05);
+      background: var(--card-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       padding: 12px;
       border-radius: 6px;
       margin-bottom: 12px;
@@ -244,7 +243,7 @@
     }
 
     .subscriptions-panel .subscription .status-error::before {
-      content: '🔴';
+      content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ef4444' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='8'/%3E%3C/svg%3E");
       margin-right: 4px;
     }
 
@@ -275,11 +274,13 @@
       font-size: clamp(12px, 2vw, 14px);
       cursor: pointer;
       transition: background-color 0.3s ease, transform 0.3s ease;
+      background: var(--button-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
+      color: var(--text-color);
     }
 
     .subscriptions-panel .subscription .buttons .copy-button {
-      background: var(--button-bg);
-      color: var(--text-color);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -292,7 +293,6 @@
 
     .subscriptions-panel .subscription .buttons .instruction-button {
       background: var(--button-secondary-bg);
-      color: var(--text-color);
     }
 
     .subscriptions-panel .subscription .buttons .instruction-button:hover {
@@ -302,6 +302,8 @@
 
     .telegram-block {
       background: var(--telegram-block-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       padding: 16px;
       border-radius: 8px;
       display: flex;
@@ -327,6 +329,7 @@
 
     .telegram-block .icon {
       font-size: clamp(20px, 3vw, 24px);
+      color: #ffffff;
     }
 
     .button {
@@ -342,7 +345,9 @@
       cursor: pointer;
       transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
       font-family: 'Inter', sans-serif;
-      background-color: var(--button-bg);
+      background: var(--button-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       color: var(--text-color);
       box-shadow: var(--button-glow);
       opacity: 0;
@@ -381,6 +386,8 @@
       gap: 8px;
       padding: 12px;
       background: var(--button-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       color: var(--text-color);
       font-size: clamp(14px, 2.5vw, 16px);
       text-align: center;
@@ -395,7 +402,8 @@
     }
 
     .button-square .icon {
-      font-size: clamp(160px, 30vw, 180px);
+      width: clamp(160px, 30vw, 180px);
+      height: clamp(160px, 30vw, 180px);
       color: #ffffff;
     }
 
@@ -410,7 +418,7 @@
 
     .button-success {
       background: var(--button-success-bg);
-      color: #000000;
+      color: #ffffff;
     }
 
     .button-success:hover:not(:disabled) {
@@ -435,6 +443,8 @@
 
     .card {
       background: var(--card-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       padding: 12px;
       border-radius: 8px;
       box-shadow: var(--button-glow);
@@ -464,6 +474,11 @@
       font-size: clamp(12px, 2.5vw, 14px);
       text-align: center;
       margin-bottom: 16px;
+      background: var(--card-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
+      padding: 12px;
+      border-radius: 8px;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
     }
@@ -486,7 +501,9 @@
 
     .tooltip .tooltip-text {
       visibility: hidden;
-      background-color: var(--header-bg);
+      background: var(--card-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       color: var(--text-color);
       text-align: center;
       border-radius: 4px;
@@ -544,7 +561,9 @@
     }
 
     .manual-content pre {
-      background-color: var(--button-secondary-bg);
+      background: var(--button-secondary-bg);
+      backdrop-filter: var(--card-blur);
+      border: 1px solid var(--card-border);
       padding: 8px;
       border-radius: 4px;
       overflow-x: auto;
@@ -582,8 +601,6 @@
     .button:nth-child(4), .card:nth-child(4) { animation-delay: 0.4s; }
     .subscriptions-panel { animation-delay: 0.5s; }
 
-    .logo { animation: scaleIn 0.6s ease-out forwards; }
-
     /* Адаптивность */
     @media (max-width: 600px) {
       .container {
@@ -592,10 +609,6 @@
 
       .header-title {
         font-size: clamp(18px, 4vw, 22px);
-      }
-
-      .logo-text {
-        font-size: clamp(24px, 5vw, 30px);
       }
 
       .button {
@@ -610,7 +623,8 @@
       }
 
       .button-square .icon {
-        font-size: clamp(140px, 30vw, 160px);
+        width: clamp(140px, 30vw, 160px);
+        height: clamp(140px, 30vw, 160px);
       }
 
       .user-panel-header {
@@ -635,10 +649,6 @@
         font-size: clamp(22px, 3vw, 28px);
       }
 
-      .logo-text {
-        font-size: clamp(30px, 4vw, 36px);
-      }
-
       .button {
         font-size: clamp(15px, 2vw, 17px);
         padding: 14px 18px;
@@ -651,7 +661,8 @@
       }
 
       .button-square .icon {
-        font-size: clamp(180px, 30vw, 200px);
+        width: clamp(180px, 30vw, 200px);
+        height: clamp(180px, 30vw, 200px);
       }
 
       .button-grid {
@@ -705,8 +716,8 @@
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
       const BOT_USERNAME = '@YourBot';
-      const APP_DOWNLOAD_LINK = 'https://example.com/download'; // Заменить на реальную ссылку
-      const TELEGRAM_CHANNEL_LINK = 'https://t.me/WSocks_Channel'; // Заменить на реальную ссылку
+      const APP_DOWNLOAD_LINK = 'https://example.com/download';
+      const TELEGRAM_CHANNEL_LINK = 'https://t.me/WSocks_Channel';
 
       const axiosInstance = axios.create({ timeout: 0 });
 
@@ -742,7 +753,13 @@
           .then(({ data }) => {
             console.log('Ответ авторизации:', data);
             setUser(data.user);
-            setLoading(false);
+            // Загрузка подписок и рефералов сразу после авторизации
+            Promise.all([fetchSubscriptions(), fetchReferrals()])
+              .catch(err => {
+                console.error('Ошибка загрузки данных:', err);
+                setError(`Ошибка загрузки данных: ${err.message}`);
+              })
+              .finally(() => setLoading(false));
           })
           .catch(err => {
             console.error('Ошибка авторизации:', err);
@@ -756,20 +773,15 @@
           setError('Пользователь не авторизован');
           return;
         }
-        setLoading(true);
-        setError(null);
         try {
           const response = await axiosInstance.get(`${API_URL}/api/subscriptions?tg_id=${user.telegram_id}`, {
             headers: { 'Cache-Control': 'no-cache' }
           });
           console.log('Ответ подписок:', response.data);
           setSubscriptions(response.data.subscriptions || []);
-          setView('subscriptions');
         } catch (err) {
           console.error('Ошибка подписок:', err);
           setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
-        } finally {
-          setLoading(false);
         }
       };
 
@@ -778,20 +790,15 @@
           setError('Пользователь не авторизован');
           return;
         }
-        setLoading(true);
-        setError(null);
         try {
           const response = await axiosInstance.get(`${API_URL}/api/referrals?tg_id=${user.telegram_id}`, {
             headers: { 'Cache-Control': 'no-cache' }
           });
           console.log('Ответ рефералов:', response.data);
           setReferrals(response.data.referrals || []);
-          setView('referrals');
         } catch (err) {
           console.error('Ошибка рефералов:', err);
           setError(`Ошибка получения рефералов: ${err.response?.data?.detail || err.message}`);
-        } finally {
-          setLoading(false);
         }
       };
 
@@ -938,24 +945,29 @@
       const Header = ({ title, onBack }) => {
         const children = [];
         if (onBack) {
-          children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'));
+          children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, 
+            h('svg', { width: '20', height: '20', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+              h('path', { d: 'M15 18l-6-6 6-6' })
+            )
+          ));
         }
         children.push(h('div', { className: 'header-title' }, title));
         return h('div', { className: 'header' }, children);
       };
 
       const renderMainMenu = () => {
-        const contentChildren = [
-          h('div', { className: 'logo' }, [
-            h('div', { className: 'logo-text' }, 'WSocks VPN')
-          ])
-        ];
+        const contentChildren = [];
 
         if (user) {
           contentChildren.push(
             h('div', { className: 'user-panel' }, [
               h('div', { className: 'user-panel-header' }, [
-                h('span', null, `🔒 Ключи доступа: ${user.first_name}`),
+                h('span', null, [
+                  h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2a7.2 7.2 0 01-6-3.22c.03-1.99 4-3.08 6-3.08s5.97 1.09 6 3.08a7.2 7.2 0 01-6 3.22z' })
+                  ),
+                  ` Ключи доступа: ${user.first_name}`
+                ]),
                 h('span', null, `Активных подписок: ${subscriptions.length}`),
                 h('span', null, `Рефералов: ${referrals.length}`)
               ])
@@ -968,14 +980,17 @@
                     const isExpired = sub.is_expired;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
-                        '🔐 Подключение #',
-                        sub.email.split('-').pop(),
+                        h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                          h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
+                        ),
+                        ` Подключение #${sub.email.split('-').pop()}`,
                         isExpired ? h('span', { className: 'status-error' }, 'Заблокировано') : null
                       ]),
                       h('p', null, [
-                        '📡 Активировано: ',
-                        new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' }),
-                        ' UTC'
+                        h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                          h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z' })
+                        ),
+                        ` Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
                       ]),
                       h('div', { className: 'details' }, [
                         h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
@@ -986,9 +1001,17 @@
                       ]),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                          '📋 Скопировать'
+                          h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                            h('path', { d: 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z' })
+                          ),
+                          ' Скопировать'
                         ]),
-                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, '📄 Инструкция')
+                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                          h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                            h('path', { d: 'M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' })
+                          ),
+                          ' Инструкция'
+                        ])
                       ])
                     ]);
                   })
@@ -1006,43 +1029,53 @@
           contentChildren.push(
             h('div', { className: 'button-grid' }, [
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: fetchSubscriptions, disabled: loading }, [
-                  h('span', { className: 'icon' }, '⚙️'),
+                h('button', { className: 'button button-square', onClick: () => setView('subscriptions'), disabled: loading }, [
+                  h('svg', { className: 'icon', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z' })
+                  ),
                   h('span', null, 'Подписки')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: fetchReferrals, disabled: loading }, [
-                  h('span', { className: 'icon' }, '🔗'),
+                h('button', { className: 'button button-square', onClick: () => setView('referrals'), disabled: loading }, [
+                  h('svg', { className: 'icon', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z' })
+                  ),
                   h('span', null, 'Рефералы')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: () => setView('support'), disabled: loading }, [
-                  h('span', { className: 'icon' }, '📧'),
+                  h('svg', { className: 'icon', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z' })
+                  ),
                   h('span', null, 'Поддержка')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'button button-square', onClick: () => setView('info'), disabled: loading }, [
-                  h('span', { className: 'icon' }, 'ℹ️'),
+                  h('svg', { className: 'icon', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' })
+                  ),
                   h('span', null, 'Информация')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
               ])
             ]),
             h('div', { className: 'telegram-block', onClick: () => Telegram.WebApp.openLink(TELEGRAM_CHANNEL_LINK) }, [
-              h('span', { className: 'icon' }, '📢'),
+              h('svg', { className: 'icon', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                h('path', { d: 'M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z' })
+              ),
               h('span', null, 'Подпишись на наш ТГК')
             ])
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'WSocks VPN' }),
+          Header({ title: '' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1158,14 +1191,17 @@
               const isExpired = sub.is_expired;
               const cardChildren = [
                 h('h3', null, [
-                  '🔐 Подключение #',
-                  sub.email.split('-').pop(),
+                  h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
+                  ),
+                  ` Подключение #${sub.email.split('-').pop()}`,
                   isExpired ? h('span', { className: 'status-error' }, 'Заблокировано') : null
                 ]),
                 h('p', null, [
-                  '📡 Активировано: ',
-                  new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' }),
-                  ' UTC'
+                  h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm0-4h-2V7h2v6z' })
+                  ),
+                  ` Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
                 ]),
                 h('div', { className: 'details' }, [
                   h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
@@ -1176,9 +1212,17 @@
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                    '📋 Скопировать'
+                    h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                      h('path', { d: 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z' })
+                    ),
+                    ' Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, '📄 Инструкция')
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                    h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                      h('path', { d: 'M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' })
+                    ),
+                    ' Инструкция'
+                  ])
                 ])
               ];
               contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
@@ -1273,14 +1317,17 @@
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
-                  '🔐 Подключение #',
-                  sub.email.split('-').pop(),
+                  h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
+                  ),
+                  ` Подключение #${sub.email.split('-').pop()}`,
                   sub.is_expired ? h('span', { className: 'status-error' }, 'Заблокировано') : null
                 ]),
                 h('p', null, [
-                  '📡 Активировано: ',
-                  new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' }),
-                  ' UTC'
+                  h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                    h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm0-4h-2V7h2v6z' })
+                  ),
+                  ` Активировано: ${new Date(sub.expiry_date).toLocaleString('ru-RU', { timeZone: 'UTC' })} UTC`
                 ]),
                 h('div', { className: 'details' }, [
                   h('b', null, 'Тариф:'), h('span', null, '3 WP/день'),
@@ -1291,9 +1338,17 @@
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                    '📋 Скопировать'
+                    h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                      h('path', { d: 'M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z' })
+                    ),
+                    ' Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, '📄 Инструкция')
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                    h('svg', { width: '16', height: '16', fill: '#ffffff', viewBox: '0 0 24 24' }, 
+                      h('path', { d: 'M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z' })
+                    ),
+                    ' Инструкция'
+                  ])
                 ])
               ])
             );
@@ -1374,7 +1429,7 @@
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualPC.content(selectedSub) } })
             ]),
-            h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+                        h('button', { className: 'button button-secondary', onClick: () => setView('setup'), disabled: loading }, 'Назад')
           );
         }
 
@@ -1393,7 +1448,7 @@
             h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualAndroid')) }, 'Повторить'),
             h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
           );
-        } else {
+        } else if (selectedSub) {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroid.content } })
@@ -1417,7 +1472,7 @@
             h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
             h('button', { className: 'button button-secondary', onClick: () => setView('setup') }, 'Назад')
           );
-        } else {
+        } else if (selectedSub) {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualIOS.content } })
@@ -1467,115 +1522,15 @@
           );
         } else {
           contentChildren.push(
-            h('button', { className: 'button button-primary', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
-            h('button', { className: 'button button-primary', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
-            h('button', { className: 'button button-primary', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
-            h('button', { className: 'button button-primary', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
+            h('div', { className: 'card' }, [
+              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
+            ]),
             h('button', { className: 'button button-secondary', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Информация', onBack: () => setView('main') }),
-          h('div', { className: 'content' }, contentChildren)
-        ]);
-      };
-
-      const renderService = () => {
-        const contentChildren = [];
-
-        if (error) {
-          contentChildren.push(
-            h('p', { className: 'error' }, error),
-            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-          );
-        } else {
-          contentChildren.push(
-            h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-          );
-        }
-
-        return h('div', { className: 'container' }, [
-          Header({ title: 'О сервисе', onBack: () => setView('info') }),
-          h('div', { className: 'content' }, contentChildren)
-        ]);
-      };
-
-      const renderSubscription = () => {
-        const contentChildren = [];
-
-        if (error) {
-          contentChildren.push(
-            h('p', { className: 'error' }, error),
-            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-          );
-        } else {
-          contentChildren.push(
-            h('div', { className: 'card' }, [
-              h('p', null, [h('b', null, 'Стоимость:'), ' 89 ₽/месяц']),
-              h('p', null, [h('b', null, 'Ограничение скорости:'), ' Отсутствует']),
-              h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
-              h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
-              h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
-              h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
-              h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
-            ]),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-          );
-        }
-
-        return h('div', { className: 'container' }, [
-          Header({ title: 'О подписке', onBack: () => setView('info') }),
-          h('div', { className: 'content' }, contentChildren)
-        ]);
-      };
-
-      const renderTerms = () => {
-        const contentChildren = [];
-
-        if (error) {
-          contentChildren.push(
-            h('p', { className: 'error' }, error),
-            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-          );
-        } else {
-          contentChildren.push(
-            h('div', { className: 'card' }, [
-              h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
-            ]),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-          );
-        }
-
-        return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
-          h('div', { className: 'content' }, contentChildren)
-        ]);
-      };
-
-      const renderPrivacy = () => {
-        const contentChildren = [];
-
-        if (error) {
-          contentChildren.push(
-            h('p', { className: 'error' }, error),
-            h('button', { className: 'button button-primary', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info') }, 'Назад')
-          );
-        } else {
-          contentChildren.push(
-            h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
-            h('button', { className: 'button button-primary', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
-            h('button', { className: 'button button-secondary', onClick: () => setView('info'), disabled: loading }, 'Назад')
-          );
-        }
-
-        return h('div', { className: 'container' }, [
-          Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
+          Header({ title: window.TEXTS.terms.title, onBack: () => setView('main') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1594,30 +1549,16 @@
         manualAndroid: renderManualAndroid,
         manualIOS: renderManualIOS,
         manualAndroidTV: renderManualAndroidTV,
-        info: renderInfo,
-        service: renderService,
-        subscription: renderSubscription,
-        terms: renderTerms,
-        privacy: renderPrivacy
+        info: renderInfo
       };
 
-      const contentChildren = [];
-
-      if (!user) {
-        contentChildren.push(
-          Header({ title: 'WSocks VPN' }),
-          h('div', { className: 'content' }, [
-            error ? h('p', { className: 'error' }, error) : null,
-            error ? h('button', { className: 'button button-primary', onClick: () => window.location.reload() }, 'Повторить') : null,
-            error ? h('button', { className: 'button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение') : null,
-            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...') : null
-          ])
-        );
-      } else {
-        contentChildren.push(views[view]());
-      }
-
-      return h('div', null, contentChildren);
+      return views[view] ? views[view]() : h('div', { className: 'container' }, [
+        Header({ title: 'Ошибка' }),
+        h('div', { className: 'content' }, [
+          h('p', { className: 'error' }, 'Неизвестный вид'),
+          h('button', { className: 'button button-secondary', onClick: () => setView('main') }, 'Назад')
+        ])
+      ]);
     }
 
     ReactDOM.render(h(App), document.getElementById('root'));
