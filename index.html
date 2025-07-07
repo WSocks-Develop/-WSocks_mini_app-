@@ -41,13 +41,13 @@
     :root[data-theme="dark"] {
       --glass-bg: rgba(75, 156, 211, 0.3);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 0 10px var(--accent-color);
+      --glass-shadow: 0 0 10px #fff; /* Белая подсветка для хеадера */
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       --background-color: #131313;
       --text-color: #ffffff;
       --header-bg: rgba(0, 0, 0, 0.5);
-      --button-bg: rgba(75, 156, 211, 0.3);
+      --button-bg: #404040; /* Цвет кнопок */
       --button-hover-bg: rgba(90, 180, 229, 0.4);
       --accent-color: #4b9cd3;
       --button-secondary-bg: rgba(31, 41, 55, 0.3);
@@ -58,7 +58,7 @@
       --button-danger-hover-bg: rgba(220, 38, 38, 0.4);
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
-      --telegram-block-bg: rgba(75, 156, 211, 0.3);
+      --telegram-block-bg: #2196f3; /* Цвет кнопки "Подпишись на ТГК" */
     }
 
     :root[data-theme="light"] {
@@ -88,6 +88,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-weight: bold; /* Жирные шрифты */
     }
 
     body {
@@ -191,16 +192,20 @@
     .user-panel {
       display: flex;
       justify-content: space-around;
+      background: #0e0e0e; /* Цвет личного кабинета */
       transform: scale(1.1);
+    }
+
+    .user-panel > div {
+      text-align: center;
+      border: 1px solid #fff; /* Обособленные блоки */
+      padding: 10px;
+      border-radius: 8px;
     }
 
     .user-panel:hover {
       transform: scale(1.12);
       box-shadow: 0 6px 12px var(--shadow-color);
-    }
-
-    .user-panel > div {
-      text-align: center;
     }
 
     .subscriptions-panel {
@@ -286,7 +291,7 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .subscription .buttons .copy-button:hover,
+    .subscriptions-panel .subscription .buttons .copy-button hovered,
     .subscriptions-panel .subscription .buttons .instruction-button:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow-color);
@@ -303,6 +308,7 @@
       transition: all 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
+      background: var(--telegram-block-bg); /* Цвет кнопки "Подпишись на ТГК" */
     }
 
     .telegram-block:hover {
@@ -427,12 +433,16 @@
       margin-bottom: 16px;
     }
 
-    .button-row.first-row {
+    .button-row.first first-row {
       justify-content: space-between;
     }
 
     .button-row.second-row {
       justify-content: space-around;
+    }
+
+    .button-small {
+      transform: scale(0.5); /* Уменьшение кнопок в 2 раза */
     }
 
     .card {
@@ -695,7 +705,7 @@
       }
 
       .user-panel:hover {
-        transform: scale(1.07);
+        transform:Behind: scale(1.07);
       }
 
       .product-grid {
@@ -1112,21 +1122,21 @@
             ]),
             h('div', { className: 'button-row second-row' }, [
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: fetchReferrals, disabled: loading }, [
+                h('button', { className: 'button button-square button-small', onClick: fetchReferrals, disabled: loading }, [
                   h('i', { className: 'fas fa-link icon' }),
                   h('span', null, 'Рефералы')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: () => setView('support'), disabled: loading }, [
+                h('button', { className: 'button button-square button-small', onClick: () => setView('support'), disabled: loading }, [
                   h('i', { className: 'fas fa-envelope icon' }),
                   h('span', null, 'Поддержка')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'button button-square', onClick: () => setView('info'), disabled: loading }, [
+                h('button', { className: 'button button-square button-small', onClick: () => setView('info'), disabled: loading }, [
                   h('i', { className: 'fas fa-info-circle icon' }),
                   h('span', null, 'Информация')
                 ]),
@@ -1214,7 +1224,7 @@
           } else {
             referrals.forEach((ref, index) => {
               const cardChildren = [
-                h('p', null, [h('b', null, 'ID реферала: '), ref.referee_id])
+                h('p', null, [h('b', null, 'id: '), ref.referee_id])
               ];
               if (ref.bonus_applied) {
                 cardChildren.push(
