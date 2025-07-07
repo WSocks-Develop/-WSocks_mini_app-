@@ -44,7 +44,7 @@
       --glass-shadow: 0 0 10px #fff;
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-      --background-color: linear-gradient(to bottom, #666666, #000000);
+      --background-color: linear-gradient(to bottom, #333333, #1a1a1a);
       --text-color: #ffffff;
       --header-bg: rgba(0, 0, 0, 0.5);
       --button-bg: linear-gradient(135deg, #505050, #404040);
@@ -73,7 +73,7 @@
       --text-color: #333333;
       --header-bg: rgba(255, 255, 255, 0.5);
       --button-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.3), rgba(75, 156, 211, 0.3));
-      --button-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, 180, 229, 0.1));
+      --button-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, Dot: 1px solid rgba(90, 180, 229, 0.3);
       --accent-color: #4b9cd3;
       --button-secondary-bg: linear-gradient(135deg, rgba(120, 130, 140, 0.3), rgba(107, 114, 128, 0.3));
       --button-secondary-hover-bg: linear-gradient(135deg, rgba(75, 85, 99, 0.2), rgba(75, 85, 99, 0.1));
@@ -98,6 +98,9 @@
     body {
       font-family: 'Inter', sans-serif;
       background: var(--background-color);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
       color: var(--text-color);
       overflow-x: hidden;
       height: 100vh;
@@ -141,16 +144,15 @@
     }
 
     .back-button {
-      background: var(--button-bg);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: none;
+      border: none;
       color: var(--text-color);
       font-size: 20px;
       cursor: pointer;
       padding: 4px 8px;
       position: absolute;
       left: 16px;
-      border-radius: 10px;
-      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      transition: color 0.3s ease;
       text-shadow: var(--text-shadow);
     }
 
@@ -160,22 +162,7 @@
     }
 
     .back-button:hover:not(:disabled) {
-      background: var(--button-hover-bg);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px var(--shadow-color);
-    }
-
-    .back-button::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
-      transform: rotate(30deg);
-      animation: shine 3s infinite linear;
-      pointer-events: none;
+      color: var(--accent-color);
     }
 
     .content {
@@ -199,8 +186,8 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel, .card {
-      background: rgba(0, 0, 0, 0.8);
+    .subscriptions-panel, .card, .subscription {
+      background: var(--header-bg);
       backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
@@ -225,17 +212,18 @@
     }
 
     .subscriptions-panel:hover,
-    .card:hover {
+    .card:hover,
+    .subscription:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 12px var(--shadow-color);
     }
 
-    .subscriptions-panel .card {
+    .subscriptions-panel .subscription {
       padding: 12px;
       margin-bottom: 12px;
     }
 
-    .subscriptions-panel .card h3 {
+    .subscriptions-panel .subscription h3 {
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       margin-bottom: 8px;
@@ -245,35 +233,35 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .card .status-error {
+    .subscriptions-panel .subscription .status-error {
       color: var(--error-color);
       text-decoration: underline;
     }
 
-    .subscriptions-panel .card p {
+    .subscriptions-panel .subscription p {
       font-size: clamp(12px, 2vw, 14px);
       margin-bottom: 6px;
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .card .details {
+    .subscriptions-panel .subscription .details {
       display: grid;
       grid-template-columns: 1fr 2fr;
       gap: 8px;
       margin-bottom: 12px;
     }
 
-    .subscriptions-panel .card .details b {
+    .subscriptions-panel .subscription .details b {
       font-weight: 600;
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .card .buttons {
+    .subscriptions-panel .subscription .buttons {
       display: flex;
       gap: 8px;
     }
 
-    .subscriptions-panel .card .buttons button {
+    .subscriptions-panel .subscription .buttons button {
       padding: 8px 12px;
       border-radius: 8px;
       font-size: clamp(12px, 2vw, 14px);
@@ -281,8 +269,8 @@
       transition: all 0.3s ease;
     }
 
-    .subscriptions-panel .card .buttons .copy-button,
-    .subscriptions-panel .card .buttons .instruction-button {
+    .subscriptions-panel .subscription .buttons .copy-button,
+    .subscriptions-panel .subscription .buttons .instruction-button {
       position: relative;
       padding: 8px 12px;
       border-radius: 20px;
@@ -302,15 +290,15 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .card .buttons .copy-button:hover,
-    .subscriptions-panel .card .buttons .instruction-button:hover {
+    .subscriptions-panel .subscription .buttons .copy-button:hover,
+    .subscriptions-panel .subscription .buttons .instruction-button:hover {
       background: var(--button-hover-bg);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow-color);
     }
 
-    .subscriptions-panel .card .buttons .copy-button::before,
-    .subscriptions-panel .card .buttons .instruction-button::before {
+    .subscriptions-panel .subscription .buttons .copy-button::before,
+    .subscriptions-panel .subscription .buttons .instruction-button::before {
       content: "";
       position: absolute;
       top: -50%;
@@ -326,6 +314,7 @@
     .telegram-block {
       padding: 20px 16px;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 8px;
@@ -413,6 +402,15 @@
       content: none !important;
     }
 
+    @keyframes shine {
+      0% {
+        transform: translate(-100%, -100%) rotate(30deg);
+      }
+      100% {
+        transform: translate(100%, 100%) rotate(30deg);
+      }
+    }
+
     .button-primary {
       background: var(--button-bg);
     }
@@ -433,6 +431,7 @@
       text-align: center;
       min-height: 100px;
       transform: scale(1.2);
+      transition: all 0.3s ease;
     }
 
     .button-square:hover:not(:disabled) {
@@ -701,15 +700,6 @@
 
     .fas, .far {
       text-shadow: var(--text-shadow);
-    }
-
-    @keyframes shine {
-      0% {
-        transform: translate(-100%, -100%) rotate(30deg);
-      }
-      100% {
-        transform: translate(100%, 100%) rotate(30deg);
-      }
     }
 
     @keyframes slideIn {
@@ -1089,37 +1079,14 @@
         return h('div', { className: 'header' }, children);
       };
 
-      const renderSubscriptionCard = (sub) => {
-        const isExpired = sub.is_expired;
-        const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-        return h('div', { className: 'card' }, [
-          h('h3', null, [
-            h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
-            `Подключение #${sub.email.split('-').pop()}`,
-            isExpired ? h('span', { className: 'status-error' }, [
-              h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
-              'Заблокировано'
-            ]) : null
-          ]),
-          h('p', null, [
-            h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-            `До окончания: ${daysRemaining} дней`
-          ]),
-          h('div', { className: 'details' }, [
-            h('b', null, 'Тариф:'), h('span', null, sub.tariff || '3 WP/день'),
-            h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
-          ]),
-          h('div', { className: 'buttons' }, [
-            h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-              h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
-              'Скопировать'
-            ]),
-            h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
-              h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
-              'Инструкция'
-            ])
-          ])
-        ]);
+      const getSubscriptionPlan = (days) => {
+        switch (days) {
+          case 30: return '89 рублей / мес';
+          case 90: return '249 рублей / 3 мес';
+          case 180: return '449 рублей / 6 мес';
+          case 360: return '849 рублей / год';
+          default: return 'Неизвестный тариф';
+        }
       };
 
       const renderMainMenu = () => {
@@ -1131,7 +1098,39 @@
             h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
               subscriptions.length === 0
                 ? [h('p', null, 'Нет активных подписок')]
-                : subscriptions.map((sub, index) => renderSubscriptionCard(sub))
+                : subscriptions.map((sub, index) => {
+                    const isExpired = sub.is_expired;
+                    const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
+                    const plan = getSubscriptionPlan(sub.days);
+                    return h('div', { key: index, className: 'subscription' }, [
+                      h('h3', null, [
+                        h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                        `Подключение #${sub.email.split('-').pop()}`,
+                        isExpired ? h('span', { className: 'status-error' }, [
+                          h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                          'Заблокировано'
+                        ]) : null
+                      ]),
+                      h('p', null, [
+                        h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                        `До окончания: ${daysRemaining} дней`
+                      ]),
+                      h('div', { className: 'details' }, [
+                        h('b', null, 'Тариф:'), h('span', null, plan),
+                        h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
+                      ]),
+                      h('div', { className: 'buttons' }, [
+                        h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                          h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                          'Скопировать'
+                        ]),
+                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                          h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                          'Инструкция'
+                        ])
+                      ])
+                    ]);
+                  })
             )
           );
         }
@@ -1186,7 +1185,7 @@
             h('div', { className: 'telegram-block', onClick: () => Telegram.WebApp.openLink(TELEGRAM_CHANNEL_LINK) }, [
               h('i', { className: 'fas fa-bullhorn icon' }),
               h('span', null, 'WSocks Блог'),
-              h('p', { style: { fontSize: '12px', marginTop: '4px', textAlign: 'center' } }, 'Актуальные новости проекта')
+              h('p', { style: { fontSize: '10px', margin: '0' } }, 'Актуальные новости проекта')
             ])
           );
         }
@@ -1305,7 +1304,38 @@
             contentChildren.push(h('p', { className: 'card' }, 'Нет активных подписок.'));
           } else {
             subscriptions.forEach((sub, index) => {
-              contentChildren.push(h('div', { key: index }, renderSubscriptionCard(sub)));
+              const isExpired = sub.is_expired;
+              const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
+              const plan = getSubscriptionPlan(sub.days);
+              const cardChildren = [
+                h('h3', null, [
+                  h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                  `Подключение #${sub.email.split('-').pop()}`,
+                  isExpired ? h('span', { className: 'status-error' }, [
+                    h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                    'Заблокировано'
+                  ]) : null
+                ]),
+                h('p', null, [
+                  h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                  `До окончания: ${daysRemaining} дней`
+                ]),
+                h('div', { className: 'details' }, [
+                  h('b', null, 'Тариф:'), h('span', null, plan),
+                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
+                ]),
+                h('div', { className: 'buttons' }, [
+                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                    h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                    'Скопировать'
+                  ]),
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                    h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                    'Инструкция'
+                  ])
+                ])
+              ];
+              contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
             });
           }
 
@@ -1336,10 +1366,10 @@
           );
         } else {
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней - 89 ₽'),
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней - 249 ₽'),
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней - 449 ₽'),
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней - 849 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(30, false, null, generateRequestId()), disabled: loading || processingActions['buy-30'] }, '30 дней - 89 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней - 249 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней - 449 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней - 849 ₽'),
             h('button', { className: 'glass-button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -1367,10 +1397,10 @@
             );
           }
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней - 89 ₽'),
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней - 249 ₽'),
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней - 449 ₽'),
-            h('button', { className: 'glass-button button-primary', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней - 849 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(30, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-30'] }, 'Продлить на 30 дней - 89 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней - 249 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней - 449 ₽'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней - 849 ₽'),
             h('button', { className: 'glass-button button-secondary', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
           );
         }
@@ -1394,7 +1424,38 @@
           contentChildren.push(h('p', { className: 'card' }, 'Выберите подписку для продления на 7 дней:'));
           const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
           nonTrialSubs.forEach((sub, index) => {
-            contentChildren.push(h('div', { key: index }, renderSubscriptionCard(sub)));
+            const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
+            const plan = getSubscriptionPlan(sub.days);
+            contentChildren.push(
+              h('div', { key: index, className: 'card' }, [
+                h('h3', null, [
+                  h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                  `Подключение #${sub.email.split('-').pop()}`,
+                  sub.is_expired ? h('span', { className: 'status-error' }, [
+                    h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                    'Заблокировано'
+                  ]) : null
+                ]),
+                h('p', null, [
+                  h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                  `До окончания: ${daysRemaining} дней`
+                ]),
+                h('div', { className: 'details' }, [
+                  h('b', null, 'Тариф:'), h('span', null, plan),
+                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
+                ]),
+                h('div', { className: 'buttons' }, [
+                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                    h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                    'Скопировать'
+                  ]),
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                    h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                    'Инструкция'
+                  ])
+                ])
+              ])
+            );
           });
           contentChildren.push(h('button', { className: 'glass-button button-secondary', onClick: () => setView('referrals'), disabled: loading }, 'Назад'));
         }
@@ -1638,7 +1699,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondaryNo-shine', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
           );
         } else {
           contentChildren.push(
