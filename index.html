@@ -62,6 +62,7 @@
       --vpn-shop-bg: linear-gradient(135deg, #64b6f7, #5aaaeb);
       --vpn-shop-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, 180, 229, 0.1));
       --status-active-color: #00cc99;
+      --subscription-desc-bg: #2a2a2a;
     }
 
     :root[data-theme="light"] {
@@ -88,6 +89,7 @@
       --vpn-shop-bg: linear-gradient(135deg, rgba(100, 182, 247, 0.3), rgba(90, 170, 235, 0.3));
       --vpn-shop-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, 180, 229, 0.1));
       --status-active-color: #00cc99;
+      --subscription-desc-bg: #e0e0e0;
     }
 
     * {
@@ -153,6 +155,8 @@
       padding: 4px 8px;
       position: absolute;
       left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
       transition: color 0.3s ease;
       text-shadow: var(--text-shadow);
     }
@@ -255,6 +259,9 @@
       grid-template-columns: 1fr 2fr;
       gap: 8px;
       margin-bottom: 12px;
+      background: var(--subscription-desc-bg);
+      padding: 8px;
+      border-radius: 8px;
     }
 
     .subscriptions-panel .subscription .details b {
@@ -288,7 +295,7 @@
       -webkit-backdrop-filter: blur(10px);
       box-shadow: var(--button-shadow);
       overflow: hidden;
-      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      transition: background 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -373,7 +380,7 @@
       -webkit-backdrop-filter: blur(10px);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
       overflow: hidden;
-      transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      transition: background 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
       opacity: 0;
@@ -445,7 +452,7 @@
       transition: all 0.3s ease;
     }
 
-    .button-square:hover:not(:disabled) {
+    .button-square:hover:test:not(:disabled) {
       background: var(--button-hover-bg);
       transform: scale(1.22);
       box-shadow: 0 6px 12px var(--shadow-color);
@@ -655,7 +662,7 @@
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
-      background: var(--glass-bg);
+      background: #323232;
       backdrop-filter: var(--glass-blur);
       border: none;
       border-radius: 8px;
@@ -677,13 +684,16 @@
     }
 
     .product-card {
-      background: var(--glass-bg);
+      background: #323232;
       backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
       padding: 16px;
-      text-align: center;
+      text-align: left;
       transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     .product-card:hover {
@@ -704,9 +714,10 @@
     }
 
     .product-image {
+      width: 100px;
       height: 100px;
       background: #ccc;
-      margin-bottom: 10px;
+      margin-right: 16px;
     }
 
     .fas, .far {
@@ -1095,7 +1106,7 @@
 
         if (user) {
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
             h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
               subscriptions.length === 0
                 ? [h('p', null, 'Нет активных подписок')]
@@ -1103,6 +1114,7 @@
                     const isExpired = sub.is_expired;
                     const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const daysText = daysRemaining < -8 ? '∞' : daysRemaining;
+                    const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1114,12 +1126,12 @@
                             ])
                           : h('span', { className: 'status-active' }, [
                               h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                              'Активно'
+                              daysRemaining < -8 ? 'Активно' : 'Активно'
                             ])
                       ]),
                       h('p', null, [
                         h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                        `До окончания: ${daysText} дней`
+                        `До окончания: ${daysDisplay}`
                       ]),
                       h('div', { className: 'details' }, [
                         h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
@@ -1226,7 +1238,7 @@
               ]),
               h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)')
             ]),
-            h('button', { className: 'glass scrolls-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
           );
         }
 
@@ -1314,6 +1326,7 @@
               const isExpired = sub.is_expired;
               const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
               const daysText = daysRemaining < -8 ? '∞' : daysRemaining;
+              const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
               const cardChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1325,12 +1338,12 @@
                       ])
                     : h('span', { className: 'status-active' }, [
                         h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                        'Активно'
+                        daysRemaining < -8 ? 'Активно' : 'Активно'
                       ])
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                  `До окончания: ${daysText} дней`
+                  `До окончания: ${daysDisplay}`
                 ]),
                 h('div', { className: 'details' }, [
                   h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
@@ -1437,6 +1450,7 @@
           nonTrialSubs.forEach((sub, index) => {
             const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
             const daysText = daysRemaining < -8 ? '∞' : daysRemaining;
+            const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
@@ -1449,12 +1463,12 @@
                       ])
                     : h('span', { className: 'status-active' }, [
                         h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                        'Активно'
+                        daysRemaining < -8 ? 'Активно' : 'Активно'
                       ])
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                  `До окончания: ${daysText} дней`
+                  `До окончания: ${daysDisplay}`
                 ]),
                 h('div', { className: 'details' }, [
                   h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
@@ -1768,9 +1782,11 @@
             h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
               h('div', { key: index, className: 'product-card' }, [
                 h('div', { className: 'product-image' }, 'Image'),
-                h('h3', null, product.name),
-                h('p', null, product.description),
-                h('button', { className: 'glass-button button-primary no-shine' }, 'Купить')
+                h('div', null, [
+                  h('h3', null, product.name),
+                  h('p', null, product.description),
+                  h('button', { className: 'glass-button button-primary no-shine' }, 'Купить')
+                ])
               ])
             ))),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
