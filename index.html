@@ -150,7 +150,8 @@
       background: none;
       border: none;
       color: var(--text-color);
-      font-size: 20px;
+      font-size: 24px;
+      font-weight: bold;
       cursor: pointer;
       padding: 4px 8px;
       position: absolute;
@@ -239,7 +240,8 @@
       margin-bottom: 12px;
     }
 
-    .subscriptions-panel .subscription h3 {
+    .subscriptions-panel .subscription h3,
+    .subscription h3 {
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       margin-bottom: 8px;
@@ -249,43 +251,37 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .subscription .status-error {
+    .subscriptions-panel .subscription .status-error,
+    .subscription .status-error {
       color: var(--error-color);
       text-decoration: underline;
     }
 
-    .subscriptions-panel .subscription .status-active {
+    .subscriptions-panel .subscription .status-active,
+    .subscription .status-active {
       color: var(--status-active-color);
       text-decoration: underline;
     }
 
-    .subscriptions-panel .subscription p {
-      font-size: clamp(12px, 2vw, 14px);
+    .subscriptions-panel .subscription p,
+    .subscription p {
+      font-size: clamp(14px, 2.5vw, 16px);
       margin-bottom: 6px;
       text-shadow: var(--text-shadow);
     }
 
-    .subscription .details {
-      display: grid;
-      grid-template-columns: 1fr 2fr;
-      gap: 8px;
-      margin-bottom: 12px;
-      background: var(--subscription-desc-bg);
-      padding: 8px;
-      border-radius: 8px;
+    .subscriptions-panel .subscription p .days-remaining,
+    .subscription p .days-remaining {
+      font-size: clamp(16px, 3vw, 18px);
+      font-weight: bold;
     }
 
-    .subscriptions-panel .subscription .details b {
-      font-weight: 600;
-      text-shadow: var(--text-shadow);
-    }
-
-    .subscriptions-panel .subscription .buttons {
+    .subscription .buttons {
       display: flex;
       gap: 8px;
     }
 
-    .subscriptions-panel .subscription .buttons button {
+    .subscription .buttons button {
       padding: 8px 12px;
       border-radius: 8px;
       font-size: clamp(12px, 2vw, 14px);
@@ -293,8 +289,8 @@
       transition: all 0.3s ease;
     }
 
-    .subscriptions-panel .subscription .buttons .copy-button,
-    .subscriptions-panel .subscription .buttons .instruction-button {
+    .copy-button,
+    .instruction-button {
       position: relative;
       padding: 8px 12px;
       border-radius: 20px;
@@ -314,15 +310,15 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .subscription .buttons .copy-button:hover,
-    .subscriptions-panel .subscription .buttons .instruction-button:hover {
+    .copy-button:hover,
+    .instruction-button:hover {
       background: var(--button-hover-bg);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow-color);
     }
 
-    .subscriptions-panel .subscription .buttons .copy-button::before,
-    .subscriptions-panel .subscription .buttons .instruction-button::before {
+    .copy-button::before,
+    .instruction-button::before {
       content: "";
       position: absolute;
       top: -50%;
@@ -463,7 +459,7 @@
       transition: all 0.3s ease;
     }
 
-    .button-square:hover:test:not(:disabled) {
+    .button-square:hover:not(:disabled) {
       background: var(--button-hover-bg);
       transform: scale(1.22);
       box-shadow: 0 6px 12px var(--shadow-color);
@@ -531,7 +527,7 @@
     }
 
     .button-small .icon {
-      font-size: clamp(40px, 8vw, 48px);
+      font-size: clamp(e40px, 8vw, 48px);
     }
 
     .card p {
@@ -1124,7 +1120,6 @@
                 : subscriptions.map((sub, index) => {
                     const isExpired = sub.is_expired;
                     const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-                    const daysText = daysRemaining < -8 ? '∞' : daysRemaining;
                     const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
@@ -1137,15 +1132,13 @@
                             ])
                           : h('span', { className: 'status-active' }, [
                               h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                              daysRemaining < -8 ? 'Активно' : 'Активно'
+                              'Активно'
                             ])
                       ]),
                       h('p', null, [
                         h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                        `До окончания: ${daysDisplay}`
-                      ]),
-                      h('div', { className: 'details' }, [
-                        h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
+                        'До окончания: ',
+                        h('span', { className: 'days-remaining' }, daysDisplay)
                       ]),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1336,7 +1329,6 @@
             subscriptions.forEach((sub, index) => {
               const isExpired = sub.is_expired;
               const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-              const daysText = daysRemaining < -8 ? '∞' : daysRemaining;
               const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
               const cardChildren = [
                 h('h3', null, [
@@ -1349,15 +1341,13 @@
                       ])
                     : h('span', { className: 'status-active' }, [
                         h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                        daysRemaining < -8 ? 'Активно' : 'Активно'
+                        'Активно'
                       ])
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                  `До окончания: ${daysDisplay}`
-                ]),
-                h('div', { className: 'details' }, [
-                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
+                  'До окончания: ',
+                  h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1460,7 +1450,6 @@
           const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
           nonTrialSubs.forEach((sub, index) => {
             const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-            const daysText = daysRemaining < -8 ? '∞' : daysRemaining;
             const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
@@ -1474,15 +1463,13 @@
                       ])
                     : h('span', { className: 'status-active' }, [
                         h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                        daysRemaining < -8 ? 'Активно' : 'Активно'
+                        'Активно'
                       ])
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                  `До окончания: ${daysDisplay}`
-                ]),
-                h('div', { className: 'details' }, [
-                  h('b', null, 'Приложение:'), h('a', { className: 'link', href: APP_DOWNLOAD_LINK, onClick: () => Telegram.WebApp.openLink(APP_DOWNLOAD_LINK) }, 'Скачать')
+                  'До окончания: ',
+                  h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
