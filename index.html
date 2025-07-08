@@ -301,7 +301,7 @@
     .copy-button,
     .instruction-button {
       position: relative;
-      padding:03px;
+      padding: 8px 12px;
       border-radius: 20px;
       background: var(--button-bg);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -339,7 +339,7 @@
       animation: slideIn 0.5s ease-out forwards;
       background: var(--telegram-block-bg);
       box-shadow: 0 0 10px var(--telegram-block-bg);
-      border-radius: 20px;
+      signal: 20px;
     }
 
     .youtube-block {
@@ -695,10 +695,20 @@
     }
 
     .product-image {
-      width: 66px;
-      height: 66px;
+      width: 76.9px; /* 33px * 2.3 */
+      height: 76.9px; /* 33px * 2.3 */
       background: #ccc;
       margin-right: 16px;
+    }
+
+    .product-card-overlay .product-image {
+      width: 130.4px; /* 300px / 2.3 */
+      height: 130.4px; /* 300px / 2.3 */
+    }
+
+    .buy-button {
+      width: 100px;
+      height: 40px;
     }
 
     .fas, .far {
@@ -820,8 +830,8 @@
     }
 
     .product-card-content .product-image {
-      width: 150px;
-      height: 150px;
+      width: 130.4px; /* 300px / 2.3 */
+      height: 130.4px; /* 300px / 2.3 */
       object-fit: cover;
       border-radius: 10px;
     }
@@ -855,10 +865,6 @@
     .support-button {
       background: #383838;
       margin-bottom: 16px;
-    }
-
-    .buy-button {
-      width: 100px;
     }
   </style>
 </head>
@@ -925,9 +931,9 @@
       const [processingActions, setProcessingActions] = useState({});
       const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
       const [products] = useState([
-        { name: 'Товар 1', description: 'Описание товара 1', image: 'https://via.placeholder.com/66' },
-        { name: 'Товар 2', description: 'Описание товара 2', image: 'https://via.placeholder.com/66' },
-        { name: 'Товар 3', description: 'Описание товара 3', image: 'https://via.placeholder.com/66' }
+        { name: 'Товар 1', description: 'Описание товара 1' },
+        { name: 'Товар 2', description: 'Описание товара 2' },
+        { name: 'Товар 3', description: 'Описание товара 3' }
       ]);
       const [searchTerm, setSearchTerm] = useState('');
       const [viewStack, setViewStack] = useState([]);
@@ -1201,6 +1207,7 @@
                     const isExpired = sub.is_expired;
                     const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
+                    const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? 3 : 5;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1219,6 +1226,11 @@
                         h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
                         'До окончания: ',
                         h('span', { className: 'days-remaining' }, daysDisplay)
+                      ]),
+                      h('p', null, [
+                        h('i', { className: 'fas fa-mobile-alt', style: { marginRight: '4px' } }),
+                        'Макс. устройств: ',
+                        h('span', null, maxDevices)
                       ]),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1239,8 +1251,8 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
-            h('button', { className: 'glass-button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => window.location.reload() }, 'Повторить'),
+            h('button', { className: 'glass-button button-danger no-shine', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение')
           );
         } else {
           contentChildren.push(
@@ -1311,7 +1323,7 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => navigate('support')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('support')) }, 'Повторить'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
@@ -1338,7 +1350,7 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
@@ -1372,7 +1384,7 @@
                 );
               } else {
                 cardChildren.push(
-                  h('button', { className: 'glass-button button-success', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
+                  h('button', { className: 'glass-button button-success no-shine', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
                 );
               }
               contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
@@ -1396,7 +1408,7 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
@@ -1407,6 +1419,7 @@
               const isExpired = sub.is_expired;
               const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
               const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
+              const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? 3 : 5;
               const cardChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1426,6 +1439,11 @@
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
+                h('p', null, [
+                  h('i', { className: 'fas fa-mobile-alt', style: { marginRight: '4px' } }),
+                  'Макс. устройств: ',
+                  h('span', null, maxDevices)
+                ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
@@ -1442,8 +1460,8 @@
           }
 
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
-            h('button', { className: 'glass-button button-primary', onClick: () => navigate('buy'), disabled: loading }, 'Купить подписку'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('buy'), disabled: loading }, 'Купить подписку'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
@@ -1525,6 +1543,7 @@
           nonTrialSubs.forEach((sub, index) => {
             const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
             const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
+            const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? 3 : 5;
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
@@ -1544,6 +1563,11 @@
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
+                ]),
+                h('p', null, [
+                  h('i', { className: 'fas fa-mobile-alt', style: { marginRight: '4px' } }),
+                  'Макс. устройств: ',
+                  h('span', null, maxDevices)
                 ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
@@ -1780,8 +1804,7 @@
               h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
               h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
               h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
-              h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
-              h('p', null, [h('b', null, 'Кол-во устройств:'), ' 3']),
+              h('p', null, [h('b', null, 'Макс. устройств:'), ' 5 (3 для пробной подписки)']),
               h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
@@ -1855,10 +1878,10 @@
         const testProducts = sections.filter(section => section.name !== 'All').map(section => ({
           name: section.name,
           products: [
-            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц', image: 'https://via.placeholder.com/66' },
-            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца', image: 'https://via.placeholder.com/66' },
-            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев', image: 'https://via.placeholder.com/66' },
-            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год', image: 'https://via.placeholder.com/66' }
+            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц', image: 'https://via.placeholder.com/150' },
+            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца', image: 'https://via.placeholder.com/150' },
+            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев', image: 'https://via.placeholder.com/150' },
+            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год', image: 'https://via.placeholder.com/150' }
           ]
         }));
 
@@ -1945,11 +1968,11 @@
         viewStack.length > 0 && h('button', { className: 'circular-back-button', onClick: goBack }, '<'),
         selectedProduct && h('div', { className: 'product-card-overlay', onClick: () => setSelectedProduct(null) }, [
           h('div', { className: 'product-card-content', onClick: (e) => e.stopPropagation() }, [
-            h('img', { src: selectedProduct.image || 'https://via.placeholder.com/150', alt: selectedProduct.name, className: 'product-image' }),
+            h('img', { src: selectedProduct.image || 'https://via.placeholder.com/300', alt: selectedProduct.name, className: 'product-image' }),
             h('div', { className: 'product-details' }, [
               h('h2', null, selectedProduct.name),
               h('p', null, selectedProduct.description),
-              h('button', { className: 'glass-button button-primary no-shine buy-button', onClick: () => Telegram.WebApp.showAlert('Скоро будет доступно') }, 'Купить')
+              h('button', { className: 'glass-button button-primary no-shine buy-button', onClick: () => alert('Скоро будет доступно') }, 'Купить')
             ])
           ]),
           h('button', { className: 'close-button', onClick: () => setSelectedProduct(null) }, '×')
