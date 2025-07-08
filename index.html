@@ -1,4 +1,35 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -11,7 +42,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Oswald:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <script>
-    // Заглушка для texts.js
     window.TEXTS = {
       setup: {
         manualPC: {
@@ -428,12 +458,8 @@
     }
 
     @keyframes shine {
-      0% {
-        transform: translate(-100%, -100%) rotate(30deg);
-      }
-      100% {
-        transform: translate(100%, 100%) rotate(30deg);
-      }
+      0% { transform: translate(−100%, -100%) rotate(30deg); }
+      100% { transform: translate(100%, 100%) rotate(30deg); }
     }
 
     .button-primary {
@@ -527,7 +553,7 @@
     }
 
     .button-small .icon {
-      font-size: clamp(e40px, 8vw, 48px);
+      font-size: clamp(40px, 8vw, 48px);
     }
 
     .card p {
@@ -750,81 +776,106 @@
     .logo { animation: scaleIn 0.6s ease-out forwards; }
 
     @media (max-width: 600px) {
-      .container {
-        padding: 8px;
-      }
-
-      .header-title {
-        font-size: clamp(18px, 4vw, 22px);
-      }
-
-      .logo-text {
-        font-size: clamp(24px, 5vw, 30px);
-      }
-
-      .glass-button {
-        font-size: clamp(12px, 2.5vw, 14px);
-        padding: 10px 12px;
-      }
-
-      .button-square {
-        font-size: clamp(20px, 4vw, 24px);
-        padding: 10px;
-        min-height: 100px;
-      }
-
-      .button-square .icon {
-        font-size: clamp(80px, 16vw, 96px);
-      }
-
-      .button-small {
-        font-size: clamp(10px, 2vw, 12px);
-      }
-
-      .button-small .icon {
-        font-size: clamp(40px, 8vw, 48px);
-      }
-
-      .product-grid {
-        grid-template-columns: 1fr;
-      }
+      .container { padding: 8px; }
+      .header-title { font-size: clamp(18px, 4vw, 22px); }
+      .logo-text { font-size: clamp(24px, 5vw, 30px); }
+      .glass-button { font-size: clamp(12px, 2.5vw, 14px); padding: 10px 12px; }
+      .button-square { font-size: clamp(20px, 4vw, 24px); padding: 10px; min-height: 100px; }
+      .button-square .icon { font-size: clamp(80px, 16vw, 96px); }
+      .button-small { font-size: clamp(10px, 2vw, 12px); }
+      .button-small .icon { font-size: clamp(40px, 8vw, 48px); }
+      .product-grid { grid-template-columns: 1fr; }
     }
 
     @media (min-width: 1200px) {
-      .container {
-        max-width: min(80vw, 1400px);
-      }
+      .container { max-width: min(80vw, 1400px); }
+      .header-title { font-size: clamp(22px, 3vw, 28px); }
+      .logo-text { font-size: clamp(30px, 4vw, 36px); }
+      .glass-button { font-size: clamp(15px, 2vw, 17px); padding: 14px 18px; }
+      .button-square { font-size: clamp(24px, 4vw, 28px); padding: 12px; min-height: 110px; }
+      .button-square .icon { font-size: clamp(96px, 16vw, 120px); }
+      .button-small { font-size: clamp(12px, 2vw, 14px); }
+      .button-small .icon { font-size: clamp(48px, 8vw, 60px); }
+    }
 
-      .header-title {
-        font-size: clamp(22px, 3vw, 28px);
-      }
+    .circular-back-button {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--button-bg);
+      color: var(--text-color);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      z-index: 1001;
+      transition: background 0.3s ease;
+    }
 
-      .logo-text {
-        font-size: clamp(30px, 4vw, 36px);
-      }
+    .circular-back-button:hover {
+      background: var(--button-hover-bg);
+    }
 
-      .glass-button {
-        font-size: clamp(15px, 2vw, 17px);
-        padding: 14px 18px;
-      }
+    .product-card-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1002;
+    }
 
-      .button-square {
-        font-size: clamp(24px, 4vw, 28px);
-        padding: 12px;
-        min-height: 110px;
-      }
+    .product-card-content {
+      background: #373737;
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+      color: var(--text-color);
+    }
 
-      .button-square .icon {
-        font-size: clamp(96px, 16vw, 120px);
-      }
+    .product-image {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
 
-      .button-small {
-        font-size: clamp(12px, 2vw, 14px);
-      }
+    .product-details {
+      flex: 1;
+    }
 
-      .button-small .icon {
-        font-size: clamp(48px, 8vw, 60px);
-      }
+    .product-details h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .product-details p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-color);
     }
   </style>
 </head>
@@ -865,6 +916,8 @@
         { name: 'Товар 3', description: 'Описание товара 3' }
       ]);
       const [searchTerm, setSearchTerm] = useState('');
+      const [viewStack, setViewStack] = useState([]);
+      const [selectedProduct, setSelectedProduct] = useState(null);
 
       const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -916,6 +969,21 @@
           });
       }, []);
 
+      const navigate = (newView) => {
+        setViewStack(prev => [...prev, view]);
+        setView(newView);
+      };
+
+      const goBack = () => {
+        if (viewStack.length > 0) {
+          const prevView = viewStack[viewStack.length - 1];
+          setViewStack(prev => prev.slice(0, -1));
+          setView(prevView);
+        } else {
+          setView('main');
+        }
+      };
+
       const fetchSubscriptions = async () => {
         if (!user) {
           setError('Пользователь не авторизован');
@@ -928,7 +996,7 @@
             headers: { 'Cache-Control': 'no-cache' }
           });
           setSubscriptions(response.data.subscriptions || []);
-          setView('subscriptions');
+          navigate('subscriptions');
         } catch (err) {
           console.error('Ошибка подписок:', err);
           setError(`Ошибка получения подписок: ${err.response?.data?.detail || err.message}`);
@@ -950,7 +1018,7 @@
           });
           console.log('Ответ рефералов:', response.data);
           setReferrals(response.data.referrals || []);
-          setView('referrals');
+          navigate('referrals');
         } catch (err) {
           console.error('Ошибка рефералов:', err);
           setError(`Ошибка получения рефералов: ${err.response?.data?.detail || err.message}`);
@@ -978,7 +1046,7 @@
           const response = await axiosInstance.post(`${API_URL}${endpoint}`, payload);
           console.log('Ответ подписки:', response.data);
           setPaymentData({ ...response.data, isExtension });
-          setView('payment');
+          navigate('payment');
         } catch (err) {
           console.error('Ошибка активации подписки:', err);
           setError(`Ошибка активации подписки: ${err.response?.data?.detail || err.message}`);
@@ -1030,7 +1098,7 @@
           const nonTrialSubs = subscriptions.filter(sub => !sub.email.startsWith('DE-FRA-TRIAL-'));
           if (nonTrialSubs.length > 1 && !email) {
             setSelectedReferee(referee_id);
-            setView('selectsubscription');
+            navigate('selectsubscription');
             return;
           }
           const payload = { tg_id: user.telegram_id, referee_id, email };
@@ -1060,7 +1128,7 @@
         setLoading(true);
         setError(null);
         try {
-          setView('subscriptions');
+          navigate('subscriptions');
           await fetchSubscriptions();
           Telegram.WebApp.showAlert(
             paymentData.isExtension 
@@ -1099,13 +1167,10 @@
         setIsSubscriptionsOpen(!isSubscriptionsOpen);
       };
 
-      const Header = ({ title, onBack }) => {
-        const children = [];
-        if (onBack) {
-          children.push(h('button', { className: 'back-button', onClick: onBack, disabled: loading }, '←'));
-        }
-        children.push(h('div', { className: 'header-title' }, title));
-        return h('div', { className: 'header' }, children);
+      const Header = ({ title }) => {
+        return h('div', { className: 'header' }, [
+          h('div', { className: 'header-title' }, title)
+        ]);
       };
 
       const renderMainMenu = () => {
@@ -1145,7 +1210,7 @@
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                           'Скопировать'
                         ]),
-                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                           h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                           'Инструкция'
                         ])
@@ -1173,7 +1238,7 @@
                 h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'glass-button button-square shop-button', onClick: () => setView('shop'), disabled: loading }, [
+                h('button', { className: 'glass-button button-square shop-button', onClick: () => navigate('shop'), disabled: loading }, [
                   h('i', { className: 'fas fa-store icon' }),
                   h('span', null, 'Магазин')
                 ]),
@@ -1189,14 +1254,14 @@
                 h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'glass-button button-square button-small', onClick: () => setView('support'), disabled: loading }, [
+                h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('support'), disabled: loading }, [
                   h('i', { className: 'fas fa-life-ring icon' }),
                   h('span', null, 'Поддержка')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
               ]),
               h('div', { className: 'tooltip' }, [
-                h('button', { className: 'glass-button button-square button-small', onClick: () => setView('info'), disabled: loading }, [
+                h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('info'), disabled: loading }, [
                   h('i', { className: 'fas fa-info-circle icon' }),
                   h('span', null, 'Информация')
                 ]),
@@ -1209,6 +1274,27 @@
                 ' WSocks // Блог'
               ]),
               h('small', null, 'Актуальные новости проекта')
+            ]),
+            h('div', { className: 'telegram-block', style: { background: '#ff0033' }, onClick: () => Telegram.WebApp.openLink('https://youtube.com/WSocks') }, [
+              h('span', null, [
+                h('i', { className: 'fab fa-youtube' }),
+                ' WSocks в YouTube'
+              ]),
+              h('small', null, 'Смотрите наши видео')
+            ]),
+            h('div', { className: 'telegram-block', style: { background: '#555a5f' }, onClick: () => Telegram.WebApp.openLink('https://wsocks.com') }, [
+              h('span', null, [
+                h('i', { className: 'fas fa-globe' }),
+                ' Сайт с общей информацией'
+              ]),
+              h('small', null, 'Узнайте больше о проекте')
+            ]),
+            h('div', { className: 'telegram-block', style: { background: '#efeeed', color: '#000' }, onClick: () => Telegram.WebApp.openLink('https://github.com/WSocks') }, [
+              h('span', null, [
+                h('i', { className: 'fab fa-github' }),
+                ' GitHub страница проекта'
+              ]),
+              h('small', null, 'Исходный код и разработка')
             ])
           );
         }
@@ -1225,8 +1311,8 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => setView('support')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main') }, 'Назад')
+            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => navigate('support')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
@@ -1242,12 +1328,12 @@
               ]),
               h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)')
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Поддержка', onBack: () => setView('main') }),
+          Header({ title: 'Поддержка' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1259,7 +1345,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main') }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
@@ -1303,12 +1389,12 @@
           }
 
           contentChildren.push(
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Реферальная система', onBack: () => setView('main') }),
+          Header({ title: 'Реферальная система' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1320,7 +1406,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main') }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           if (subscriptions.length === 0) {
@@ -1354,7 +1440,7 @@
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1369,13 +1455,13 @@
               h('button', { className: 'glass-button button-primary', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
               h('span', { className: 'tooltip-text' }, 'Активируйте бесплатную подписку на 3 дня')
             ]),
-            h('button', { className: 'glass-button button-primary', onClick: () => setView('buy'), disabled: loading }, 'Купить подписку'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-primary', onClick: () => navigate('buy'), disabled: loading }, 'Купить подписку'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'VPN', onBack: () => setView('main') }),
+          Header({ title: 'VPN' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1387,7 +1473,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => activateSubscription(30, false, null, generateRequestId())) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('subscriptions') }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
@@ -1395,12 +1481,12 @@
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(90, false, null, generateRequestId()), disabled: loading || processingActions['buy-90'] }, '90 дней - 249 ₽'),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(180, false, null, generateRequestId()), disabled: loading || processingActions['buy-180'] }, '180 дней - 449 ₽'),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(360, false, null, generateRequestId()), disabled: loading || processingActions['buy-360'] }, '360 дней - 849 ₽'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Купить подписку', onBack: () => setView('subscriptions') }),
+          Header({ title: 'Купить подписку' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1412,7 +1498,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => activateSubscription(30, true, selectedSub.email, generateRequestId())) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('subscriptions') }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           if (selectedSub) {
@@ -1426,12 +1512,12 @@
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(90, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-90'] }, 'Продлить на 90 дней - 249 ₽'),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(180, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-180'] }, 'Продлить на 180 дней - 449 ₽'),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => activateSubscription(360, true, selectedSub ? selectedSub.email : null, generateRequestId()), disabled: loading || processingActions['extend-360'] }, 'Продлить на 360 дней - 849 ₽'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Продлить подписку', onBack: () => setView('subscriptions') }),
+          Header({ title: 'Продлить подписку' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1443,7 +1529,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => applyReferralBonus(selectedReferee)) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('referrals') }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(h('p', { className: 'card' }, 'Выберите подписку для продления на 7 дней:'));
@@ -1476,7 +1562,7 @@
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); setView('setup'); }, disabled: loading }, [
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1484,11 +1570,11 @@
               ])
             );
           });
-          contentChildren.push(h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('referrals'), disabled: loading }, 'Назад'));
+          contentChildren.push(h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад'));
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Выберите подписку', onBack: () => setView('referrals') }),
+          Header({ title: 'Выберите подписку' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1500,7 +1586,7 @@
           contentChildren.push(
             h('p', { className: 'error' }, error),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(confirmActivation) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); goBack(); } }, 'Назад')
           );
         } else if (paymentData) {
           contentChildren.push(
@@ -1508,12 +1594,12 @@
             h('p', { className: 'card' }, [h('b', null, 'Пользователь: '), paymentData.email]),
             h('p', { className: 'card' }, [h('b', null, 'Дата окончания: '), new Date(paymentData.expiry_date).toLocaleString()]),
             h('button', { className: 'glass-button button-success no-shine', onClick: confirmActivation, disabled: loading }, 'Подтвердить'),
-            h('button', { className: 'glass-button button-danger no-shine', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); }, disabled: loading }, 'Отмена')
+            h('button', { className: 'glass-button button-danger no-shine', onClick: () => { setPaymentData(null); localStorage.removeItem('paymentData'); goBack(); }, disabled: loading }, 'Отмена')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Подтверждение подписки', onBack: () => { setPaymentData(null); localStorage.removeItem('paymentData'); setView('subscriptions'); } }),
+          Header({ title: 'Подтверждение подписки' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1524,24 +1610,24 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('setup')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('subscriptions') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('setup')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           if (selectedSub) {
             contentChildren.push(h('p', { className: 'card' }, [h('b', null, 'Email: '), selectedSub.email]));
           }
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('manualPC'), disabled: loading }, window.TEXTS.setup.manualPC.title),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('manualAndroid'), disabled: loading }, window.TEXTS.setup.manualAndroid.title),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('manualIOS'), disabled: loading }, window.TEXTS.setup.manualIOS.title),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('manualAndroidTV'), disabled: loading }, window.TEXTS.setup.manualAndroidTV.title),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('subscriptions'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('manualPC'), disabled: loading }, window.TEXTS.setup.manualPC.title),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('manualAndroid'), disabled: loading }, window.TEXTS.setup.manualAndroid.title),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('manualIOS'), disabled: loading }, window.TEXTS.setup.manualIOS.title),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('manualAndroidTV'), disabled: loading }, window.TEXTS.setup.manualAndroidTV.title),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Настройка', onBack: () => setView('subscriptions') }),
+          Header({ title: 'Настройка' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1552,20 +1638,20 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('manualPC')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('manualPC')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else if (selectedSub) {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualPC.content(selectedSub) } })
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualPC.title, onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualPC.title }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1576,20 +1662,20 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('manualAndroid')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('manualAndroid')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroid.content } })
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualAndroid.title, onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualAndroid.title }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1600,20 +1686,20 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('manualIOS')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('manualIOS')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualIOS.content } })
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualIOS.title, onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualIOS.title }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1624,20 +1710,20 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('manualAndroidTV')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('manualAndroidTV')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else if (selectedSub) {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.setup.manualAndroidTV.content(selectedSub) } })
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('setup'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.setup.manualAndroidTV.title, onBack: () => setView('setup') }),
+          Header({ title: window.TEXTS.setup.manualAndroidTV.title }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1648,21 +1734,21 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('info')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('info')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('service'), disabled: loading }, 'О сервисе'),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('subscription'), disabled: loading }, 'О подписке'),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('terms'), disabled: loading }, 'Пользовательское соглашение'),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => setView('privacy'), disabled: loading }, 'Политика конфиденциальности'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('service'), disabled: loading }, 'О сервисе'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('subscription'), disabled: loading }, 'О подписке'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('terms'), disabled: loading }, 'Пользовательское соглашение'),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('privacy'), disabled: loading }, 'Политика конфиденциальности'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Информация', onBack: () => setView('main') }),
+          Header({ title: 'Информация' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1673,18 +1759,18 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('service')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('service')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('p', { className: 'card' }, 'WSocks VPN обеспечивает безопасный доступ в интернет через серверы в Германии. Мы гарантируем конфиденциальность данных, стабильность и высокую скорость. Сервис использует современные протоколы TLS+Vless+TCP+Reality и поддерживает несколько приложений.'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'О сервисе', onBack: () => setView('info') }),
+          Header({ title: 'О сервисе' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1695,8 +1781,8 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('subscription')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('subscription')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
@@ -1709,12 +1795,12 @@
               h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
               h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'О подписке', onBack: () => setView('info') }),
+          Header({ title: 'О подписке' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1725,20 +1811,20 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('terms')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('terms')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
               h('div', { className: 'manual-content', dangerouslySetInnerHTML: { __html: window.TEXTS.terms.content } })
             ]),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: window.TEXTS.terms.title, onBack: () => setView('info') }),
+          Header({ title: window.TEXTS.terms.title }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1749,19 +1835,19 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => setView('privacy')) }, 'Повторить'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info') }, 'Назад')
+            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('privacy')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
           contentChildren.push(
             h('p', { className: 'card' }, 'WSocks VPN уважает вашу конфиденциальность и использует только данные, предоставленные Telegram. Подробности доступны по ссылке:'),
             h('button', { className: 'glass-button button-primary no-shine', onClick: () => Telegram.WebApp.openLink('https://telegra.ph/Politika-konfidencialnosti-08-04-7'), disabled: loading }, 'Открыть политику'),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('info'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Политика конфиденциальности', onBack: () => setView('info') }),
+          Header({ title: 'Политика конфиденциальности' }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
@@ -1769,7 +1855,7 @@
       const renderShop = () => {
         const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
         return h('div', { className: 'container' }, [
-          Header({ title: 'Магазин', onBack: () => setView('main') }),
+          Header({ title: 'Магазин' }),
           h('div', { className: 'content' }, [
             h('input', { 
               type: 'search', 
@@ -1783,11 +1869,11 @@
                 h('div', null, [
                   h('h3', null, product.name),
                   h('p', null, product.description),
-                  h('button', { className: 'glass-button button-primary no-shine' }, 'Купить')
+                  h('button', { className: 'glass-button button-primary no-shine', onClick: () => setSelectedProduct(product) }, 'Купить')
                 ])
               ])
             ))),
-            h('button', { className: 'glass-button button-secondary no-shine', onClick: () => setView('main'), disabled: loading }, 'Назад')
+            h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           ])
         ]);
       };
@@ -1830,7 +1916,21 @@
         contentChildren.push(views[view]());
       }
 
-      return h('div', null, contentChildren);
+      return h('div', null, [
+        contentChildren,
+        viewStack.length > 0 && h('button', { className: 'circular-back-button', onClick: goBack }, '←'),
+        selectedProduct && h('div', { className: 'product-card-overlay', onClick: () => setSelectedProduct(null) }, [
+          h('div', { className: 'product-card-content', onClick: (e) => e.stopPropagation() }, [
+            h('img', { src: selectedProduct.image || 'https://via.placeholder.com/300', alt: selectedProduct.name, className: 'product-image' }),
+            h('div', { className: 'product-details' }, [
+              h('h2', null, selectedProduct.name),
+              h('p', null, selectedProduct.description),
+              h('button', { className: 'glass-button button-primary no-shine' }, 'Купить')
+            ])
+          ]),
+          h('button', { className: 'close-button', onClick: () => setSelectedProduct(null) }, '×')
+        ])
+      ]);
     }
 
     ReactDOM.render(h(App), document.getElementById('root'));
