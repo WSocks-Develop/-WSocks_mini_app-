@@ -326,6 +326,20 @@
       box-shadow: 0 4px 8px var(--shadow-color);
     }
 
+    .copy-button::before,
+    .instruction-button::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+      transform: rotate(30deg);
+      animation: shine 3s infinite linear;
+      pointer-events: none;
+    }
+
     .telegram-block {
       padding: 20px 16px;
       display: flex;
@@ -339,7 +353,7 @@
       animation: slideIn 0.5s ease-out forwards;
       background: var(--telegram-block-bg);
       box-shadow: 0 0 10px var(--telegram-block-bg);
-      signal: 20px;
+      border-radius: 20px;
     }
 
     .youtube-block {
@@ -430,6 +444,19 @@
 
     .glass-button:active:not(:disabled) {
       transform: scale(0.98);
+    }
+
+    .glass-button::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
+      transform: rotate(30deg);
+      animation: shine 3s infinite linear;
+      pointer-events: none;
     }
 
     .no-shine::before {
@@ -576,6 +603,38 @@
       text-decoration: underline;
     }
 
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      background: var(--header-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--text-color);
+      text-align: center;
+      border-radius: 4px;
+      padding: 4px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 2vw, 12px);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-shadow: var(--text-shadow);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
     .clickable {
       color: var(--accent-color);
       cursor: pointer;
@@ -695,20 +754,10 @@
     }
 
     .product-image {
-      width: 76.9px; /* 33px * 2.3 */
-      height: 76.9px; /* 33px * 2.3 */
+      width: 33px;
+      height: 33px;
       background: #ccc;
       margin-right: 16px;
-    }
-
-    .product-card-overlay .product-image {
-      width: 130.4px; /* 300px / 2.3 */
-      height: 130.4px; /* 300px / 2.3 */
-    }
-
-    .buy-button {
-      width: 100px;
-      height: 40px;
     }
 
     .fas, .far {
@@ -830,8 +879,8 @@
     }
 
     .product-card-content .product-image {
-      width: 130.4px; /* 300px / 2.3 */
-      height: 130.4px; /* 300px / 2.3 */
+      width: 300px;
+      height: 300px;
       object-fit: cover;
       border-radius: 10px;
     }
@@ -1207,7 +1256,6 @@
                     const isExpired = sub.is_expired;
                     const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-                    const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? 3 : 5;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1227,17 +1275,12 @@
                         'До окончания: ',
                         h('span', { className: 'days-remaining' }, daysDisplay)
                       ]),
-                      h('p', null, [
-                        h('i', { className: 'fas fa-mobile-alt', style: { marginRight: '4px' } }),
-                        'Макс. устройств: ',
-                        h('span', null, maxDevices)
-                      ]),
                       h('div', { className: 'buttons' }, [
-                        h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                        h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                           'Скопировать'
                         ]),
-                        h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                           h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                           'Инструкция'
                         ])
@@ -1251,33 +1294,48 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => window.location.reload() }, 'Повторить'),
-            h('button', { className: 'glass-button button-danger no-shine', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение')
+            h('button', { className: 'glass-button button-primary', onClick: () => window.location.reload() }, 'Повторить'),
+            h('button', { className: 'glass-button button-danger', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение')
           );
         } else {
           contentChildren.push(
             h('div', { className: 'button-row first-row' }, [
-              h('button', { className: 'glass-button button-square vpn-button', onClick: fetchSubscriptions, disabled: loading }, [
-                h('i', { className: 'fas fa-shield-alt icon' }),
-                h('span', null, 'VPN')
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'glass-button button-square vpn-button', onClick: fetchSubscriptions, disabled: loading }, [
+                  h('i', { className: 'fas fa-shield-alt icon' }),
+                  h('span', null, 'VPN')
+                ]),
+                h('span', { className: 'tooltip-text' }, 'Управление вашими подписками')
               ]),
-              h('button', { className: 'glass-button button-square shop-button', onClick: () => navigate('shop'), disabled: loading }, [
-                h('i', { className: 'fas fa-store icon' }),
-                h('span', null, 'Магазин')
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'glass-button button-square shop-button', onClick: () => navigate('shop'), disabled: loading }, [
+                  h('i', { className: 'fas fa-store icon' }),
+                  h('span', null, 'Магазин')
+                ]),
+                h('span', { className: 'tooltip-text' }, 'Посетите наш магазин')
               ])
             ]),
             h('div', { className: 'button-row second-row' }, [
-              h('button', { className: 'glass-button button-square button-small', onClick: fetchReferrals, disabled: loading }, [
-                h('i', { className: 'fas fa-users icon' }),
-                h('span', null, 'Рефералы')
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'glass-button button-square button-small', onClick: fetchReferrals, disabled: loading }, [
+                  h('i', { className: 'fas fa-users icon' }),
+                  h('span', null, 'Рефералы')
+                ]),
+                h('span', { className: 'tooltip-text' }, 'Приглашайте друзей и получайте бонусы')
               ]),
-              h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('support'), disabled: loading }, [
-                h('i', { className: 'fas fa-envelope icon' }),
-                h('span', null, 'Поддержка')
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('support'), disabled: loading }, [
+                  h('i', { className: 'fas fa-envelope icon' }),
+                  h('span', null, 'Поддержка')
+                ]),
+                h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
               ]),
-              h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('info'), disabled: loading }, [
-                h('i', { className: 'fas fa-info-circle icon' }),
-                h('span', null, 'Информация')
+              h('div', { className: 'tooltip' }, [
+                h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('info'), disabled: loading }, [
+                  h('i', { className: 'fas fa-info-circle icon' }),
+                  h('span', null, 'Информация')
+                ]),
+                h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
               ])
             ]),
             h('div', { className: 'telegram-block', onClick: () => Telegram.WebApp.openLink('https://t.me/WSocks_VPN') }, [
@@ -1323,7 +1381,7 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(() => navigate('support')) }, 'Повторить'),
+            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(() => navigate('support')) }, 'Повторить'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
@@ -1350,7 +1408,7 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
+            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(fetchReferrals) }, 'Повторить'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
@@ -1384,7 +1442,7 @@
                 );
               } else {
                 cardChildren.push(
-                  h('button', { className: 'glass-button button-success no-shine', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
+                  h('button', { className: 'glass-button button-success', onClick: () => applyReferralBonus(ref.referee_id), disabled: loading }, 'Получить бонус')
                 );
               }
               contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
@@ -1408,7 +1466,7 @@
         if (error) {
           contentChildren.push(
             h('p', { className: 'error' }, error),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
+            h('button', { className: 'glass-button button-primary', onClick: () => handleRetry(fetchSubscriptions) }, 'Повторить'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack }, 'Назад')
           );
         } else {
@@ -1419,7 +1477,6 @@
               const isExpired = sub.is_expired;
               const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
               const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-              const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? 3 : 5;
               const cardChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1439,17 +1496,12 @@
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
-                h('p', null, [
-                  h('i', { className: 'fas fa-mobile-alt', style: { marginRight: '4px' } }),
-                  'Макс. устройств: ',
-                  h('span', null, maxDevices)
-                ]),
                 h('div', { className: 'buttons' }, [
-                  h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1460,8 +1512,11 @@
           }
 
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary no-shine', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: () => navigate('buy'), disabled: loading }, 'Купить подписку'),
+            h('div', { className: 'tooltip' }, [
+              h('button', { className: 'glass-button button-primary', onClick: activateTrial, disabled: loading }, 'Пробная подписка'),
+              h('span', { className: 'tooltip-text' }, 'Активируйте бесплатную подписку на 3 дня')
+            ]),
+            h('button', { className: 'glass-button button-primary', onClick: () => navigate('buy'), disabled: loading }, 'Купить подписку'),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
         }
@@ -1543,7 +1598,6 @@
           nonTrialSubs.forEach((sub, index) => {
             const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
             const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-            const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? 3 : 5;
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
@@ -1564,17 +1618,12 @@
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
-                h('p', null, [
-                  h('i', { className: 'fas fa-mobile-alt', style: { marginRight: '4px' } }),
-                  'Макс. устройств: ',
-                  h('span', null, maxDevices)
-                ]),
                 h('div', { className: 'buttons' }, [
-                  h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1804,7 +1853,7 @@
               h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
               h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
               h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
-              h('p', null, [h('b', null, 'Макс. устройств:'), ' 5 (3 для пробной подписки)']),
+              h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
               h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
@@ -1878,10 +1927,10 @@
         const testProducts = sections.filter(section => section.name !== 'All').map(section => ({
           name: section.name,
           products: [
-            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц', image: 'https://via.placeholder.com/150' },
-            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца', image: 'https://via.placeholder.com/150' },
-            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев', image: 'https://via.placeholder.com/150' },
-            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год', image: 'https://via.placeholder.com/150' }
+            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц' },
+            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца' },
+            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев' },
+            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год' }
           ]
         }));
 
@@ -1912,11 +1961,11 @@
             ))),
             h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
               h('div', { key: index, className: 'product-card' }, [
-                h('img', { src: product.image, alt: product.name, className: 'product-image' }),
+                h('div', { className: 'product-image' }, 'Image'),
                 h('div', null, [
                   h('h3', null, product.name),
                   h('p', null, product.description),
-                  h('button', { className: 'glass-button button-primary no-shine buy-button', onClick: () => setSelectedProduct(product) }, 'Купить')
+                  h('button', { className: 'glass-button button-primary no-shine', onClick: () => setSelectedProduct(product) }, 'Купить')
                 ])
               ])
             ))),
@@ -1972,7 +2021,7 @@
             h('div', { className: 'product-details' }, [
               h('h2', null, selectedProduct.name),
               h('p', null, selectedProduct.description),
-              h('button', { className: 'glass-button button-primary no-shine buy-button', onClick: () => alert('Скоро будет доступно') }, 'Купить')
+              h('button', { className: 'glass-button button-primary no-shine' }, 'Купить')
             ])
           ]),
           h('button', { className: 'close-button', onClick: () => setSelectedProduct(null) }, '×')
