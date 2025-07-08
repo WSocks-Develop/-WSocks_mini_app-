@@ -162,7 +162,7 @@
       font-size: 24px;
       font-weight: bold;
       cursor: pointer;
-       padding: 4px 8px;
+      padding: 4px 8px;
       position: absolute;
       left: 16px;
       top: 50%;
@@ -214,7 +214,7 @@
 
     .subscription {
       background: #2a2a2a;
-      backdrop-filter: var(--glass-blur);
+      backdrop-filter    backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
       padding: 20px;
@@ -326,11 +326,6 @@
       box-shadow: 0 4px 8px var(--shadow-color);
     }
 
-    .copy-button::before,
-    .instruction-button::before {
-      content: none;
-    }
-
     .telegram-block {
       padding: 20px 16px;
       display: flex;
@@ -376,7 +371,7 @@
 
     .telegram-block span,
     .youtube-block span,
- &nbsp;.site-block span,
+    .site-block span,
     .github-block span {
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
@@ -407,7 +402,7 @@
       border-radius: 20px;
       background: var(--button-bg);
       border: 1px solid rgba(255, 255, 255, 0.3);
-      color dart: var(--text-color);
+      color: var(--text-color);
       font-size: clamp(12px, 2.5vw, 14px);
       font-weight: 600;
       backdrop-filter: blur(10px);
@@ -479,7 +474,6 @@
       text-align: center;
       min-height: 100px;
       transform: scale(1.2);
-      background: var(--button-bg);
       transition: all 0.3s ease;
     }
 
@@ -593,6 +587,38 @@
 
     .link:hover {
       text-decoration: underline;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      background: var(--header-bg);
+      backdrop-filter: var(--glass-blur);
+      color: var(--text-color);
+      text-align: center;
+      border-radius: 4px;
+      padding: 4px 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: clamp(11px, 2vw, 12px);
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-shadow: var(--text-shadow);
+      box-shadow: var(--glass-shadow);
+    }
+
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
     }
 
     .clickable {
@@ -716,37 +742,7 @@
     .product-image {
       width: 76px;
       height: 76px;
-      object-fit: cover;
       margin-right: 16px;
-    }
-
-    .product-card button {
-      min-width: 100px;
-      text-align: center;
-    }
-
-    .product-card-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1002;
-    }
-
-    .product-card-content {
-      background: #373737;
-      padding: 20px;
-      border-radius: 10px;
-      display: flex;
-      gap: 20px;
-      max-width: 800px;
-      width: 100%;
-      color: var(--text-color);
     }
 
     .product-card-content .product-image {
@@ -754,37 +750,6 @@
       height: 130px;
       object-fit: cover;
       border-radius: 10px;
-    }
-
-    .product-details {
-      flex: 1;
-    }
-
-    .product-details h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-
-    .product-details p {
-      font-size: 16px;
-      line-height: 1.5;
-      margin-bottom: 20px;
-    }
-
-    .close-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--text-color);
-    }
-
-    .support-button {
-      background: #383838;
-      margin-bottom: 16px;
     }
 
     .fas, .far {
@@ -802,7 +767,7 @@
     }
 
     .glass-button:nth-child(1), .card:nth-child(1), .telegram-block:nth-child(1) { animation-delay: 0.1s; }
-    .glass-button:nth-child(2), .card:nth-child(2) { animation-delay: 0.2s; }
+    .glass-button:nth-child(　　　　 2), .card:nth-child(2) { animation-delay: 0.2s; }
     .glass-button:nth-child(3), .card:nth-child(3) { animation-delay: 0.3s; }
     .glass-button:nth-child(4), .card:nth-child(4) { animation-delay: 0.4s; }
     .subscriptions-panel { animation-delay: 0.5s; }
@@ -880,6 +845,61 @@
     .circular-back-button:hover {
       background: var(--button-hover-bg);
     }
+
+    .product-card-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1002;
+    }
+
+    .product-card-content {
+      background: #373737;
+      padding: 20px;
+      border-radius: 10px;
+      display: flex;
+      gap: 20px;
+      max-width: 800px;
+      width: 100%;
+      color: var(--text-color);
+    }
+
+    .product-details {
+      flex: 1;
+    }
+
+    .product-details h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .product-details p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-color);
+    }
+
+    .support-button {
+      background: #383838;
+      margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
@@ -945,9 +965,9 @@
       const [processingActions, setProcessingActions] = useState({});
       const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
       const [products] = useState([
-        { name: 'Товар 1', description: 'Описание товара 1', image: 'https://via.placeholder.com/76' },
-        { name: 'Товар 2', description: 'Описание товара 2', image: 'https://via.placeholder.com/76' },
-        { name: 'Товар 3', description: 'Описание товара 3', image: 'https://via.placeholder.com/76' }
+        { name: 'Товар 1', description: 'Описание товара 1' },
+        { name: 'Товар 2', description: 'Описание товара 2' },
+        { name: 'Товар 3', description: 'Описание товара 3' }
       ]);
       const [searchTerm, setSearchTerm] = useState('');
       const [viewStack, setViewStack] = useState([]);
@@ -1221,7 +1241,6 @@
                     const isExpired = sub.is_expired;
                     const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
                     const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-                    const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5';
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1242,16 +1261,16 @@
                         h('span', { className: 'days-remaining' }, daysDisplay)
                       ]),
                       h('p', null, [
-                        h('i', { className: 'fas fa-laptop', style: { marginRight: '4px' } }),
+                        h('i', { className: 'fas fa-users', style: { marginRight: '4px' } }),
                         'Макс. устройств: ',
-                        maxDevices
+                        sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
                       ]),
                       h('div', { className: 'buttons' }, [
-                        h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                        h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                           'Скопировать'
                         ]),
-                        h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                        h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                           h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                           'Инструкция'
                         ])
@@ -1313,7 +1332,7 @@
                 h('i', { className: 'fas fa-globe' }),
                 ' Сайт с общей информацией'
               ]),
-              h('small', null, 'Узнайте больше о проекте')
+              h('small', null, 'У Missouri')
             ]),
             h('div', { className: 'telegram-block github-block', onClick: () => Telegram.WebApp.openLink('https://github.com/WSocks-Develop/WSocks-VPN--NekoBox-.git') }, [
               h('span', null, [
@@ -1433,7 +1452,6 @@
               const isExpired = sub.is_expired;
               const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
               const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-              const maxDevices = sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5';
               const cardChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
@@ -1454,16 +1472,16 @@
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
                 h('p', null, [
-                  h('i', { className: 'fas fa-laptop', style: { marginRight: '4px' } }),
+                  h('i', { className: 'fas fa-users', style: { marginRight: '4px' } }),
                   'Макс. устройств: ',
-                  maxDevices
+                  sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
                 ]),
                 h('div', { className: 'buttons' }, [
-                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                  h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                  h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1557,7 +1575,6 @@
           nonTrialSubs.forEach((sub, index) => {
             const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
             const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-            const maxDevices = '5';
             contentChildren.push(
               h('div', { key: index, className: 'card' }, [
                 h('h3', null, [
@@ -1578,17 +1595,12 @@
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
-                h('p', null, [
-                  h('i', { className: 'fas fa-laptop', style: { marginRight: '4px' } }),
-                  'Макс. устройств: ',
-                  maxDevices
-                ]),
                 h('div', { className: 'buttons' }, [
-                  h('button', { className: 'copy-button', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                  h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                     'Скопировать'
                   ]),
-                  h('button', { className: 'instruction-button', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                  h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
                     h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
                     'Инструкция'
                   ])
@@ -1818,7 +1830,7 @@
               h('p', null, [h('b', null, 'Ограничение трафика:'), ' Безлимитный']),
               h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
               h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
-              h('p', null, [h('b', null, 'Макс. устройств:'), ' 5 (3 для пробной подписки)']),
+              h('p', null, [h('b', null, 'Макс. устройств:'), ' 5']),
               h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
@@ -1892,10 +1904,10 @@
         const testProducts = sections.filter(section => section.name !== 'All').map(section => ({
           name: section.name,
           products: [
-            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц', image: 'https://via.placeholder.com/76' },
-            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца', image: 'https://via.placeholder.com/76' },
-            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев', image: 'https://via.placeholder.com/76' },
-            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год', image: 'https://via.placeholder.com/76' }
+            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц' },
+            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца' },
+            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев' },
+            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год' }
           ]
         }));
 
@@ -1926,11 +1938,11 @@
             ))),
             h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
               h('div', { key: index, className: 'product-card' }, [
-                h('img', { src: product.image, alt: product.name, className: 'product-image' }),
+                h('img', { src: 'https://picsum.photos/76', alt: 'Product Image', className: 'product-image' }),
                 h('div', null, [
                   h('h3', null, product.name),
                   h('p', null, product.description),
-                  h('button', { className: 'glass-button button-primary no-shine', onClick: () => setSelectedProduct(product) }, 'Купить')
+                  h('button', { className: 'glass-button button-primary no-shine', style: { width: '100px' }, onClick: () => setSelectedProduct(product) }, 'Купить')
                 ])
               ])
             ))),
@@ -1982,7 +1994,7 @@
         viewStack.length > 0 && h('button', { className: 'circular-back-button', onClick: goBack }, '<'),
         selectedProduct && h('div', { className: 'product-card-overlay', onClick: () => setSelectedProduct(null) }, [
           h('div', { className: 'product-card-content', onClick: (e) => e.stopPropagation() }, [
-            h('img', { src: selectedProduct.image || 'https://via.placeholder.com/130', alt: selectedProduct.name, className: 'product-image' }),
+            h('img', { src: selectedProduct.image || 'https://picsum.photos/130', alt: selectedProduct.name, className: 'product-image' }),
             h('div', { className: 'product-details' }, [
               h('h2', null, selectedProduct.name),
               h('p', null, selectedProduct.description),
