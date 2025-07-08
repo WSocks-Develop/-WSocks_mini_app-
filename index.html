@@ -1,35 +1,4 @@
-<script type="text/javascript">
-        var gk_isXlsx = false;
-        var gk_xlsxFileLookup = {};
-        var gk_fileData = {};
-        function filledCell(cell) {
-          return cell !== '' && cell != null;
-        }
-        function loadFileData(filename) {
-        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
-            try {
-                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
-                var firstSheetName = workbook.SheetNames[0];
-                var worksheet = workbook.Sheets[firstSheetName];
-                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-                var filteredData = jsonData.filter(row => row.some(filledCell));
-                var headerRowIndex = filteredData.findIndex((row, index) =>
-                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
-                );
-                if (headerRowIndex === -1 || headerRowIndex > 25) {
-                  headerRowIndex = 0;
-                }
-                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
-                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
-                return csv;
-            } catch (e) {
-                console.error(e);
-                return "";
-            }
-        }
-        return gk_fileData[filename] || "";
-        }
-        </script><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" data-theme="dark">
 <head>
   <meta charset="UTF-8">
@@ -111,6 +80,7 @@
       --button-secondary-hover-bg: linear-gradient(135deg, rgba(75, 85, 99, 0.2), rgba(75, 85, 99, 0.1));
       --button-success-bg: linear-gradient(135deg, rgba(20, 200, 140, 0.3), rgba(16, 185, 129, 0.3));
       --button-success-hover-bg: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(5, 150, 105, 0.1));
+      |Inline Stylesheets
       --button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 68, 0.3));
       --button-danger-hover-bg: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.1));
       --shadow-color: rgba(75, 156, 211, 0.5);
@@ -721,16 +691,18 @@
       backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
-      padding: 16px;
+      padding: 8px;
       text-align: left;
       transition: all 0.3s ease;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 8px;
+      transform: scale(0.4);
+      transform-origin: top left;
     }
 
     .product-card:hover {
-      transform: translateY(-5px);
+      transform: scale(0.42) translateY(-5px);
       box-shadow: 0 6px 12px var(--shadow-color);
     }
 
@@ -775,6 +747,31 @@
 
     .logo { animation: scaleIn 0.6s ease-out forwards; }
 
+    .sections {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #323232;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .section i {
+      font-size: 18px;
+    }
+
+    .section span {
+      font-size: 14px;
+    }
+
     @media (max-width: 600px) {
       .container { padding: 8px; }
       .header-title { font-size: clamp(18px, 4vw, 22px); }
@@ -813,6 +810,7 @@
       align-items: center;
       justify-content: center;
       font-size: 20px;
+      font-weight: bold;
       z-index: 1001;
       transition: background 0.3s ease;
     }
@@ -918,6 +916,7 @@
       const [searchTerm, setSearchTerm] = useState('');
       const [viewStack, setViewStack] = useState([]);
       const [selectedProduct, setSelectedProduct] = useState(null);
+      const [selectedSection, setSelectedSection] = useState('Spotify');
 
       const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -1268,28 +1267,28 @@
                 h('span', { className: 'tooltip-text' }, 'Узнайте больше о WSocks VPN')
               ])
             ]),
-            h('div', { className: 'telegram-block', onClick: () => Telegram.WebApp.openLink(TELEGRAM_CHANNEL_LINK) }, [
+            h('div', { className: 'telegram-block', onClick: () => Telegram.WebApp.openLink('https://t.me/WSocks_VPN') }, [
               h('span', null, [
                 h('i', { className: 'fas fa-bullhorn icon' }),
                 ' WSocks // Блог'
               ]),
               h('small', null, 'Актуальные новости проекта')
             ]),
-            h('div', { className: 'telegram-block', style: { background: '#ff0033' }, onClick: () => Telegram.WebApp.openLink('https://youtube.com/WSocks') }, [
+            h('div', { className: 'telegram-block', style: { background: '#ff0033' }, onClick: () => Telegram.WebApp.openLink('https://www.youtube.com/@WSocks_VPN') }, [
               h('span', null, [
                 h('i', { className: 'fab fa-youtube' }),
                 ' WSocks в YouTube'
               ]),
               h('small', null, 'Смотрите наши видео')
             ]),
-            h('div', { className: 'telegram-block', style: { background: '#555a5f' }, onClick: () => Telegram.WebApp.openLink('https://wsocks.com') }, [
+            h('div', { className: 'telegram-block', style: { background: '#555a5f' }, onClick: () => Telegram.WebApp.openLink('https://wsocks.ru') }, [
               h('span', null, [
                 h('i', { className: 'fas fa-globe' }),
                 ' Сайт с общей информацией'
               ]),
               h('small', null, 'Узнайте больше о проекте')
             ]),
-            h('div', { className: 'telegram-block', style: { background: '#efeeed', color: '#000' }, onClick: () => Telegram.WebApp.openLink('https://github.com/WSocks') }, [
+            h('div', { className: 'telegram-block', style: { background: '#010409', color: '#fff' }, onClick: () => Telegram.WebApp.openLink('https://github.com/WSocks-Develop/WSocks-VPN--NekoBox-.git') }, [
               h('span', null, [
                 h('i', { className: 'fab fa-github' }),
                 ' GitHub страница проекта'
@@ -1853,7 +1852,27 @@
       };
 
       const renderShop = () => {
-        const filteredProducts = products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        const sections = [
+          { name: 'Spotify', icon: 'fab fa-spotify' },
+          { name: 'ChatGPT / Sora', icon: 'fas fa-robot' },
+          { name: 'Telegram', icon: 'fab fa-telegram' },
+          { name: 'Grok', icon: 'fas fa-brain' },
+          { name: 'Adobe', icon: 'fab fa-adobe' },
+          { name: 'Разное', icon: 'fas fa-ellipsis-h' }
+        ];
+
+        const testProducts = sections.map(section => ({
+          name: section.name,
+          products: [
+            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц' },
+            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца' },
+            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев' },
+            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год' }
+          ]
+        }));
+
+        const filteredProducts = testProducts.find(p => p.name === selectedSection)?.products || [];
+
         return h('div', { className: 'container' }, [
           Header({ title: 'Магазин' }),
           h('div', { className: 'content' }, [
@@ -1863,6 +1882,16 @@
               placeholder: 'Поиск товаров', 
               onChange: (e) => setSearchTerm(e.target.value) 
             }),
+            h('div', { className: 'sections' }, sections.map(section => (
+              h('div', { 
+                className: 'section', 
+                onClick: () => setSelectedSection(section.name),
+                style: selectedSection === section.name ? { background: '#4b9cd3' } : {}
+              }, [
+                h('i', { className: section.icon }),
+                h('span', null, section.name)
+              ])
+            ))),
             h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
               h('div', { key: index, className: 'product-card' }, [
                 h('div', { className: 'product-image' }, 'Image'),
@@ -1918,7 +1947,7 @@
 
       return h('div', null, [
         contentChildren,
-        viewStack.length > 0 && h('button', { className: 'circular-back-button', onClick: goBack }, '←'),
+        viewStack.length > 0 && h('button', { className: 'circular-back-button', onClick: goBack }, '<'),
         selectedProduct && h('div', { className: 'product-card-overlay', onClick: () => setSelectedProduct(null) }, [
           h('div', { className: 'product-card-content', onClick: (e) => e.stopPropagation() }, [
             h('img', { src: selectedProduct.image || 'https://via.placeholder.com/300', alt: selectedProduct.name, className: 'product-image' }),
