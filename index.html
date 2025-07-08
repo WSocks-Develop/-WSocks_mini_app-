@@ -58,10 +58,14 @@
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
       --telegram-block-bg: #2196f3;
+      --youtube-block-bg: #ff0033;
+      --site-block-bg: #555a5f;
+      --github-block-bg: #010409;
       --vpn-shop-bg: linear-gradient(135deg, #64b6f7, #5aaaeb);
       --vpn-shop-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, 180, 229, 0.1));
       --status-active-color: #00cc99;
       --subscription-desc-bg: #2a2a2a;
+      --back-button-bg: #181818;
     }
 
     :root[data-theme="light"] {
@@ -80,16 +84,19 @@
       --button-secondary-hover-bg: linear-gradient(135deg, rgba(75, 85, 99, 0.2), rgba(75, 85, 99, 0.1));
       --button-success-bg: linear-gradient(135deg, rgba(20, 200, 140, 0.3), rgba(16, 185, 129, 0.3));
       --button-success-hover-bg: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(5, 150, 105, 0.1));
-      |Inline Stylesheets
       --button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 68, 0.3));
       --button-danger-hover-bg: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.1));
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
       --telegram-block-bg: rgba(75, 156, 211, 0.3);
+      --youtube-block-bg: rgba(255, 0, 51, 0.3);
+      --site-block-bg: rgba(85, 90, 95, 0.3);
+      --github-block-bg: rgba(1, 4, 9, 0.3);
       --vpn-shop-bg: linear-gradient(135deg, rgba(100, 182, 247, 0.3), rgba(90, 170, 235, 0.3));
       --vpn-shop-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, 180, 229, 0.1));
       --status-active-color: #00cc99;
       --subscription-desc-bg: #e0e0e0;
+      --back-button-bg: #d0d0d0;
     }
 
     * {
@@ -347,13 +354,33 @@
       border-radius: 20px;
     }
 
-    .telegram-block:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px var(--shadow-color);
-      background: var(--button-hover-bg);
+    .youtube-block {
+      background: var(--youtube-block-bg);
+      box-shadow: 0 0 10px var(--youtube-block-bg);
     }
 
-    .telegram-block span {
+    .site-block {
+      background: var(--site-block-bg);
+      box-shadow: 0 0 10px var(--site-block-bg);
+    }
+
+    .github-block {
+      background: var(--github-block-bg);
+      box-shadow: 0 0 10px var(--github-block-bg);
+    }
+
+    .telegram-block:hover,
+    .youtube-block:hover,
+    .site-block:hover,
+    .github-block:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px var(--shadow-color);
+    }
+
+    .telegram-block span,
+    .youtube-block span,
+    .site-block span,
+    .github-block span {
       font-size: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       color: var(--text-color);
@@ -363,7 +390,10 @@
       gap: 6px;
     }
 
-    .telegram-block small {
+    .telegram-block small,
+    .youtube-block small,
+    .site-block small,
+    .github-block small {
       font-size: clamp(10px, 2vw, 12px);
       color: var(--text-color);
       opacity: 0.8;
@@ -428,7 +458,7 @@
     }
 
     @keyframes shine {
-      0% { transform: translate(−100%, -100%) rotate(30deg); }
+      0% { transform: translate(-100%, -100%) rotate(30deg); }
       100% { transform: translate(100%, 100%) rotate(30deg); }
     }
 
@@ -697,12 +727,11 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      transform: scale(0.4);
-      transform-origin: top left;
+      width: 100%;
     }
 
     .product-card:hover {
-      transform: scale(0.42) translateY(-5px);
+      transform: translateY(-5px);
       box-shadow: 0 6px 12px var(--shadow-color);
     }
 
@@ -802,7 +831,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: var(--button-bg);
+      background: var(--back-button-bg);
       color: var(--text-color);
       border: none;
       cursor: pointer;
@@ -875,11 +904,46 @@
       cursor: pointer;
       color: var(--text-color);
     }
+
+    .support-button {
+      background: #383838;
+    }
   </style>
 </head>
 <body>
   <div id="root"></div>
   <script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+      if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+          var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+          var firstSheetName = workbook.SheetNames[0];
+          var worksheet = workbook.Sheets[firstSheetName];
+          var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+          var filteredData = jsonData.filter(row => row.some(filledCell));
+          var headerRowIndex = filteredData.findIndex((row, index) =>
+            row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+          );
+          if (headerRowIndex === -1 || headerRowIndex > 25) {
+            headerRowIndex = 0;
+          }
+          var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+          csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+          return csv;
+        } catch (e) {
+          console.error(e);
+          return "";
+        }
+      }
+      return gk_fileData[filename] || "";
+    }
+
     const { useState, useEffect, createElement: h } = React;
 
     function debounce(func, wait) {
@@ -1155,10 +1219,10 @@
 
       const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text).then(() => {
-          Telegram.WebApp.showAlert('Ключ скопирован!');
+          Telegram.WebApp.showAlert('Скопировано!');
         }).catch(err => {
           console.error('Ошибка копирования:', err);
-          Telegram.WebApp.showAlert('Не удалось скопировать ключ');
+          Telegram.WebApp.showAlert('Не удалось скопировать');
         });
       };
 
@@ -1254,7 +1318,7 @@
               ]),
               h('div', { className: 'tooltip' }, [
                 h('button', { className: 'glass-button button-square button-small', onClick: () => navigate('support'), disabled: loading }, [
-                  h('i', { className: 'fas fa-life-ring icon' }),
+                  h('i', { className: 'fas fa-envelope icon' }),
                   h('span', null, 'Поддержка')
                 ]),
                 h('span', { className: 'tooltip-text' }, 'Свяжитесь с нашей поддержкой')
@@ -1274,21 +1338,21 @@
               ]),
               h('small', null, 'Актуальные новости проекта')
             ]),
-            h('div', { className: 'telegram-block', style: { background: '#ff0033' }, onClick: () => Telegram.WebApp.openLink('https://www.youtube.com/@WSocks_VPN') }, [
+            h('div', { className: 'telegram-block youtube-block', onClick: () => Telegram.WebApp.openLink('https://www.youtube.com/@WSocks_VPN') }, [
               h('span', null, [
                 h('i', { className: 'fab fa-youtube' }),
                 ' WSocks в YouTube'
               ]),
               h('small', null, 'Смотрите наши видео')
             ]),
-            h('div', { className: 'telegram-block', style: { background: '#555a5f' }, onClick: () => Telegram.WebApp.openLink('https://wsocks.ru') }, [
+            h('div', { className: 'telegram-block site-block', onClick: () => Telegram.WebApp.openLink('https://wsocks.ru') }, [
               h('span', null, [
                 h('i', { className: 'fas fa-globe' }),
                 ' Сайт с общей информацией'
               ]),
               h('small', null, 'Узнайте больше о проекте')
             ]),
-            h('div', { className: 'telegram-block', style: { background: '#010409', color: '#fff' }, onClick: () => Telegram.WebApp.openLink('https://github.com/WSocks-Develop/WSocks-VPN--NekoBox-.git') }, [
+            h('div', { className: 'telegram-block github-block', onClick: () => Telegram.WebApp.openLink('https://github.com/WSocks-Develop/WSocks-VPN--NekoBox-.git') }, [
               h('span', null, [
                 h('i', { className: 'fab fa-github' }),
                 ' GitHub страница проекта'
@@ -1316,16 +1380,10 @@
         } else {
           contentChildren.push(
             h('div', { className: 'card' }, [
-              h('p', null, [
-                'Для связи с нашей поддержкой отправьте сообщение сюда, ',
-                h('span', { className: 'clickable', onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK) }, SUPPORT_HANDLE),
-                ' и наша команда ответит вам в ближайшее время!'
-              ]),
-              h('p', null, [
-                'Ваш id в телеграмм: ',
-                h('span', { className: 'clickable', onClick: () => copyToClipboard(user.telegram_id) }, user.telegram_id)
-              ]),
-              h('p', { style: { fontStyle: 'italic' } }, '(нажмите на id чтобы скопировать)')
+              h('p', null, 'Для связи с нашей поддержкой отправьте сообщение в поддержку.'),
+              h('p', null, `Ваш id в телеграмм: ${user.telegram_id}`),
+              h('button', { className: 'glass-button support-button', onClick: () => copyToClipboard(user.telegram_id) }, 'Скопировать TG ID'),
+              h('button', { className: 'glass-button support-button', onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK) }, 'Написать в поддержку')
             ]),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
           );
@@ -1358,11 +1416,8 @@
           if (user) {
             contentChildren.push(
               h('div', { className: 'card' }, [
-                h('p', null, [
-                  'Ваша реферальная ссылка: ',
-                  h('span', { className: 'clickable', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, `${BOT_USERNAME}?start=ref_${user.telegram_id}`)
-                ]),
-                h('p', { style: { fontStyle: 'italic' } }, '(нажмите на ссылку чтобы скопировать)')
+                h('p', null, `Ваша реферальная ссылка: ${BOT_USERNAME}?start=ref_${user.telegram_id}`),
+                h('button', { className: 'glass-button button-primary no-shine', onClick: () => copyToClipboard(`${BOT_USERNAME}?start=ref_${user.telegram_id}`) }, 'Скопировать ссылку')
               ])
             );
           }
@@ -1857,7 +1912,7 @@
           { name: 'ChatGPT / Sora', icon: 'fas fa-robot' },
           { name: 'Telegram', icon: 'fab fa-telegram' },
           { name: 'Grok', icon: 'fas fa-brain' },
-          { name: 'Adobe', icon: 'fab fa-adobe' },
+          { name: 'Adobe', icon: 'fas fa-paint-brush' },
           { name: 'Разное', icon: 'fas fa-ellipsis-h' }
         ];
 
