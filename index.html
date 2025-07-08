@@ -301,7 +301,7 @@
     .copy-button,
     .instruction-button {
       position: relative;
-      padding: 8px 12px;
+      padding:03px;
       border-radius: 20px;
       background: var(--button-bg);
       border: 1px solid rgba(255, 255, 255, 0.3);
@@ -324,20 +324,6 @@
       background: var(--button-hover-bg);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow-color);
-    }
-
-    .copy-button::before,
-    .instruction-button::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
-      transform: rotate(30deg);
-      animation: shine 3s infinite linear;
-      pointer-events: none;
     }
 
     .telegram-block {
@@ -446,19 +432,6 @@
       transform: scale(0.98);
     }
 
-    .glass-button::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent 70%);
-      transform: rotate(30deg);
-      animation: shine 3s infinite linear;
-      pointer-events: none;
-    }
-
     .no-shine::before {
       content: none !important;
     }
@@ -486,7 +459,7 @@
       font-size: clamp(20px, 4vw, 24px);
       font-weight: bold;
       text-align: center;
-      min一一height: 100px;
+      min-height: 100px;
       transform: scale(1.2);
       transition: all 0.3s ease;
     }
@@ -665,7 +638,7 @@
       margin-bottom: 4px;
     }
 
-    .search条 {
+    .search-bar {
       width: 100%;
       padding: 10px;
       margin-bottom: 20px;
@@ -722,17 +695,10 @@
     }
 
     .product-image {
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
+      width: 66px;
+      height: 66px;
+      background: #ccc;
       margin-right: 16px;
-    }
-
-    .overlay-product-image {
-      width: 120px;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 10px;
     }
 
     .fas, .far {
@@ -749,7 +715,7 @@
       to { opacity: 1; transform: scale(1); }
     }
 
-    .glass-button:nth-child(1), .card:nth-child(1), .telegram-block:nth-child(1) { animation delaying: 0.1s; }
+    .glass-button:nth-child(1), .card:nth-child(1), .telegram-block:nth-child(1) { animation-delay: 0.1s; }
     .glass-button:nth-child(2), .card:nth-child(2) { animation-delay: 0.2s; }
     .glass-button:nth-child(3), .card:nth-child(3) { animation-delay: 0.3s; }
     .glass-button:nth-child(4), .card:nth-child(4) { animation-delay: 0.4s; }
@@ -853,6 +819,13 @@
       color: var(--text-color);
     }
 
+    .product-card-content .product-image {
+      width: 150px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
     .product-details {
       flex: 1;
     }
@@ -882,6 +855,10 @@
     .support-button {
       background: #383838;
       margin-bottom: 16px;
+    }
+
+    .buy-button {
+      width: 100px;
     }
   </style>
 </head>
@@ -948,9 +925,9 @@
       const [processingActions, setProcessingActions] = useState({});
       const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
       const [products] = useState([
-        { name: 'Товар 1', description: 'Описание товара 1' },
-        { name: 'Товар 2', description: 'Описание товара 2' },
-        { name: 'Товар 3', description: 'Описание товара 3' }
+        { name: 'Товар 1', description: 'Описание товара 1', image: 'https://via.placeholder.com/66' },
+        { name: 'Товар 2', description: 'Описание товара 2', image: 'https://via.placeholder.com/66' },
+        { name: 'Товар 3', description: 'Описание товара 3', image: 'https://via.placeholder.com/66' }
       ]);
       const [searchTerm, setSearchTerm] = useState('');
       const [viewStack, setViewStack] = useState([]);
@@ -1243,7 +1220,6 @@
                         'До окончания: ',
                         h('span', { className: 'days-remaining' }, daysDisplay)
                       ]),
-                      h('p', null, [h('b', null, 'Кол-во устройств: '), '3']),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
@@ -1450,7 +1426,6 @@
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
-                h('p', null, [h('b', null, 'Кол-во устройств: '), '3']),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
@@ -1570,7 +1545,6 @@
                   'До окончания: ',
                   h('span', { className: 'days-remaining' }, daysDisplay)
                 ]),
-                h('p', null, [h('b', null, 'Кол-во устройств: '), '3']),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
@@ -1768,9 +1742,7 @@
       };
 
       const renderService = () => {
-        const contentChildren
-
- = [];
+        const contentChildren = [];
 
         if (error) {
           contentChildren.push(
@@ -1809,6 +1781,7 @@
               h('p', null, [h('b', null, 'Протоколы:'), ' TLS+Vless']),
               h('p', null, [h('b', null, 'Приложения:'), ' Amnesia, NekoBox']),
               h('p', null, [h('b', null, 'Макс. устройств:'), ' 3']),
+              h('p', null, [h('b', null, 'Кол-во устройств:'), ' 3']),
               h('p', null, [h('b', null, 'Примечание:'), ' Добавьте игры или торренты в исключения, чтобы избежать ограничения скорости.'])
             ]),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
@@ -1882,10 +1855,10 @@
         const testProducts = sections.filter(section => section.name !== 'All').map(section => ({
           name: section.name,
           products: [
-            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц' },
-            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца' },
-            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев' },
-            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год' }
+            { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц', image: 'https://via.placeholder.com/66' },
+            { name: `${section.name} - 3 месяца`, description: 'Подписка на 3 месяца', image: 'https://via.placeholder.com/66' },
+            { name: `${section.name} - 6 месяцев`, description: 'Подписка на 6 месяцев', image: 'https://via.placeholder.com/66' },
+            { name: `${section.name} - 1 год`, description: 'Подписка на 1 год', image: 'https://via.placeholder.com/66' }
           ]
         }));
 
@@ -1916,11 +1889,11 @@
             ))),
             h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
               h('div', { key: index, className: 'product-card' }, [
-                h('img', { src: product.image || 'https://via.placeholder.com/50', alt: product.name, className: 'product-image' }),
+                h('img', { src: product.image, alt: product.name, className: 'product-image' }),
                 h('div', null, [
                   h('h3', null, product.name),
                   h('p', null, product.description),
-                  h('button', { className: 'glass-button button-primary no-shine', onClick: () => setSelectedProduct(product) }, 'Купить')
+                  h('button', { className: 'glass-button button-primary no-shine buy-button', onClick: () => setSelectedProduct(product) }, 'Купить')
                 ])
               ])
             ))),
@@ -1972,11 +1945,11 @@
         viewStack.length > 0 && h('button', { className: 'circular-back-button', onClick: goBack }, '<'),
         selectedProduct && h('div', { className: 'product-card-overlay', onClick: () => setSelectedProduct(null) }, [
           h('div', { className: 'product-card-content', onClick: (e) => e.stopPropagation() }, [
-            h('img', { src: selectedProduct.image || 'https://via.placeholder.com/120', alt: selectedProduct.name, className: 'overlay-product-image' }),
+            h('img', { src: selectedProduct.image || 'https://via.placeholder.com/150', alt: selectedProduct.name, className: 'product-image' }),
             h('div', { className: 'product-details' }, [
               h('h2', null, selectedProduct.name),
               h('p', null, selectedProduct.description),
-              h('button', { className: 'glass-button button-primary no-shine', onClick: () => Telegram.WebApp.showAlert('Скоро будет доступно') }, 'Купить')
+              h('button', { className: 'glass-button button-primary no-shine buy-button', onClick: () => Telegram.WebApp.showAlert('Скоро будет доступно') }, 'Купить')
             ])
           ]),
           h('button', { className: 'close-button', onClick: () => setSelectedProduct(null) }, '×')
