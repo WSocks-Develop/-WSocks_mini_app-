@@ -40,7 +40,7 @@
     :root[data-theme="dark"] {
       --glass-bg: rgba(75, 156, 211, 0.3);
       --glass-blur: blur(10px);
-      --glass-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Updated to remove white glow and add volume effect */
+      --glass-shadow: 0 0 10px #fff;
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
       --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       --background-color: linear-gradient(to bottom, #333333, #000000);
@@ -66,6 +66,7 @@
       --status-active-color: #00cc99;
       --subscription-desc-bg: #2a2a2a;
       --back-button-bg: #181818;
+      --volume-effect: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
     :root[data-theme="light"] {
@@ -97,6 +98,7 @@
       --status-active-color: #00cc99;
       --subscription-desc-bg: #e0e0e0;
       --back-button-bg: #d0d0d0;
+      --volume-effect: 0 4px 8px rgba(0, 0, 0, 0.3);
     }
 
     * {
@@ -135,7 +137,7 @@
       top: 0;
       background: var(--header-bg);
       backdrop-filter: var(--glass-blur);
-      box-shadow: var(--glass-shadow);
+      box-shadow: var(--volume-effect);
       color: var(--text-color);
       padding: 12px 16px;
       display: flex;
@@ -366,15 +368,19 @@
 
     .github-block {
       background: var(--github-block-bg);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Updated for volume effect */
+      box-shadow: 0 0 10px var(--github-block-bg);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .telegram-block:hover,
     .youtube-block:hover,
-    .site-block:hover,
+    .site-block:hover {
+      transform: translateY(-2px);
+    }
+
     .github-block:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Updated to remove blue glow */
+      box-shadow: var(--volume-effect);
     }
 
     .telegram-block span,
@@ -747,18 +753,11 @@
       text-shadow: var(--text-shadow);
     }
 
-    .product-card .product-image {
-      width: 33px; /* Reduced from 100px to 33px (divided by 3) */
-      height: 33px; /* Reduced from 100px to 33px (divided by 3) */
+    .product-image {
+      width: 33px;
+      height: 33px;
       background: #ccc;
       margin-right: 16px;
-    }
-
-    .product-card-content .product-image {
-      width: 300px;
-      height: 300px;
-      object-fit: cover;
-      border-radius: 10px;
     }
 
     .fas, .far {
@@ -879,6 +878,13 @@
       color: var(--text-color);
     }
 
+    .product-card-content .product-image {
+      width: 300px;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
     .product-details {
       flex: 1;
     }
@@ -907,6 +913,7 @@
 
     .support-button {
       background: #383838;
+      margin-bottom: 16px;
     }
   </style>
 </head>
@@ -980,7 +987,7 @@
       const [searchTerm, setSearchTerm] = useState('');
       const [viewStack, setViewStack] = useState([]);
       const [selectedProduct, setSelectedProduct] = useState(null);
-      const [selectedSection, setSelectedSection] = useState('Все'); // Updated default to 'Все'
+      const [selectedSection, setSelectedSection] = useState('All');
 
       const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -1382,7 +1389,7 @@
             h('div', { className: 'card' }, [
               h('p', null, 'Для связи с нашей поддержкой отправьте сообщение в поддержку.'),
               h('p', null, `Ваш id в телеграмм: ${user.telegram_id}`),
-              h('button', { className: 'glass-button support-button', onClick: () => copyToClipboard(user.telegram_id), style: { marginBottom: '20px' } }, 'Скопировать TG ID'), // Increased distance
+              h('button', { className: 'glass-button support-button', onClick: () => copyToClipboard(user.telegram_id) }, 'Скопировать TG ID'),
               h('button', { className: 'glass-button support-button', onClick: () => Telegram.WebApp.openLink(SUPPORT_LINK) }, 'Написать в поддержку')
             ]),
             h('button', { className: 'glass-button button-secondary no-shine', onClick: goBack, disabled: loading }, 'Назад')
@@ -1759,7 +1766,7 @@
       };
 
       const renderManualAndroidTV = () => {
-        const content  const contentChildren = [];
+        const contentChildren = [];
 
         if (error) {
           contentChildren.push(
@@ -1908,7 +1915,7 @@
 
       const renderShop = () => {
         const sections = [
-          { name: 'Все', icon: 'fas fa-globe' }, // Added 'Все' section as the first one
+          { name: 'All', icon: 'fas fa-globe' },
           { name: 'Spotify', icon: 'fab fa-spotify' },
           { name: 'ChatGPT / Sora', icon: 'fas fa-robot' },
           { name: 'Telegram', icon: 'fab fa-telegram' },
@@ -1917,7 +1924,7 @@
           { name: 'Разное', icon: 'fas fa-ellipsis-h' }
         ];
 
-        const testProducts = sections.map(section => ({
+        const testProducts = sections.filter(section => section.name !== 'All').map(section => ({
           name: section.name,
           products: [
             { name: `${section.name} - 1 месяц`, description: 'Подписка на 1 месяц' },
@@ -1927,13 +1934,11 @@
           ]
         }));
 
-        const productsToShow = (selectedSection === 'Все' 
-          ? testProducts.flatMap(p => p.products) 
-          : testProducts.find(p => p.name === selectedSection)?.products || []
-        ).filter(product => 
-          product.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-          product.description.toLowerCase().includes(searchTerm.toLowerCase())
-        ); // Updated to include search functionality across all sections
+        const allProducts = testProducts.flatMap(p => p.products);
+
+        const filteredProducts = selectedSection === 'All'
+          ? allProducts.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase()))
+          : testProducts.find(p => p.name === selectedSection)?.products.filter(product => product.name.toLowerCase().includes(searchTerm.toLowerCase())) || [];
 
         return h('div', { className: 'container' }, [
           Header({ title: 'Магазин' }),
@@ -1954,7 +1959,7 @@
                 h('span', null, section.name)
               ])
             ))),
-            h('div', { className: 'product-grid' }, productsToShow.map((product, index) => (
+            h('div', { className: 'product-grid' }, filteredProducts.map((product, index) => (
               h('div', { key: index, className: 'product-card' }, [
                 h('div', { className: 'product-image' }, 'Image'),
                 h('div', null, [
@@ -2000,7 +2005,7 @@
             error ? h('p', { className: 'error' }, error) : null,
             error ? h('button', { className: 'glass-button button-primary no-shine', onClick: () => window.location.reload() }, 'Повторить') : null,
             error ? h('button', { className: 'glass-button button-danger no-shine', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение') : null,
-            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...')/json : null
+            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...') : null
           ])
         );
       } else {
