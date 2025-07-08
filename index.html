@@ -191,8 +191,19 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel, .card, .subscription {
+    .subscriptions-panel, .card {
       background: #323232;
+      backdrop-filter: var(--glass-blur);
+      box-shadow: none;
+      border-radius: 12px;
+      padding: 20px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .subscription {
+      background: #2a2a2a;
       backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
@@ -254,7 +265,7 @@
       text-shadow: var(--text-shadow);
     }
 
-    .subscriptions-panel .subscription .details {
+    .subscription .details {
       display: grid;
       grid-template-columns: 1fr 2fr;
       gap: 8px;
@@ -1359,7 +1370,7 @@
                   ])
                 ])
               ];
-              contentChildren.push(h('div', { key: index, className: 'card' }, cardChildren));
+              contentChildren.push(h('div', { key: index, className: 'subscription' }, cardChildren));
             });
           }
 
@@ -1374,7 +1385,7 @@
         }
 
         return h('div', { className: 'container' }, [
-          Header({ title: 'Подписки', onBack: () => setView('main') }),
+          Header({ title: 'VPN', onBack: () => setView('main') }),
           h('div', { className: 'content' }, contentChildren)
         ]);
       };
