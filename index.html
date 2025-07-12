@@ -2013,7 +2013,7 @@
             error ? h('p', { className: 'error' }, error) : null,
             error ? h('button', { className: 'glass-button button-primary no-shine', onClick: () => window.location.reload() }, 'Повторить') : null,
             error ? h('button', { className: 'glass-button button-danger no-shine', onClick: () => Telegram.WebApp.close() }, 'Закрыть приложение') : null,
-            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя... ') : null
+            !error ? h('p', { className: 'card', style: { textAlign: 'center' } }, 'Загрузка данных пользователя...') : null
           ])
         );
       } else {
