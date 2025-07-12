@@ -318,6 +318,8 @@
       align-items: center;
       gap: 6px;
       text-shadow: var(--text-shadow);
+      width: 100%;
+      margin-bottom: 8px;
     }
 
     .copy-button:hover,
@@ -634,7 +636,7 @@
     }
 
     .tooltip:hover .tooltip-text {
-      visibility: visible;
+      visibility: visible lançamento;
       opacity: 1;
     }
 
@@ -990,11 +992,16 @@
       const [viewStack, setViewStack] = useState([]);
       const [selectedProduct, setSelectedProduct] = useState(null);
       const [selectedSection, setSelectedSection] = useState('All');
+      const [shopSubscriptions, setShopSubscriptions] = useState(() => {
+        const saved = localStorage.getItem('shopSubscriptions');
+        return saved ? JSON.parse(saved) : [];
+      });
+      const [isShopSubscriptionsOpen, setIsShopSubscriptionsOpen] = useState(false);
 
-      const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
+      const API_URL = 'https://faithful-celestina-drstonit-ed3b0b61.koyeb.app';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
-      const BOT_USERNAME = '@YourBot';
+      const BOT_USERNAME = '@penis2008bot';
       const APP_DOWNLOAD_LINK = 'https://example.com/download';
       const TELEGRAM_CHANNEL_LINK = 'https://t.me/WSocks_Channel';
 
@@ -1005,6 +1012,10 @@
         localStorage.setItem('paymentData', JSON.stringify(paymentData));
         localStorage.setItem('selectedSub', JSON.stringify(selectedSub));
       }, [view, paymentData, selectedSub]);
+
+      useEffect(() => {
+        localStorage.setItem('shopSubscriptions', JSON.stringify(shopSubscriptions));
+      }, [shopSubscriptions]);
 
       useEffect(() => {
         console.log('Приложение запускается...');
@@ -1239,6 +1250,10 @@
         setIsSubscriptionsOpen(!isSubscriptionsOpen);
       };
 
+      const toggleShopSubscriptionsPanel = () => {
+        setIsShopSubscriptionsOpen(!isShopSubscriptionsOpen);
+      };
+
       const Header = ({ title }) => {
         return h('div', { className: 'header' }, [
           h('div', { className: 'header-title' }, title)
@@ -1296,6 +1311,17 @@
                           'Инструкция'
                         ])
                       ])
+                    ]);
+                  })
+            ),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: toggleShopSubscriptionsPanel }, isShopSubscriptionsOpen ? 'Скрыть подписки магазина' : 'Показать подписки магазина'),
+            h('div', { className: `subscriptions-panel ${isShopSubscriptionsOpen ? 'open' : ''}` }, 
+              shopSubscriptions.length === 0
+                ? [h('p', null, 'Нет активных подписок из магазина')]
+                : shopSubscriptions.map((sub, index) => {
+                    return h('div', { key: index, className: 'subscription' }, [
+                      h('h3', null, sub.name),
+                      h('p', null, sub.description)
                     ]);
                   })
             )
@@ -2029,7 +2055,11 @@
             h('div', { className: 'product-details' }, [
               h('h2', null, selectedProduct.name),
               h('p', null, selectedProduct.description),
-              h('button', { className: 'glass-button button-primary no-shine', onClick: () => Telegram.WebApp.showAlert('Скоро будет доступно') }, 'Купить')
+              h('button', { className: 'glass-button button-primary no-shine', onClick: () => {
+                setShopSubscriptions(prev => [...prev, selectedProduct]);
+                setSelectedProduct(null);
+                Telegram.WebApp.showAlert('Подписка добавлена!');
+              } }, 'Купить')
             ])
           ]),
           h('button', { className: 'close-button', onClick: () => setSelectedProduct(null) }, '×')
