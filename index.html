@@ -59,7 +59,7 @@
       --button-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.3), rgba(75, 156, 211, 0.3));
       --button-hover-bg: linear-gradient(135deg, rgba(90, 180, 229, 0.2), rgba(90, 180, 229, 0.1));
       --accent-color: #4b9cd3;
-      --button-secondary-bg: linear-gradient(135deg, rgba(120, 130, 140, 0.3), rgba(107, 114, 128, 0.3));
+      --button-secondary-bg: linear-gradient(135deg, rgba(120, 130, 140, 0.3), rgba(107 шк, 114, 128, 0.3));
       --button-secondary-hover-bg: linear-gradient(135deg, rgba(75, 85, 99, 0.2), rgba(75, 85, 99, 0.1));
       --button-success-bg: linear-gradient(135deg, rgba(20, 200, 140, 0.3), rgba(16, 185, 129, 0.3));
       --button-success-hover-bg: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(5, 150, 105, 0.1));
@@ -636,7 +636,7 @@
     }
 
     .tooltip:hover .tooltip-text {
-      visibility: visible lançamento;
+      visibility: visible;
       opacity: 1;
     }
 
@@ -982,7 +982,7 @@
       });
       const [selectedReferee, setSelectedReferee] = useState(null);
       const [processingActions, setProcessingActions] = useState({});
-      const [isSubscriptionsOpen, setIsSubscriptionsOpen] = useState(false);
+      const [isAllSubscriptionsOpen, setIsAllSubscriptionsOpen] = useState(false);
       const [products] = useState([
         { name: 'Товар 1', description: 'Описание товара 1' },
         { name: 'Товар 2', description: 'Описание товара 2' },
@@ -996,7 +996,6 @@
         const saved = localStorage.getItem('shopSubscriptions');
         return saved ? JSON.parse(saved) : [];
       });
-      const [isShopSubscriptionsOpen, setIsShopSubscriptionsOpen] = useState(false);
 
       const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -1246,12 +1245,8 @@
         });
       };
 
-      const toggleSubscriptionsPanel = () => {
-        setIsSubscriptionsOpen(!isSubscriptionsOpen);
-      };
-
-      const toggleShopSubscriptionsPanel = () => {
-        setIsShopSubscriptionsOpen(!isShopSubscriptionsOpen);
+      const toggleAllSubscriptionsPanel = () => {
+        setIsAllSubscriptionsOpen(!isAllSubscriptionsOpen);
       };
 
       const Header = ({ title }) => {
@@ -1265,65 +1260,62 @@
 
         if (user) {
           contentChildren.push(
-            h('button', { className: 'glass-button button-primary no-shine', onClick: toggleSubscriptionsPanel }, isSubscriptionsOpen ? 'Скрыть подписки' : 'Показать подписки'),
-            h('div', { className: `subscriptions-panel ${isSubscriptionsOpen ? 'open' : ''}` }, 
-              subscriptions.length === 0
+            h('button', { className: 'glass-button button-primary no-shine', onClick: toggleAllSubscriptionsPanel }, isAllSubscriptionsOpen ? 'Скрыть все подписки' : 'Показать все подписки'),
+            h('div', { className: `subscriptions-panel ${isAllSubscriptionsOpen ? 'open' : ''}` }, 
+              subscriptions.length === 0 && shopSubscriptions.length === 0
                 ? [h('p', null, 'Нет активных подписок')]
-                : subscriptions.map((sub, index) => {
-                    const isExpired = sub.is_expired;
-                    const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-                    const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-                    return h('div', { key: index, className: 'subscription' }, [
-                      h('h3', null, [
-                        h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
-                        `Подключение #${sub.email.split('-').pop()}`
-                      ]),
-                      h('p', null, [
-                        isExpired ? h('span', { className: 'status-error' }, [
-                          h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
-                          'Заблокировано'
-                        ]) : h('span', { className: 'status-active' }, [
-                          h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                          'Активно'
-                        ])
-                      ]),
-                      h('p', null, [
-                        h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                        'До окончания: ',
-                        h('span', { className: 'days-remaining' }, daysDisplay)
-                      ]),
-                      h('p', null, [
-                        h('i', { className: 'fas fa-users', style: { marginRight: '4px' } }),
-                        'Макс. устройств: ',
-                        sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
-                      ]),
-                      h('button', { className: 'extend-button no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, [
-                        h('i', { className: 'fas fa-sync-alt', style: { marginRight: '4px' } }),
-                        'Продлить'
-                      ]),
-                      h('div', { className: 'buttons' }, [
-                        h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                          h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
-                          'Скопировать'
+                : [
+                    ...subscriptions.map((sub, index) => {
+                      const isExpired = sub.is_expired;
+                      const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
+                      const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
+                      return h('div', { key: `vpn-${index}`, className: 'subscription' }, [
+                        h('h3', null, [
+                          h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
+                          `VPN Подключение #${sub.email.split('-').pop()}`
                         ]),
-                        h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
-                          h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
-                          'Инструкция'
+                        h('p', null, [
+                          isExpired ? h('span', { className: 'status-error' }, [
+                            h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                            'Заблокировано'
+                          ]) : h('span', { className: 'status-active' }, [
+                            h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
+                            'Активно'
+                          ])
+                        ]),
+                        h('p', null, [
+                          h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                          'До окончания: ',
+                          h('span', { className: 'days-remaining' }, daysDisplay)
+                        ]),
+                        h('p', null, [
+                          h('i', { className: 'fas fa-users', style: { marginRight: '4px' } }),
+                          'Макс. устройств: ',
+                          sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
+                        ]),
+                        h('button', { className: 'extend-button no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, [
+                          h('i', { className: 'fas fa-sync-alt', style: { marginRight: '4px' } }),
+                          'Продлить'
+                        ]),
+                        h('div', { className: 'buttons' }, [
+                          h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                            h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                            'Скопировать'
+                          ]),
+                          h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                            h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                            'Инструкция'
+                          ])
                         ])
-                      ])
-                    ]);
-                  })
-            ),
-            h('button', { className: 'glass-button button-primary no-shine', onClick: toggleShopSubscriptionsPanel }, isShopSubscriptionsOpen ? 'Скрыть подписки магазина' : 'Показать подписки магазина'),
-            h('div', { className: `subscriptions-panel ${isShopSubscriptionsOpen ? 'open' : ''}` }, 
-              shopSubscriptions.length === 0
-                ? [h('p', null, 'Нет активных подписок из магазина')]
-                : shopSubscriptions.map((sub, index) => {
-                    return h('div', { key: index, className: 'subscription' }, [
-                      h('h3', null, sub.name),
-                      h('p', null, sub.description)
-                    ]);
-                  })
+                      ]);
+                    }),
+                    ...shopSubscriptions.map((sub, index) => {
+                      return h('div', { key: `shop-${index}`, className: 'subscription' }, [
+                        h('h3', null, sub.name),
+                        h('p', null, sub.description)
+                      ]);
+                    })
+                  ]
             )
           );
         }
