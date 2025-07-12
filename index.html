@@ -52,7 +52,7 @@
       --glass-blur: blur(10px);
       --glass-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       --button-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --text-shock: 0 1px 2px rgba(0, 0, 0, 0.3);
       --background-color: linear-gradient(to bottom, #D6D8D4, #F0F1EE);
       --text-color: #333333;
       --header-bg: rgba(255, 255, 255, 0.5);
@@ -63,9 +63,7 @@
       --button-secondary-hover-bg: linear-gradient(135deg, rgba(75, 85, 99, 0.2), rgba(75, 85, 99, 0.1));
       --button-success-bg: linear-gradient(135deg, rgba(20, 200, 140, 0.3), rgba(16, 185, 129, 0.3));
       --button-success-hover-bg: linear-gradient(135deg, rgba(5, 150, 105, 0.2), rgba(5, 150, 105, 0.1));
-      --
-
-button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 68, 0.3));
+      --button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 68, 0.3));
       --button-danger-hover-bg: linear-gradient(135deg, rgba(220, 38, 38, 0.2), rgba(220, 38, 38, 0.1));
       --shadow-color: rgba(75, 156, 211, 0.5);
       --error-color: #ef4444;
@@ -197,7 +195,7 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
       backdrop-filter: var(--glass-blur);
       box-shadow: none;
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
@@ -206,7 +204,7 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
     .subscriptions-panel {
       padding: 0;
       transition: max-height 0.3s ease-out, padding 0.3s ease-out, opacity 0.3s ease-out;
-      max-height:1982;
+      max-height: 0;
       overflow: hidden;
       opacity: 0;
     }
@@ -231,7 +229,7 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
 
     .subscriptions-panel .subscription h3,
     .subscription h3 {
-      font-size: 18px;
+      font-size: clamp(16px, 3vw, 18px);
       font-weight: 600;
       margin-bottom: 8px;
       display: flex;
@@ -254,21 +252,23 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
 
     .subscriptions-panel .subscription p,
     .subscription p {
-      font-size: 14px;
-      margin-bottom: 8px;
+      font-size: clamp(14px, 2.5vw, 16px);
+      margin-bottom: 6px;
       text-shadow: var(--text-shadow);
     }
 
     .subscriptions-panel .subscription p .days-remaining,
     .subscription p .days-remaining {
-      font-size: clamp(16px, 3vw, 18px);
       font-weight: bold;
+    }
+
+    .subscription > *:not(:last-child) {
+      margin-bottom: 12px;
     }
 
     .subscription .buttons {
       display: flex;
       gap: 8px;
-      margin-top: 12px;
     }
 
     .subscription .buttons button {
@@ -300,6 +300,28 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
       text-shadow: var(--text-shadow);
     }
 
+    .extend-button {
+      position: relative;
+      padding: 8px 12px;
+      border-radius: 20px;
+      background: #2196f3;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: var(--text-color);
+      font-size: clamp(12px, 2vw, 14px);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--button-shadow);
+      overflow: hidden;
+      transition: background 0.6s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: var(--text-shadow);
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
     .copy-button:hover,
     .instruction-button:hover {
       background: var(--button-hover-bg);
@@ -307,9 +329,15 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
       box-shadow: 0 4px 8px var(--shadow-color);
     }
 
+    .extend-button:hover {
+      background: #1e88e5;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+
     .telegram-block {
       padding: 20px 16px;
-      display: flexPOWER;
+      display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
@@ -608,7 +636,7 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
     }
 
     .tooltip:hover .tooltip-text {
-      visibility: visible;
+      visibility: visible lançamento;
       opacity: 1;
     }
 
@@ -891,10 +919,6 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
       background: #383838;
       margin-bottom: 16px;
     }
-
-    .extend-button {
-      background-color: #2196f3;
-    }
   </style>
 </head>
 <body>
@@ -968,6 +992,11 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
       const [viewStack, setViewStack] = useState([]);
       const [selectedProduct, setSelectedProduct] = useState(null);
       const [selectedSection, setSelectedSection] = useState('All');
+      const [shopSubscriptions, setShopSubscriptions] = useState(() => {
+        const saved = localStorage.getItem('shopSubscriptions');
+        return saved ? JSON.parse(saved) : [];
+      });
+      const [isShopSubscriptionsOpen, setIsShopSubscriptionsOpen] = useState(false);
 
       const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
@@ -983,6 +1012,10 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
         localStorage.setItem('paymentData', JSON.stringify(paymentData));
         localStorage.setItem('selectedSub', JSON.stringify(selectedSub));
       }, [view, paymentData, selectedSub]);
+
+      useEffect(() => {
+        localStorage.setItem('shopSubscriptions', JSON.stringify(shopSubscriptions));
+      }, [shopSubscriptions]);
 
       useEffect(() => {
         console.log('Приложение запускается...');
@@ -1217,6 +1250,10 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
         setIsSubscriptionsOpen(!isSubscriptionsOpen);
       };
 
+      const toggleShopSubscriptionsPanel = () => {
+        setIsShopSubscriptionsOpen(!isShopSubscriptionsOpen);
+      };
+
       const Header = ({ title }) => {
         return h('div', { className: 'header' }, [
           h('div', { className: 'header-title' }, title)
@@ -1239,16 +1276,16 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
                         h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
-                        `Подключение #${sub.email.split('-').pop()}`,
-                        isExpired 
-                          ? h('span', { className: 'status-error' }, [
-                              h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
-                              'Заблокировано'
-                            ])
-                          : h('span', { className: 'status-active' }, [
-                              h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                              'Активно'
-                            ])
+                        `Подключение #${sub.email.split('-').pop()}`
+                      ]),
+                      h('p', null, [
+                        isExpired ? h('span', { className: 'status-error' }, [
+                          h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                          'Заблокировано'
+                        ]) : h('span', { className: 'status-active' }, [
+                          h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
+                          'Активно'
+                        ])
                       ]),
                       h('p', null, [
                         h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
@@ -1260,6 +1297,10 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
                         'Макс. устройств: ',
                         sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
                       ]),
+                      h('button', { className: 'extend-button no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, [
+                        h('i', { className: 'fas fa-sync-alt', style: { marginRight: '4px' } }),
+                        'Продлить'
+                      ]),
                       h('div', { className: 'buttons' }, [
                         h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
@@ -1270,6 +1311,17 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
                           'Инструкция'
                         ])
                       ])
+                    ]);
+                  })
+            ),
+            h('button', { className: 'glass-button button-primary no-shine', onClick: toggleShopSubscriptionsPanel }, isShopSubscriptionsOpen ? 'Скрыть подписки магазина' : 'Показать подписки магазина'),
+            h('div', { className: `subscriptions-panel ${isShopSubscriptionsOpen ? 'open' : ''}` }, 
+              shopSubscriptions.length === 0
+                ? [h('p', null, 'Нет активных подписок из магазина')]
+                : shopSubscriptions.map((sub, index) => {
+                    return h('div', { key: index, className: 'subscription' }, [
+                      h('h3', null, sub.name),
+                      h('p', null, sub.description)
                     ]);
                   })
             )
@@ -1450,16 +1502,16 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
               const cardChildren = [
                 h('h3', null, [
                   h('i', { className: 'fas fa-key', style: { marginRight: '4px' } }),
-                  `Подключение #${sub.email.split('-').pop()}`,
-                  isExpired 
-                    ? h('span', { className: 'status-error' }, [
-                        h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
-                        'Заблокировано'
-                      ])
-                    : h('span', { className: 'status-active' }, [
-                        h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                        'Активно'
-                      ])
+                  `Подключение #${sub.email.split('-').pop()}`
+                ]),
+                h('p', null, [
+                  isExpired ? h('span', { className: 'status-error' }, [
+                    h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                    'Заблокировано'
+                  ]) : h('span', { className: 'status-active' }, [
+                    h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
+                    'Активно'
+                  ])
                 ]),
                 h('p', null, [
                   h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
@@ -1471,11 +1523,10 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
                   'Макс. устройств: ',
                   sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
                 ]),
-                h('button', { 
-                  className: 'glass-button extend-button no-shine', 
-                  onClick: () => { setSelectedSub(sub); navigate('extend'); }, 
-                  disabled: loading 
-                }, 'Продлить'),
+                h('button', { className: 'extend-button no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, [
+                  h('i', { className: 'fas fa-sync-alt', style: { marginRight: '4px' } }),
+                  'Продлить'
+                ]),
                 h('div', { className: 'buttons' }, [
                   h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                     h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
@@ -2004,7 +2055,11 @@ button-danger-bg: linear-gradient(135deg, rgba(255, 85, 85, 0.3), rgba(239, 68, 
             h('div', { className: 'product-details' }, [
               h('h2', null, selectedProduct.name),
               h('p', null, selectedProduct.description),
-              h('button', { className: 'glass-button button-primary no-shine', onClick: () => Telegram.WebApp.showAlert('Скоро будет доступно') }, 'Купить')
+              h('button', { className: 'glass-button button-primary no-shine', onClick: () => {
+                setShopSubscriptions(prev => [...prev, selectedProduct]);
+                setSelectedProduct(null);
+                Telegram.WebApp.showAlert('Подписка добавлена!');
+              } }, 'Купить')
             ])
           ]),
           h('button', { className: 'close-button', onClick: () => setSelectedProduct(null) }, '×')
