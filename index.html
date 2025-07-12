@@ -253,19 +253,24 @@
     .subscriptions-panel .subscription p,
     .subscription p {
       font-size: clamp(14px, 2.5vw, 16px);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-shadow: var(--text-shadow);
     }
 
     .subscriptions-panel .subscription p .days-remaining,
     .subscription p .days-remaining {
-      font-size: clamp(16px, 3vw, 18px);
+      font-size: clamp(14px, 2.5vw, 16px);
       font-weight: bold;
+    }
+
+    .connection-title {
+      font-size: clamp(16px, 3vw, 18px);
     }
 
     .subscription .buttons {
       display: flex;
       gap: 8px;
+      margin-top: 8px;
     }
 
     .subscription .buttons button {
@@ -277,7 +282,8 @@
     }
 
     .copy-button,
-    .instruction-button {
+    .instruction-button,
+    .extend-button {
       position: relative;
       padding: 8px 12px;
       border-radius: 20px;
@@ -297,11 +303,20 @@
       text-shadow: var(--text-shadow);
     }
 
+    .extend-button {
+      background: #2196f3;
+    }
+
     .copy-button:hover,
-    .instruction-button:hover {
+    .instruction-button:hover,
+    .extend-button:hover {
       background: var(--button-hover-bg);
       transform: translateY(-2px);
       box-shadow: 0 4px 8px var(--shadow-color);
+    }
+
+    .extend-button:hover {
+      background: #1e88e5;
     }
 
     .telegram-block {
@@ -316,7 +331,7 @@
       opacity: 0;
       animation: slideIn 0.5s ease-out forwards;
       background: var(--telegram-block-bg);
-      box-shadow: 0 0 10px var(--telegram-block-bg);
+      box-shadow: 00 10px var(--telegram-block-bg);
       border-radius: 20px;
     }
 
@@ -351,7 +366,7 @@
     .youtube-block span,
     .site-block span,
     .github-block span {
-      font-size: clamp(14px, 2.5vw, 16px);
+      font-size: clamp(14cardiagram: clamp(14px, 2.5vw, 16px);
       font-weight: 600;
       color: var(--text-color);
       text-shadow: var(--text-shadow);
@@ -364,7 +379,7 @@
     .youtube-block small,
     .site-block small,
     .github-block small {
-      font-size: clamp(10px, 2vw, 12px);
+      font-size: clamp(10网页: clamp(10px, 2vw, 12px);
       color: var(--text-color);
       opacity: 0.8;
       text-shadow: var(--text-shadow);
@@ -888,23 +903,6 @@
       background: #383838;
       margin-bottom: 16px;
     }
-
-    .subscription > *:not(:last-child) {
-      margin-bottom: 12px;
-    }
-
-    .button-extend {
-      background: #2196f3;
-      color: white;
-    }
-
-    .button-extend:hover:not(:disabled) {
-      background: #1e88e5;
-    }
-
-    .subscription-title {
-      font-size: clamp(16px, 3vw, 18px);
-    }
   </style>
 </head>
 <body>
@@ -979,7 +977,7 @@
       const [selectedProduct, setSelectedProduct] = useState(null);
       const [selectedSection, setSelectedSection] = useState('All');
 
-      const API_URL = 'https://wsocks-api-bot-git-65pa.onrender.com';
+      const API_URL = 'https://faithful-celestina-drstonit-ed3b0b61.koyeb.app';
       const SUPPORT_LINK = 'https://t.me/WSocks_Support';
       const SUPPORT_HANDLE = '@WSocks_Support';
       const BOT_USERNAME = '@YourBot';
@@ -1248,7 +1246,7 @@
                     const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
                     return h('div', { key: index, className: 'subscription' }, [
                       h('h3', null, [
-                        h('span', { className: 'subscription-title' }, `Подключение #${sub.email.split('-').pop()}`),
+                        h('span', { className: 'connection-title' }, `Подключение #${sub.email.split('-').pop()}`),
                         isExpired 
                           ? h('span', { className: 'status-error' }, [
                               h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
@@ -1270,7 +1268,10 @@
                         sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
                       ]),
                       h('div', { className: 'buttons' }, [
-                        h('button', { className: 'glass-button button-extend no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, 'Продлить'),
+                        h('button', { className: 'extend-button no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, [
+                          h('i', { className: 'fas fa-clock', style: { marginRight: '4px' } }),
+                          'Продлить'
+                        ]),
                         h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
                           h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
                           'Скопировать'
@@ -1457,43 +1458,45 @@
               const isExpired = sub.is_expired;
               const daysRemaining = Math.ceil((new Date(sub.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
               const daysDisplay = daysRemaining < -8 ? '∞' : `${daysRemaining} дней`;
-              contentChildren.push(
-                h('div', { key: index, className: 'subscription' }, [
-                  h('h3', null, [
-                    h('span', { className: 'subscription-title' }, `Подключение #${sub.email.split('-').pop()}`),
-                    isExpired 
-                      ? h('span', { className: 'status-error' }, [
-                          h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
-                          'Заблокировано'
-                        ])
-                      : h('span', { className: 'status-active' }, [
-                          h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
-                          'Активно'
-                        ])
+              const cardChildren = [
+                h('h3', null, [
+                  h('span', { className: 'connection-title' }, `Подключение #${sub.email.split('-').pop()}`),
+                  isExpired 
+                    ? h('span', { className: 'status-error' }, [
+                        h('i', { className: 'fas fa-circle', style: { color: 'red', marginRight: '4px' } }),
+                        'Заблокировано'
+                      ])
+                    : h('span', { className: 'status-active' }, [
+                        h('i', { className: 'fas fa-circle', style: { color: 'green', marginRight: '4px' } }),
+                        'Активно'
+                      ])
+                ]),
+                h('p', null, [
+                  h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
+                  'До окончания: ',
+                  h('span', { className: 'days-remaining' }, daysDisplay)
+                ]),
+                h('p', null, [
+                  h('i', { className: 'fas fa-users', style: { marginRight: '4px' } }),
+                  'Макс. устройств: ',
+                  sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
+                ]),
+                h('div', { className: 'buttons' }, [
+                  h('button', { className: 'extend-button no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, [
+                    h('i', { className: 'fas fa-clock', style: { marginRight: '4px' } }),
+                    'Продлить'
                   ]),
-                  h('p', null, [
-                    h('i', { className: 'fas fa-satellite-dish', style: { marginRight: '4px' } }),
-                    'До окончания: ',
-                    h('span', { className: 'days-remaining' }, daysDisplay)
+                  h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
+                    h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
+                    'Скопировать'
                   ]),
-                  h('p', null, [
-                    h('i', { className: 'fas fa-users', style: { marginRight: '4px' } }),
-                    'Макс. устройств: ',
-                    sub.email.startsWith('DE-FRA-TRIAL-') ? '3' : '5'
-                  ]),
-                  h('div', { className: 'buttons' }, [
-                    h('button', { className: 'glass-button button-extend no-shine', onClick: () => { setSelectedSub(sub); navigate('extend'); }, disabled: loading }, 'Продлить'),
-                    h('button', { className: 'copy-button no-shine', onClick: () => copyToClipboard(sub.email), disabled: loading }, [
-                      h('i', { className: 'fas fa-copy', style: { marginRight: '4px' } }),
-                      'Скопировать'
-                    ]),
-                    h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
-                      h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
-                      'Инструкция'
-                    ])
+                  h('button', { className: 'instruction-button no-shine', onClick: () => { setSelectedSub(sub); navigate('setup'); }, disabled: loading }, [
+                    h('i', { className: 'fas fa-file-alt', style: { marginRight: '4px' } }),
+                    'Инструкция'
                   ])
                 ])
-              );
+              ];
+              contentChildren.push(h('div', { key: index, className: 'subscription' }, cardChildren));
             });
           }
 
